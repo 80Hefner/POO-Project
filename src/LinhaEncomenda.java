@@ -2,7 +2,7 @@ public class LinhaEncomenda
 {
     private String codigo;
     private String descricao;
-    private int quantidade;
+    private double quantidade;
     private double valor_unidade;
 
     public LinhaEncomenda()
@@ -13,7 +13,7 @@ public class LinhaEncomenda
         this.valor_unidade = 0;
     }
 
-    public LinhaEncomenda(String codigo, String descricao, int quantidade, double valor_unidade)
+    public LinhaEncomenda(String codigo, String descricao, double quantidade, double valor_unidade)
     {
         this.codigo = codigo;
         this.descricao = descricao;
@@ -49,12 +49,12 @@ public class LinhaEncomenda
         this.descricao = descricao;
     }
 
-    public int getQuantidade()
+    public double getQuantidade()
     {
         return quantidade;
     }
 
-    public void setQuantidade(int quantidade)
+    public void setQuantidade(double quantidade)
     {
         this.quantidade = quantidade;
     }
