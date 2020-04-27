@@ -1,4 +1,3 @@
-import javax.accessibility.AccessibleValue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,8 +21,6 @@ public class Voluntario
         this.codigo = "";
         this.coordenadas = new GPS();
         this.raio = 0;
-        this.classificacao = 0;
-        this.total_entregas = 0;
         this.medical = false;
         this.available = false;
         this.availableMedical = false;
@@ -44,18 +41,18 @@ public class Voluntario
         this.registos = new ArrayList<>();
     }
 
-    public Voluntario(Voluntario v)
+    public Voluntario(Voluntario e)
     {
-        this.nome = v.getNome();
-        this.codigo = v.getCodigo();
-        this.coordenadas = v.getCoordenadas();
-        this.raio = v.getRaio();
-        this.classificacao = v.getClassificacao();
-        this.total_entregas = v.getTotal_entregas();
-        this.medical = v.isMedical();
-        this.available = v.isAvailable();
-        this.availableMedical = v.isAvailableMedical();
-        this.registos = new ArrayList<>(v.getRegistos());
+        this.nome = e.getNome();
+        this.codigo = e.getCodigo();
+        this.coordenadas = e.getCoordenadas().clone();
+        this.raio = e.getRaio();
+        this.classificacao = 0;
+        this.total_entregas = 0;
+        this.medical = e.isMedical();
+        this.available = true;
+        this.availableMedical = medical;
+        this.registos = new ArrayList<>();
     }
 
     public String getNome()
@@ -162,18 +159,18 @@ public class Voluntario
     {
         if (this == o) return true;
         else if (o == null || this.getClass() != o.getClass()) return false;
-        Voluntario v = (Voluntario) o;
+        Voluntario e = (Voluntario) o;
 
-        return this.nome.equals(v.getNome()) &&
-                this.codigo.equals(v.getCodigo()) &&
-                this.coordenadas.equals(v.getCoordenadas()) &&
-                this.raio == v.getRaio() &&
-                this.classificacao == v.getClassificacao() &&
-                this.total_entregas == v.getTotal_entregas() &&
-                this.medical == v.isMedical() &&
-                this.available == v.isAvailable() &&
-                this.availableMedical == v.isAvailableMedical() &&
-                this.registos.equals(new ArrayList<>(v.getRegistos()));
+        return this.nome.equals(e.getNome()) &&
+                this.codigo.equals(e.getCodigo()) &&
+                this.coordenadas.equals(e.getCoordenadas()) &&
+                this.raio == e.getRaio() &&
+                this.classificacao == e.getClassificacao() &&
+                this.total_entregas == e.getTotal_entregas() &&
+                this.medical == e.isMedical() &&
+                this.available == e.isAvailable() &&
+                this.availableMedical == e.isAvailableMedical() &&
+                this.registos.equals(new ArrayList<>(e.getRegistos()));
     }
 
     public String toString()
