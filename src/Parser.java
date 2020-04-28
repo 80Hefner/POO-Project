@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class Parser
 {
-    public void parse(String data_path, TrazAqui trazAqui)
+    public void parseLogs(String data_path)
     {
         List<String> linhas = lerFicheiro(data_path + "/logs.txt");
         String[] linhaPartida;
@@ -18,22 +18,22 @@ public class Parser
             switch(linhaPartida[0]){
                 case "Utilizador":
                     Utilizador u = parseUtilizador(linhaPartida[1]); // criar um Utilizador
-                    trazAqui.insereUtilizador(u);
+                    TrazAqui.insereUtilizador(u);
                     System.out.println(u.toString()); //enviar para o ecra, apenas para teste
                     break;
                 case "Voluntario":
                     Voluntario v = parseVoluntario(linhaPartida[1]);
-                    trazAqui.insereVoluntario(v);
+                    TrazAqui.insereVoluntario(v);
                     System.out.println(v.toString());
                     break;
                 case "Transportadora":
                     Transportadora t = parseTransportadora(linhaPartida[1]);
-                    trazAqui.insereTransportadora(t);
+                    TrazAqui.insereTransportadora(t);
                     System.out.println(t.toString());
                     break;
                 case "Loja":
                     Loja l = parseLoja(linhaPartida[1]);
-                    trazAqui.insereLoja(l);
+                    TrazAqui.insereLoja(l);
                     System.out.println(l.toString());
                     break;
                 case "Encomenda":
@@ -42,7 +42,7 @@ public class Parser
                     break;
                 case "Aceite":
                     String s = linhaPartida[1];
-                    trazAqui.insereEncomendaAceite(s);
+                    TrazAqui.insereEncomendaAceite(s);
                     System.out.println(s);
                 default:
                     System.out.println("Linha inválida.");

@@ -5,76 +5,67 @@ import java.util.stream.Collectors;
 
 public class TrazAqui
 {
-    private TreeMap<String,Loja> lojas;
-    private TreeMap<String,Voluntario> voluntarios;
-    private TreeMap<String,Transportadora> transportadoras;
-    private TreeMap<String,Utilizador> utilizadores;
-    private ArrayList<String> aceites;
-    private String utilizador_atual;
+    private static TreeMap<String,Loja> lojas = new TreeMap<>();
+    private static TreeMap<String,Voluntario> voluntarios = new TreeMap<>();
+    private static TreeMap<String,Transportadora> transportadoras = new TreeMap<>();
+    private static TreeMap<String,Utilizador> utilizadores = new TreeMap<>();
+    private static ArrayList<String> aceites = new ArrayList<>();
+    private static String utilizador_atual = "";
 
-    public TrazAqui()
+
+    public static void insereLoja(Loja l)
     {
-        this.lojas = new TreeMap<>();
-        this.voluntarios = new TreeMap<>();
-        this.transportadoras = new TreeMap<>();
-        this.utilizadores = new TreeMap<>();
-        this.aceites = new ArrayList<>();
-        this.utilizador_atual = "";
+        TrazAqui.lojas.put(l.getCodigo(), l.clone());
     }
 
-    public void insereLoja(Loja l)
+    public static void insereVoluntario(Voluntario v)
     {
-        this.lojas.put(l.getCodigo(), l.clone());
+        TrazAqui.voluntarios.put(v.getCodigo(), v.clone());
     }
 
-    public void insereVoluntario(Voluntario v)
+    public static void insereTransportadora(Transportadora t)
     {
-        this.voluntarios.put(v.getCodigo(), v.clone());
+        TrazAqui.transportadoras.put(t.getCodigo(), t.clone());
     }
 
-    public void insereTransportadora(Transportadora t)
+    public static void insereUtilizador(Utilizador u)
     {
-        this.transportadoras.put(t.getCodigo(), t.clone());
+        TrazAqui.utilizadores.put(u.getCodigo(), u.clone());
     }
 
-    public void insereUtilizador(Utilizador u)
+    public static void insereEncomendaAceite(String e)
     {
-        this.utilizadores.put(u.getCodigo(), u.clone());
+        TrazAqui.aceites.add(e);
     }
 
-    public void insereEncomendaAceite(String e)
+    public static void mudarUtilizador(String utilizador)
     {
-        this.aceites.add(e);
+        TrazAqui.utilizador_atual = utilizador;
     }
 
-    public void mudarUtilizador(String utilizador)
+    public static List<Loja> getLojas()
     {
-        this.utilizador_atual = utilizador;
+        return TrazAqui.lojas.values().stream().map(Loja::clone).collect(Collectors.toList());
     }
 
-    public List<Loja> getLojas()
+    public static List<Voluntario> getVoluntarios()
     {
-        return this.lojas.values().stream().map(Loja::clone).collect(Collectors.toList());
+        return TrazAqui.voluntarios.values().stream().map(Voluntario::clone).collect(Collectors.toList());
     }
 
-    public List<Voluntario> getVoluntarios()
+    public static List<Transportadora> getTransportadoras()
     {
-        return this.voluntarios.values().stream().map(Voluntario::clone).collect(Collectors.toList());
+        return TrazAqui.transportadoras.values().stream().map(Transportadora::clone).collect(Collectors.toList());
     }
 
-    public List<Transportadora> getTransportadoras()
+    public static List<Utilizador> getUtilizadores()
     {
-        return this.transportadoras.values().stream().map(Transportadora::clone).collect(Collectors.toList());
+        return TrazAqui.utilizadores.values().stream().map(Utilizador::clone).collect(Collectors.toList());
     }
 
-    public List<Utilizador> getUtilizadores()
+    public static List<String> getEncomendasAceites()
     {
-        return this.utilizadores.values().stream().map(Utilizador::clone).collect(Collectors.toList());
-    }
-
-    public List<String> getEncomendasAceites()
-    {
-        return new ArrayList<>(this.aceites);
+        return new ArrayList<>(TrazAqui.aceites);
     }
 
 }
