@@ -1,31 +1,79 @@
+import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Interpreter
 {
+    private static int login = 0;
+    private static final String data_path = "/home/besta80/IdeaProjects/POO-Project/src";
+
     public static void main(String[] args)
     {
         int opcao;
         Scanner sc = new Scanner(System.in);
-        String data_path = "/home/besta80/IdeaProjects/POO-Project/src";
+        Parser parser = new Parser();
+        parser.parseLogs(data_path);
 
         while(true) {
-            System.out.println("0 -> Sair do programa.");
-            System.out.println("1 -> Ler do ficheiro.");
-            System.out.println("2 -> Registar entidade.");
-            System.out.println("3 -> Listar entidades no sistema.");
 
-            opcao = sc.nextInt();
+            if (login == 0)
+                menuLogin();
+/*            else if (TrazAqui.getUtilizador_atual().equals("admin"))
+                menuAdmin();*/
+            else
+                menuUtilizador();
+        }
+    }
+
+    private static void menuLogin()
+    {
+        int opcao;
+        Scanner sc = new Scanner(System.in);
+
+        while(true) {
+
+            clearScreen();
+            System.out.println("----------------------MENU LOGIN--------------------\n");
+            System.out.println("0 -> Sair do programa.");
+            System.out.println("1 -> Efetuar login.");
+            System.out.println("2 -> Registar novo utilizador.");
+            System.out.println("3 -> Registar entidade.");
+            opcao = Integer.parseInt(sc.nextLine());
 
             if (opcao == 0)
                 System.exit(0);
-            else if (opcao == 1) {
-                Parser parser = new Parser();
-                parser.parseLogs(data_path);
+            else if (opcao == 1 && TrazAqui.getUtilizadores().size() != 0) {
+                clearScreen();
+                System.out.println("----------------------LOGIN--------------------\n");
+                while(true) {
+                    System.out.print("Nome de utilizador: ");
+                    String utilizador = sc.nextLine();
+                    if (TrazAqui.procuraUtilizador(utilizador)) {
+                        while(true) {
+                            System.out.print("Password: ");
+                            String password = sc.nextLine();
+                            if (TrazAqui.verificaPassword(utilizador, password)) {
+                                login = 1;
+                                TrazAqui.setUtilizador_atual(utilizador);
+                                break;
+                            }
+                            else System.out.println("Password incorreta!");
+                        }
+                        break;
+                    }
+                    else System.out.println("Utilizador inválido!");
+                }
+                break;
             }
             else if (opcao == 2) {
+                registaUtilizador();
+            }
+            else if (opcao == 3) {
+                clearScreen();
+                System.out.println("----------------------MENU REGISTO DE ENTIDADE--------------------\n");
                 System.out.println("Entidade a registar:");
-                System.out.println("1 -> Loja | 2 -> Voluntário | 3 -> Transportadora | 4 -> Utilizador");
-                opcao = sc.nextInt();
+                System.out.println("1 -> Loja | 2 -> Voluntário | 3 -> Transportadora");
+                opcao = Integer.parseInt(sc.nextLine());
 
                 if (opcao == 1)
                     registaLoja();
@@ -33,11 +81,37 @@ public class Interpreter
                     registaVoluntario();
                 else if (opcao == 3)
                     registaTransportadora();
-                else if (opcao == 4)
-                    registaUtilizador();
-
             }
-            else if (opcao == 3) {
+            else {
+                System.out.println("Opção inválida!");
+                esperaInput();
+            }
+        }
+    }
+
+    private static void menuUtilizador()
+    {
+        Scanner sc = new Scanner(System.in);
+        Parser parser = new Parser();
+        int opcao;
+
+        while(true) {
+
+            clearScreen();
+            System.out.println("----------------------MENU UTILIZADOR--------------------\n");
+            System.out.println("0 -> Logout.");
+            System.out.println("1 -> Listar entidades no sistema.");
+            System.out.println("2 -> Fazer pedido de encomenda.");
+
+            opcao = Integer.parseInt(sc.nextLine());
+
+            if (opcao == 0) {
+                login = 0;
+                TrazAqui.setUtilizador_atual("");
+                break;
+            }
+            else if (opcao == 1) {
+                clearScreen();
                 System.out.println("\n-----------------TRAZ AQUI------------------------");
                 System.out.println("\n------------------LOJAS-------------------------\n");
                 System.out.println(TrazAqui.getLojas().toString());
@@ -49,17 +123,73 @@ public class Interpreter
                 System.out.println(TrazAqui.getUtilizadores().toString());
                 System.out.println("\n------------------ACEITES-------------------------\n");
                 System.out.println(TrazAqui.getEncomendasAceites().toString());
-                System.out.println("\n-----------------------END OF LIST-----------------------------\n");
-
+                System.out.print("\n");
+                esperaInput();
+            }
+            else if (opcao == 2) {
+                Encomenda e = novaEncomenda();
+                TrazAqui.insereEncomenda(e, e.getCodLoja());
             }
         }
+    }
+
+    private static Encomenda novaEncomenda()
+    {
+        Scanner sc = new Scanner(System.in);
+        Random r = new Random();
+        Encomenda e = new Encomenda();
+
+        clearScreen();
+        System.out.println("------NOVA ENCOMENDA--------");
+
+        while(true) {
+            String codigo = "e" + (r.nextInt(8999) + 1000);
+            if (!TrazAqui.procuraEncomendaAceite(codigo)) {
+                e.setCodigo(codigo);
+                break;
+            }
+        }
+        System.out.print("Código da loja: ");
+        e.setCodLoja(sc.nextLine());
+        e.setCodUtilizador(TrazAqui.getUtilizador_atual());
+        System.out.print("Número de produtos a encomendar: ");
+        int nr_produtos = Integer.parseInt(sc.nextLine());
+        for (int i = 0; i < nr_produtos; i++) {
+            LinhaEncomenda l = novaLinhaEncomenda();
+            e.insereLinhaEncomenda(l);
+            e.setPeso(e.getPeso() + l.getQuantidade() * l.getValor_unidade() / 10);
+        }
+        e.setMedical(e.getProdutos().stream().anyMatch(l -> l.getDescricao().equals("Desinfetante") || l.getDescricao().equals("Água sanitária")));
+        e.setData(LocalDateTime.now());
+
+        return e;
+    }
+
+    private static LinhaEncomenda novaLinhaEncomenda()
+    {
+        Scanner sc = new Scanner(System.in);
+        LinhaEncomenda l = new LinhaEncomenda();
+
+        clearScreen();
+        System.out.println("------NOVA LINHA ENCOMENDA--------");
+        System.out.print("Código do produto: ");
+        l.setCodigo(sc.nextLine());
+        System.out.print("Descrição: ");
+        l.setDescricao(sc.nextLine());
+        System.out.print("Quantidade: ");
+        l.setQuantidade(Integer.parseInt(sc.nextLine()));
+        System.out.print("Valor por unidade: ");
+        l.setValor_unidade(Integer.parseInt(sc.nextLine()));
+
+        return l;
     }
 
     private static void registaLoja()
     {
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("\n------REGISTO DE LOJA--------");
+        clearScreen();
+        System.out.println("------REGISTO DE LOJA--------");
         System.out.print("Nome: ");
         String nome = sc.nextLine();
         System.out.print("Codigo: ");
@@ -75,13 +205,17 @@ public class Interpreter
 
         Loja newLoja = new Loja(nome, codigo, new GPS(latitude,longitude), temFila);
         TrazAqui.insereLoja(newLoja);
+
+        System.out.println("\nLoja registada com sucesso!");
+        esperaInput();
     }
 
     private static void registaVoluntario()
     {
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("\n------REGISTO DE VOLUNTARIO--------");
+        clearScreen();
+        System.out.println("------REGISTO DE VOLUNTARIO--------");
         System.out.print("Nome: ");
         String nome = sc.nextLine();
         System.out.print("Codigo: ");
@@ -99,13 +233,17 @@ public class Interpreter
 
         Voluntario newVoluntario = new Voluntario(nome, codigo, new GPS(latitude,longitude), raio, medical);
         TrazAqui.insereVoluntario(newVoluntario);
+
+        System.out.println("\nVoluntário registado com sucesso!");
+        esperaInput();
     }
 
     private static void registaTransportadora()
     {
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("\n------REGISTO DE TRANSPORTADORA--------");
+        clearScreen();
+        System.out.println("------REGISTO DE TRANSPORTADORA--------");
         System.out.print("Nome: ");
         String nome = sc.nextLine();
         System.out.print("Codigo: ");
@@ -129,13 +267,17 @@ public class Interpreter
 
         Transportadora newTransportadora = new Transportadora(nome, codigo, new GPS(latitude,longitude), nif, raio, preco_km, limite, medical);
         TrazAqui.insereTransportadora(newTransportadora);
+
+        System.out.println("\nTransportadora registada com sucesso!");
+        esperaInput();
     }
 
     private static void registaUtilizador()
     {
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("\n------REGISTO DE UTILIZADOR--------");
+        clearScreen();
+        System.out.println("------REGISTO DE UTILIZADOR--------");
         System.out.print("Nome: ");
         String nome = sc.nextLine();
         System.out.print("Codigo: ");
@@ -145,8 +287,26 @@ public class Interpreter
         double latitude = Double.parseDouble(sc.nextLine());
         System.out.print("\tLongitude: ");
         double longitude = Double.parseDouble(sc.nextLine());
+        System.out.print("Password: ");
+        String password = sc.nextLine();
 
-        Utilizador newUtilizador = new Utilizador(nome, codigo, new GPS(latitude,longitude));
+        Utilizador newUtilizador = new Utilizador(nome, codigo, new GPS(latitude,longitude), password);
         TrazAqui.insereUtilizador(newUtilizador);
+
+        System.out.println("\nUtilizador registado com sucesso!");
+        esperaInput();
+    }
+
+    private static void clearScreen()
+    {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
+
+    private static void esperaInput()
+    {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("\nPressione <ENTER> para continuar.");
+        sc.nextLine();
     }
 }

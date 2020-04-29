@@ -36,7 +36,6 @@ public class Loja
         this.coordenadas = u.getCoordenadas();
         this.temFila = u.temFila();
         this.fila = new LinkedList<>(u.getPendentes());
-
     }
 
     public String getNome()
@@ -119,6 +118,11 @@ public class Loja
     public Loja clone()
     {
         return new Loja(this);
+    }
+
+    public void insereEncomenda(Encomenda e)
+    {
+        this.fila.add(e.clone());
     }
 
 }

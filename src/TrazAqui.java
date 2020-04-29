@@ -38,9 +38,19 @@ public class TrazAqui
         TrazAqui.aceites.add(e);
     }
 
-    public static void mudarUtilizador(String utilizador)
+    public static void insereEncomenda(Encomenda e, String codLoja)
+    {
+        TrazAqui.lojas.get(codLoja).insereEncomenda(e);
+    }
+
+    public static void setUtilizador_atual(String utilizador)
     {
         TrazAqui.utilizador_atual = utilizador;
+    }
+
+    public static String getUtilizador_atual()
+    {
+        return utilizador_atual;
     }
 
     public static List<Loja> getLojas()
@@ -66,6 +76,23 @@ public class TrazAqui
     public static List<String> getEncomendasAceites()
     {
         return new ArrayList<>(TrazAqui.aceites);
+    }
+
+    public static boolean procuraEncomendaAceite(String codigo)
+    {
+        return TrazAqui.aceites.contains(codigo);
+    }
+
+    public static boolean procuraUtilizador(String utilizador)
+    {
+        return TrazAqui.utilizadores.containsKey(utilizador);
+    }
+
+    public static boolean verificaPassword(String utilizador, String password)
+    {
+        Utilizador u = TrazAqui.utilizadores.get(utilizador);
+
+        return u.getPassword().equals(password);
     }
 
 }

@@ -152,4 +152,9 @@ public class Encomenda
         return new Encomenda(this);
     }
 
+    public void insereLinhaEncomenda(LinhaEncomenda l)
+    {
+        this.produtos.add(l.clone());
+    }
+
 }

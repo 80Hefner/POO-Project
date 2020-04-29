@@ -19,51 +19,51 @@ public class Parser
                 case "Utilizador":
                     Utilizador u = parseUtilizador(linhaPartida[1]); // criar um Utilizador
                     TrazAqui.insereUtilizador(u);
-                    System.out.println(u.toString()); //enviar para o ecra, apenas para teste
+                    //System.out.println(u.toString()); //enviar para o ecra, apenas para teste
                     break;
                 case "Voluntario":
                     Voluntario v = parseVoluntario(linhaPartida[1]);
                     TrazAqui.insereVoluntario(v);
-                    System.out.println(v.toString());
+                    //System.out.println(v.toString());
                     break;
                 case "Transportadora":
                     Transportadora t = parseTransportadora(linhaPartida[1]);
                     TrazAqui.insereTransportadora(t);
-                    System.out.println(t.toString());
+                    //System.out.println(t.toString());
                     break;
                 case "Loja":
                     Loja l = parseLoja(linhaPartida[1]);
                     TrazAqui.insereLoja(l);
-                    System.out.println(l.toString());
+                    //System.out.println(l.toString());
                     break;
                 case "Encomenda":
                     Encomenda e = parseEncomenda(linhaPartida[1]);
-                    System.out.println(e.toString());
+                    //System.out.println(e.toString());
                     break;
                 case "Aceite":
                     String s = linhaPartida[1];
                     TrazAqui.insereEncomendaAceite(s);
-                    System.out.println(s);
+                    //System.out.println(s);
+                    break;
                 default:
                     System.out.println("Linha inválida.");
                     break;
             }
 
         }
-        System.out.println("done!");
     }
 
 
     public Utilizador parseUtilizador(String input)
     {
         String[] campos = input.split(",");
-        String nome = campos[0];
-        String codUtilizador = campos[1];
+        String codUtilizador = campos[0];
+        String nome = campos[1];
         double latitude = Double.parseDouble(campos[2]);
         double longitude = Double.parseDouble(campos[3]);
         GPS gps = new GPS(latitude, longitude);
 
-        return new Utilizador(nome, codUtilizador, gps);
+        return new Utilizador(nome, codUtilizador, gps, "");
     }
 
     public Voluntario parseVoluntario(String input)
@@ -122,8 +122,9 @@ public class Parser
         double peso = Double.parseDouble(campos[3]);
         ArrayList<LinhaEncomenda> produtos = new ArrayList<>(parseProdutos(campos[4]));
         LocalDateTime data = LocalDateTime.now();
+        boolean medical = produtos.stream().anyMatch(l -> l.getDescricao().equals("Desinfetante") || l.getDescricao().equals("Água sanitária"));
 
-        return new Encomenda(codEncomenda, codLoja, codUtilizador, peso, produtos, false, data);
+        return new Encomenda(codEncomenda, codLoja, codUtilizador, peso, produtos, medical, data);
     }
 
     public List<LinhaEncomenda> parseProdutos(String input)
