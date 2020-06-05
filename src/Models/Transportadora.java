@@ -1,3 +1,5 @@
+package Models;
+
 public class Transportadora extends Voluntario
 {
     private int nif;

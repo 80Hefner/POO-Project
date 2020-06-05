@@ -1,3 +1,5 @@
+package Models;
+
 public class GPS
 {
     private double latitude;
