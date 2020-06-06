@@ -14,6 +14,7 @@ public class Encomenda
     private ArrayList<LinhaEncomenda> produtos;
     private boolean medical;
     private LocalDateTime data;
+    private boolean entregue;
 
     public Encomenda()
     {
@@ -24,9 +25,10 @@ public class Encomenda
         this.produtos = new ArrayList<>();
         this.medical = false;
         this.data = LocalDateTime.now();
+        this.entregue = false;
     }
 
-    public Encomenda(String codigo, String codLoja, String codUtilizador, double peso, ArrayList<LinhaEncomenda> produtos, boolean medical, LocalDateTime data)
+    public Encomenda(String codigo, String codLoja, String codUtilizador, double peso, ArrayList<LinhaEncomenda> produtos, boolean medical, LocalDateTime data, boolean entregue)
     {
         this.codigo = codigo;
         this.codLoja = codLoja;
@@ -35,6 +37,7 @@ public class Encomenda
         this.produtos = produtos.stream().map(LinhaEncomenda::clone).collect(Collectors.toCollection(ArrayList::new));
         this.medical = medical;
         this.data = data;
+        this.entregue = entregue;
     }
 
     public Encomenda(Encomenda l)
@@ -46,6 +49,7 @@ public class Encomenda
         this.produtos = new ArrayList<>(l.getProdutos());
         this.medical = l.isMedical();
         this.data = l.getData();
+        this.entregue = l.isEntregue();
     }
 
     public String getCodigo()
@@ -118,6 +122,14 @@ public class Encomenda
         this.data = data;
     }
 
+    public boolean isEntregue() {
+        return entregue;
+    }
+
+    public void setEntregue(boolean entregue) {
+        this.entregue = entregue;
+    }
+
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -130,7 +142,8 @@ public class Encomenda
                 this.peso == e.getPeso() &&
                 this.produtos.equals(new ArrayList<>(e.getProdutos())) &&
                 this.medical == e.isMedical() &&
-                this.data.isEqual(e.getData());
+                this.data.isEqual(e.getData())&&
+                this.entregue == (e.isEntregue());
     }
 
     public String toString()
@@ -143,6 +156,7 @@ public class Encomenda
         sb.append("\nPeso: ").append(this.peso);
         sb.append("\nIs medical? ").append(this.medical);
         sb.append("\nData da encomenda: ").append(this.data.toString());
+        sb.append("\nFoi Entregue:\n").append(this.entregue);
         sb.append("\nProdutos:\n").append(this.produtos.toString());
         sb.append("\n");
 

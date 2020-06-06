@@ -82,7 +82,7 @@ public class Parser
         Random r = new Random();
         boolean medical = r.nextBoolean();
 
-        return new Voluntario(nome,codVoluntario,gps,raio,medical);
+        return new Voluntario(nome,codVoluntario,gps, "",raio,medical);
     }
 
     public Transportadora parseTransportadora(String input)
@@ -100,7 +100,7 @@ public class Parser
         int limite = r.nextInt(10) + 1;
         boolean medical = r.nextBoolean();
 
-        return new Transportadora(nome,codTransportadora,gps,nif,raio,preco_km,limite,medical);
+        return new Transportadora(nome,codTransportadora,gps, "",nif,raio,preco_km,limite,medical);
     }
 
     public Loja parseLoja(String input)
@@ -128,7 +128,7 @@ public class Parser
         LocalDateTime data = LocalDateTime.now();
         boolean medical = produtos.stream().anyMatch(l -> l.getDescricao().equals("Desinfetante") || l.getDescricao().equals("Água sanitária"));
 
-        return new Encomenda(codEncomenda, codLoja, codUtilizador, peso, produtos, medical, data);
+        return new Encomenda(codEncomenda, codLoja, codUtilizador, peso, produtos, medical, data, false);
     }
 
     public List<LinhaEncomenda> parseProdutos(String input)

@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+//TO do : Falta inserir velocidade, depois fazer aleatoriadade para o clima
+
 public class Voluntario
 {
     private String nome;
     private String codigo;
     private GPS coordenadas;
+    private String password;
     private double raio;
     private double classificacao;
     private int total_entregas;
@@ -22,6 +25,7 @@ public class Voluntario
         this.nome = "";
         this.codigo = "";
         this.coordenadas = new GPS();
+        this.password = "";
         this.raio = 0;
         this.medical = false;
         this.available = false;
@@ -29,11 +33,12 @@ public class Voluntario
         this.registos = new ArrayList<>();
     }
 
-    public Voluntario(String nome, String codigo, GPS coordenadas, double raio, boolean medical)
+    public Voluntario(String nome, String codigo, GPS coordenadas, String password, double raio, boolean medical)
     {
         this.nome = nome;
         this.codigo = codigo;
         this.coordenadas = coordenadas.clone();
+        this.password = password;
         this.raio = raio;
         this.classificacao = 0;
         this.total_entregas = 0;
@@ -48,6 +53,7 @@ public class Voluntario
         this.nome = e.getNome();
         this.codigo = e.getCodigo();
         this.coordenadas = e.getCoordenadas().clone();
+        this.password = e.getPassword();
         this.raio = e.getRaio();
         this.classificacao = 0;
         this.total_entregas = 0;
@@ -85,6 +91,16 @@ public class Voluntario
     public void setCoordenadas(GPS coordenadas)
     {
         this.coordenadas = coordenadas.clone();
+    }
+
+    public String getPassword()
+    {
+        return password;
+    }
+
+    public void setPassword(String password)
+    {
+        this.password = password;
     }
 
     public double getRaio()
@@ -166,6 +182,7 @@ public class Voluntario
         return this.nome.equals(e.getNome()) &&
                 this.codigo.equals(e.getCodigo()) &&
                 this.coordenadas.equals(e.getCoordenadas()) &&
+                this.password.equals(e.getPassword()) &&
                 this.raio == e.getRaio() &&
                 this.classificacao == e.getClassificacao() &&
                 this.total_entregas == e.getTotal_entregas() &&
@@ -182,6 +199,7 @@ public class Voluntario
         sb.append("Nome: ").append(this.nome);
         sb.append("\nCodigo: ").append(this.codigo);
         sb.append("\nCoordenadas: ").append(this.coordenadas.toString());
+        sb.append("\nPassword: ").append(this.password);
         sb.append("\nRaio: ").append(this.raio);
         sb.append("\nClassificação: ").append(this.classificacao);
         sb.append("\nTotal de entregas efetuadas: ").append(this.total_entregas);
@@ -197,5 +215,17 @@ public class Voluntario
     public Voluntario clone()
     {
         return new Voluntario(this);
+    }
+
+    /******* Funções Principais *******/
+    public int pedeParaRealizarEntrega(Loja lojaDaEncomenda, String codEncomenda) {
+        if (lojaDaEncomenda.possuiEncomendaCodigo(codEncomenda) && this.coordenadas.isReachable(lojaDaEncomenda.getCoordenadas(), this.raio)) {
+
+        }
+        return -1; //Não deu
+    }
+
+    public void realizaEntregaDeVenda(Encomenda enc) {
+        this.registos.add(enc);
     }
 }

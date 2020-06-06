@@ -67,6 +67,26 @@ public class TrazAqui
         return TrazAqui.lojas.values().stream().map(Loja::clone).collect(Collectors.toList());
     }
 
+    public static Loja getLoja(String codLoja)
+    {
+        return TrazAqui.lojas.get(codLoja);
+    }
+
+    public static Voluntario getVoluntario(String codVoluntario)
+    {
+        return TrazAqui.voluntarios.get(codVoluntario);
+    }
+
+    public static Utilizador getUtilizador(String codUtilizador)
+    {
+        return TrazAqui.utilizadores.get(codUtilizador);
+    }
+
+    public static Transportadora getTransportador(String codTransportadora)
+    {
+        return TrazAqui.transportadoras.get(codTransportadora);
+    }
+
     public static List<Voluntario> getVoluntarios()
     {
         return TrazAqui.voluntarios.values().stream().map(Voluntario::clone).collect(Collectors.toList());
@@ -97,6 +117,21 @@ public class TrazAqui
         return TrazAqui.utilizadores.containsKey(utilizador);
     }
 
+    public static boolean procuraVoluntario(String voluntario)
+    {
+        return TrazAqui.voluntarios.containsKey(voluntario);
+    }
+
+    public static boolean procuraTransportadora(String transportadora)
+    {
+        return TrazAqui.transportadoras.containsKey(transportadora);
+    }
+
+    public static boolean procuraLoja(String loja)
+    {
+        return TrazAqui.lojas.containsKey(loja);
+    }
+
     public static boolean verificaPassword(String utilizador, String password)
     {
         Utilizador u = TrazAqui.utilizadores.get(utilizador);
@@ -104,4 +139,9 @@ public class TrazAqui
         return u.getPassword().equals(password);
     }
 
+    public static void realizaEntregaDeVenda(Loja loja, Encomenda enc, Voluntario voluntario) {
+        loja.realizaEntregaDeVenda(enc);
+        voluntario.realizaEntregaDeVenda(enc);
+        TrazAqui.getUtilizador(enc.getCodUtilizador()).realizaEntregaDeVenda(enc);
+    }
 }

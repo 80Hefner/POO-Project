@@ -23,8 +23,10 @@ public class Interpreter
                 menuLogin();
 /*            else if (TrazAqui.getUtilizador_atual().equals("admin"))
                 menuAdmin();*/
-            else
+            else if (TrazAqui.getUtilizador_atual().startsWith("u"))
                 menuUtilizador();
+            else if (TrazAqui.getUtilizador_atual().startsWith("v"))
+                menuVoluntario();
         }
     }
 
@@ -41,13 +43,16 @@ public class Interpreter
             System.out.println("1 -> Efetuar login.");
             System.out.println("2 -> Registar novo utilizador.");
             System.out.println("3 -> Registar entidade.");
+            System.out.println("4 -> Efetuar login com Voluntario.");
+            System.out.println("5 -> Efetuar login com Loja.");
+            System.out.print("OPÇÃO: ");
             opcao = Integer.parseInt(sc.nextLine());
 
             if (opcao == 0)
                 System.exit(0);
             else if (opcao == 1 && TrazAqui.getUtilizadores().size() != 0) {
                 clearScreen();
-                System.out.println("----------------------LOGIN--------------------\n");
+                System.out.println("\n----------------------LOGIN--------------------");
                 while(true) {
                     System.out.print("Nome de utilizador: ");
                     String utilizador = sc.nextLine();
@@ -85,6 +90,32 @@ public class Interpreter
                 else if (opcao == 3)
                     registaTransportadora();
             }
+            else if (opcao == 4 && TrazAqui.getVoluntarios().size() != 0) {
+                clearScreen();
+                System.out.println("\n----------------------LOGIN--------------------");
+                while(true) {
+                    System.out.print("Nome do Voluntario: ");
+                    String voluntario = sc.nextLine();
+                    if (TrazAqui.procuraVoluntario(voluntario)) {
+                        while(true) {
+                            System.out.print("Password: ");
+                            String password = sc.nextLine();
+                            if (password.equals("")) {
+                                login = 1;
+                                TrazAqui.setUtilizador_atual(voluntario);
+                                break;
+                            }
+                            else System.out.println("Password incorreta!");
+                        }
+                        break;
+                    }
+                    else System.out.println("Voluntario inválido!");
+                }
+                break;
+            }
+            else if (opcao == 5 && TrazAqui.getTransportadoras().size() != 0) {
+
+            }
             else {
                 System.out.println("Opção inválida!");
                 esperaInput();
@@ -92,6 +123,7 @@ public class Interpreter
         }
     }
 
+    /********************* MENUS DO UTILIZADOR *******************/
     private static void menuUtilizador()
     {
         Scanner sc = new Scanner(System.in);
@@ -187,6 +219,98 @@ public class Interpreter
         return l;
     }
 
+    /********************* MENUS DO VOLUNTÁRIO *******************/
+    private static void menuVoluntario()
+    {
+        Scanner sc = new Scanner(System.in);
+        Parser parser = new Parser();
+        int opcao;
+
+        while(true) {
+
+            clearScreen();
+            System.out.println("----------------------MENU UTILIZADOR--------------------\n");
+            System.out.println("0 -> Logout.");
+            System.out.println("1 -> Listar entidades no sistema.");
+            System.out.println("2 -> Fazer pedido para entregar encomenda.");
+
+            opcao = Integer.parseInt(sc.nextLine());
+
+            if (opcao == 0) {
+                login = 0;
+                TrazAqui.setUtilizador_atual("");
+                break;
+            }
+            else if (opcao == 1) {
+                clearScreen();
+                System.out.println("\n-----------------TRAZ AQUI------------------------");
+                System.out.println("\n------------------LOJAS-------------------------\n");
+                System.out.println(TrazAqui.getLojas().toString());
+                System.out.println("\n------------------VOLUNTARIOS-------------------------\n");
+                System.out.println(TrazAqui.getVoluntarios().toString());
+                System.out.println("\n------------------TRANSPORTADORAS-------------------------\n");
+                System.out.println(TrazAqui.getTransportadoras().toString());
+                System.out.println("\n------------------UTILIZADORES-------------------------\n");
+                System.out.println(TrazAqui.getUtilizadores().toString());
+                System.out.println("\n------------------ACEITES-------------------------\n");
+                System.out.println(TrazAqui.getEncomendasAceites().toString());
+                System.out.print("\n");
+                esperaInput();
+            }
+            else if (opcao == 2) {
+                clearScreen();
+                realizaEncomendaPedida();
+                esperaInput();
+                break;
+            }
+        }
+    }
+
+    public static void realizaEncomendaPedida () {
+        Scanner sc = new Scanner(System.in);
+        Voluntario voluntario = TrazAqui.getVoluntario(TrazAqui.getUtilizador_atual());
+
+        clearScreen();
+        System.out.println("\n-----------------PEDIDO ENTREGA ENCOMENDA------------------------");
+        while(true) {
+            System.out.println("Insira o Código da loja:");
+            String codLoja = sc.nextLine();
+            if (!codLoja.startsWith("l")) {
+                codLoja = "l" + codLoja;
+            }
+            if (TrazAqui.procuraLoja(codLoja)) {
+                Loja loja = TrazAqui.getLoja(codLoja);
+
+                if (loja.getCoordenadas().isReachable( voluntario.getCoordenadas(), voluntario.getRaio())) {
+
+                    while(true) {
+                        System.out.println("Insira o Código da Encomenda:");
+                        String codEncomenda = sc.nextLine();
+                        if (loja.possuiEncomendaCodigo(codEncomenda)) {
+                            Encomenda enc = loja.getEncomenda(codEncomenda);
+                            if (TrazAqui.getUtilizador(enc.getCodUtilizador()).getCoordenadas().isReachable(voluntario.getCoordenadas(), voluntario.getRaio())) {
+                                TrazAqui.realizaEntregaDeVenda(loja, enc, voluntario);
+                                System.out.println("Entrega feita com sucesso");
+                                break;
+                            } else {
+                                System.out.println("Nao consegue alcançar utilizador");
+                            }
+                        } else {
+                            System.out.println("Encomenda Pendente inexistente");
+                        }
+                    }
+                break;
+                } else {
+                    System.out.println("Não consegue alcançar esta loja");
+                }
+            } else {
+                System.out.println("Loja Inexistente");
+            }
+
+        }
+    }
+
+    /************* REGISTAR NOVAS ENTIDADES ****************/
     private static void registaLoja()
     {
         Scanner sc = new Scanner(System.in);
@@ -234,7 +358,7 @@ public class Interpreter
         char c = sc.nextLine().toCharArray()[0];
         boolean medical = c == 'y';
 
-        Voluntario newVoluntario = new Voluntario(nome, codigo, new GPS(latitude,longitude), raio, medical);
+        Voluntario newVoluntario = new Voluntario(nome, codigo, new GPS(latitude,longitude), "", raio, medical);
         TrazAqui.insereVoluntario(newVoluntario);
 
         System.out.println("\nVoluntário registado com sucesso!");
@@ -268,7 +392,7 @@ public class Interpreter
         char c = sc.nextLine().toCharArray()[0];
         boolean medical = c == 'y';
 
-        Transportadora newTransportadora = new Transportadora(nome, codigo, new GPS(latitude,longitude), nif, raio, preco_km, limite, medical);
+        Transportadora newTransportadora = new Transportadora(nome, codigo, new GPS(latitude,longitude), "", nif, raio, preco_km, limite, medical);
         TrazAqui.insereTransportadora(newTransportadora);
 
         System.out.println("\nTransportadora registada com sucesso!");

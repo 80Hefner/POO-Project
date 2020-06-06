@@ -1,7 +1,9 @@
 package Models;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Loja
@@ -11,6 +13,7 @@ public class Loja
     private GPS coordenadas;
     private boolean temFila;
     private LinkedList<Encomenda> fila;
+    private HashMap<String, Encomenda> encomendas;
 
     public Loja()
     {
@@ -19,6 +22,7 @@ public class Loja
         this.coordenadas = new GPS();
         this.temFila = false;
         this.fila = new LinkedList<>();
+        this.encomendas = new HashMap<>();
     }
 
     public Loja(String nome, String codigo, GPS coordenadas, boolean temFila)
@@ -28,6 +32,7 @@ public class Loja
         this.coordenadas = coordenadas.clone();
         this.temFila = temFila;
         this.fila = new LinkedList<>();
+        this.encomendas = new HashMap<>();
     }
 
     public Loja(Loja u)
@@ -37,6 +42,7 @@ public class Loja
         this.coordenadas = u.getCoordenadas();
         this.temFila = u.temFila();
         this.fila = new LinkedList<>(u.getPendentes());
+        this.encomendas = new HashMap<>(u.getEncomendas());
     }
 
     public String getNome()
@@ -89,6 +95,22 @@ public class Loja
         this.fila = fila.stream().map(Encomenda::clone).collect(Collectors.toCollection(LinkedList::new));
     }
 
+    public Map<String, Encomenda> getEncomendas() {
+        return encomendas
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().clone()));
+    }
+
+    public void setEncomendas(HashMap<String, Encomenda> encomendas) {
+        this.encomendas = new HashMap<>();
+        encomendas.forEach((key,value) -> this.encomendas.put(key,value.clone()));
+    }
+
+    public Encomenda getEncomenda (String codEncomenda) {
+        return this.getEncomendas().get(codEncomenda);
+    }
+
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -110,7 +132,8 @@ public class Loja
         sb.append("\nCodigo: ").append(this.codigo);
         sb.append("\nCoordenadas: ").append(this.coordenadas.toString());
         sb.append("\nTem fila de espera? ").append(this.temFila);
-        sb.append("\nEncomendas em fila de espera: \n").append(this.fila.toString());
+        //sb.append("\nEncomendas em fila de espera: \n").append(this.fila.toString());
+        sb.append("\nEncomendas para entregar ").append(this.encomendas.toString());
         sb.append("\n");
 
         return sb.toString();
@@ -124,6 +147,17 @@ public class Loja
     public void insereEncomenda(Encomenda e)
     {
         this.fila.add(e.clone());
+        this.encomendas.put(e.getCodigo(), e.clone());
     }
 
+    public boolean possuiEncomendaCodigo (String codEncomenda) {
+        if (this.encomendas.containsKey(codEncomenda))
+            return !this.encomendas.get(codEncomenda).isEntregue();
+        return false;
+    }
+
+    public void realizaEntregaDeVenda(Encomenda encomenda) {
+        this.fila.remove(encomenda);
+        this.encomendas.get(encomenda.getCodigo()).setEntregue(true);
+    }
 }

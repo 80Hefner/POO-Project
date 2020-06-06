@@ -1,5 +1,9 @@
 package Models;
 
+import java.lang.Math;
+
+import static java.lang.Math.pow;
+
 public class GPS
 {
     private double latitude;
@@ -68,6 +72,7 @@ public class GPS
     }
 
     //Mudar para plano XY em princípio
+    /*
     public double distanceTo(GPS that)
     {
         double KMS_PER_NAUTICAL_MILE = 1.852;
@@ -83,6 +88,16 @@ public class GPS
         // each degree on a great circle of Earth is 60 nautical miles
         double nauticalMiles = 60 * Math.toDegrees(angle);
         return KMS_PER_NAUTICAL_MILE * nauticalMiles;
+    }
+    */
+
+    public double distanceTo(GPS that)
+    {
+        double distancia = Math.sqrt(
+                pow((this.getLatitude() - that.getLatitude()), 2) +
+                pow((this.getLongitude() - that.getLongitude()), 2)
+        );
+        return distancia;
     }
 
     public boolean isReachable(GPS that, double raioDeDistribuicao)

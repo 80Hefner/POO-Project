@@ -164,4 +164,8 @@ public class Utilizador
     {
         return new Utilizador(this);
     }
+
+    public void realizaEntregaDeVenda(Encomenda enc) {
+        this.encomendasHistorico.get(enc.getCodigo()).setEntregue(true);
+    }
 }
