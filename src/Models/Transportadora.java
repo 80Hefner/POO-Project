@@ -14,9 +14,9 @@ public class Transportadora extends Voluntario
         this.limite = 0;
     }
 
-    public Transportadora(String nome, String codigo, GPS coordenadas, String password, int nif, double raio, double preco_km, int limite, boolean medical)
+    public Transportadora(String nome, String codigo, GPS coordenadas, String password, double velocidadeMedia, int nif, double raio, double preco_km, int limite, boolean medical)
     {
-        super(nome,codigo,coordenadas,password,raio,medical);
+        super(nome,codigo,coordenadas,password, velocidadeMedia,raio,medical);
         this.nif = nif;
         this.preco_km = preco_km;
         this.limite = limite;
@@ -79,7 +79,8 @@ public class Transportadora extends Voluntario
         sb.append("Nome: ").append(super.getNome());
         sb.append("\nCodigo: ").append(super.getCodigo());
         sb.append("\nCoordenadas: ").append(super.getCoordenadas().toString());
-        sb.append("\nPaswword: ").append(super.getPassword().toString());
+        sb.append("\nPaswword: ").append(super.getPassword());
+        sb.append("\nVelocidade Média: ").append(super.getVelocidadeMedia());
         sb.append("\nNIF: ").append(this.nif);
         sb.append("\nRaio: ").append(super.getRaio());
         sb.append("\nPreço por km: ").append(this.preco_km);

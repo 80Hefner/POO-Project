@@ -2,6 +2,7 @@ package Models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 //TO do : Falta inserir velocidade, depois fazer aleatoriadade para o clima
@@ -12,6 +13,7 @@ public class Voluntario
     private String codigo;
     private GPS coordenadas;
     private String password;
+    private double velocidadeMedia;
     private double raio;
     private double classificacao;
     private int total_entregas;
@@ -26,6 +28,7 @@ public class Voluntario
         this.codigo = "";
         this.coordenadas = new GPS();
         this.password = "";
+        this.velocidadeMedia = 0.0;
         this.raio = 0;
         this.medical = false;
         this.available = false;
@@ -33,12 +36,13 @@ public class Voluntario
         this.registos = new ArrayList<>();
     }
 
-    public Voluntario(String nome, String codigo, GPS coordenadas, String password, double raio, boolean medical)
+    public Voluntario(String nome, String codigo, GPS coordenadas, String password, double velocidadeMedia, double raio, boolean medical)
     {
         this.nome = nome;
         this.codigo = codigo;
         this.coordenadas = coordenadas.clone();
         this.password = password;
+        this.velocidadeMedia = velocidadeMedia;
         this.raio = raio;
         this.classificacao = 0;
         this.total_entregas = 0;
@@ -54,6 +58,7 @@ public class Voluntario
         this.codigo = e.getCodigo();
         this.coordenadas = e.getCoordenadas().clone();
         this.password = e.getPassword();
+        this.velocidadeMedia = e.getVelocidadeMedia();
         this.raio = e.getRaio();
         this.classificacao = 0;
         this.total_entregas = 0;
@@ -173,6 +178,14 @@ public class Voluntario
         this.registos = registos.stream().map(Encomenda::clone).collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public double getVelocidadeMedia() {
+        return velocidadeMedia;
+    }
+
+    public void setVelocidadeMedia(double velocidadeMedia) {
+        this.velocidadeMedia = velocidadeMedia;
+    }
+
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -183,6 +196,7 @@ public class Voluntario
                 this.codigo.equals(e.getCodigo()) &&
                 this.coordenadas.equals(e.getCoordenadas()) &&
                 this.password.equals(e.getPassword()) &&
+                this.velocidadeMedia == e.getVelocidadeMedia() &&
                 this.raio == e.getRaio() &&
                 this.classificacao == e.getClassificacao() &&
                 this.total_entregas == e.getTotal_entregas() &&
@@ -200,6 +214,7 @@ public class Voluntario
         sb.append("\nCodigo: ").append(this.codigo);
         sb.append("\nCoordenadas: ").append(this.coordenadas.toString());
         sb.append("\nPassword: ").append(this.password);
+        sb.append("\nVelocidade Media: ").append(this.velocidadeMedia);
         sb.append("\nRaio: ").append(this.raio);
         sb.append("\nClassificação: ").append(this.classificacao);
         sb.append("\nTotal de entregas efetuadas: ").append(this.total_entregas);
@@ -217,15 +232,29 @@ public class Voluntario
         return new Voluntario(this);
     }
 
+
     /******* Funções Principais *******/
-    public int pedeParaRealizarEntrega(Loja lojaDaEncomenda, String codEncomenda) {
-        if (lojaDaEncomenda.possuiEncomendaCodigo(codEncomenda) && this.coordenadas.isReachable(lojaDaEncomenda.getCoordenadas(), this.raio)) {
+    public String realizaEntregaDeVenda(Encomenda enc, Loja loja, Utilizador utilizador) {
+        Random r = new Random();
+        String res;
 
-        }
-        return -1; //Não deu
-    }
-
-    public void realizaEntregaDeVenda(Encomenda enc) {
         this.registos.add(enc);
+        double distancia = this.coordenadas.distanceTo(loja.getCoordenadas()) + this.coordenadas.distanceTo(utilizador.getCoordenadas());
+        double tempo = distancia/velocidadeMedia * 60.0;
+        int temporal = (int) (r.nextDouble() * 3);
+
+        if (temporal==0) {
+            tempo *= temporal+1;
+            res = ( (int)tempo/60 + " Horas e " + (int)tempo%60 + "Minutos " + "(em comdições Normais).");
+        } else if (temporal==1) {
+            tempo *= temporal+1;
+            res = ( (int)tempo/60 + " Horas e " + (int)tempo%60 + "Minutos " + "(em comdições de Chuva).");
+        } else {
+            tempo *= temporal+1;
+            res = ( (int)tempo/60 + " Horas e " + (int)tempo%60 + "Minutos " + "(em comdições de Neve e Trevoada).");
+        }
+
+
+    return res;
     }
 }

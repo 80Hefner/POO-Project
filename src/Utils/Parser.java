@@ -81,8 +81,9 @@ public class Parser
         double raio = Double.parseDouble(campos[4]);
         Random r = new Random();
         boolean medical = r.nextBoolean();
+        double velocidadeMedia = 60.0 + ((120.0 - 60.0) * r.nextDouble());
 
-        return new Voluntario(nome,codVoluntario,gps, "",raio,medical);
+        return new Voluntario(nome,codVoluntario,gps, "", velocidadeMedia,raio,medical);
     }
 
     public Transportadora parseTransportadora(String input)
@@ -99,8 +100,9 @@ public class Parser
         Random r = new Random();
         int limite = r.nextInt(10) + 1;
         boolean medical = r.nextBoolean();
+        double velocidadeMedia = 60.0 + (120.0 - 60.0)*r.nextDouble();
 
-        return new Transportadora(nome,codTransportadora,gps, "",nif,raio,preco_km,limite,medical);
+        return new Transportadora(nome,codTransportadora,gps, "", velocidadeMedia,nif,raio,preco_km,limite,medical);
     }
 
     public Loja parseLoja(String input)

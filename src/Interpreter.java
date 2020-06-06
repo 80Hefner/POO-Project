@@ -289,8 +289,9 @@ public class Interpreter
                         if (loja.possuiEncomendaCodigo(codEncomenda)) {
                             Encomenda enc = loja.getEncomenda(codEncomenda);
                             if (TrazAqui.getUtilizador(enc.getCodUtilizador()).getCoordenadas().isReachable(voluntario.getCoordenadas(), voluntario.getRaio())) {
-                                TrazAqui.realizaEntregaDeVenda(loja, enc, voluntario);
+                                String res = TrazAqui.realizaEntregaDeVenda(loja, enc, voluntario);
                                 System.out.println("Entrega feita com sucesso");
+                                System.out.println(res);
                                 break;
                             } else {
                                 System.out.println("Nao consegue alcançar utilizador");
@@ -339,6 +340,7 @@ public class Interpreter
 
     private static void registaVoluntario()
     {
+        Random r = new Random();
         Scanner sc = new Scanner(System.in);
 
         clearScreen();
@@ -357,8 +359,9 @@ public class Interpreter
         System.out.print("Medical? [y/n]: ");
         char c = sc.nextLine().toCharArray()[0];
         boolean medical = c == 'y';
+        double velocidadeMedia = 60.0 + (120.0 - 60.0)*r.nextDouble();
 
-        Voluntario newVoluntario = new Voluntario(nome, codigo, new GPS(latitude,longitude), "", raio, medical);
+        Voluntario newVoluntario = new Voluntario(nome, codigo, new GPS(latitude,longitude), "", velocidadeMedia, raio, medical);
         TrazAqui.insereVoluntario(newVoluntario);
 
         System.out.println("\nVoluntário registado com sucesso!");
@@ -367,6 +370,7 @@ public class Interpreter
 
     private static void registaTransportadora()
     {
+        Random r = new Random();
         Scanner sc = new Scanner(System.in);
 
         clearScreen();
@@ -391,8 +395,9 @@ public class Interpreter
         System.out.print("Medical? [y/n]: ");
         char c = sc.nextLine().toCharArray()[0];
         boolean medical = c == 'y';
+        double velocidadeMedia = 60.0 + (120.0 - 60.0)*r.nextDouble();
 
-        Transportadora newTransportadora = new Transportadora(nome, codigo, new GPS(latitude,longitude), "", nif, raio, preco_km, limite, medical);
+        Transportadora newTransportadora = new Transportadora(nome, codigo, new GPS(latitude,longitude), "", velocidadeMedia, nif, raio, preco_km, limite, medical);
         TrazAqui.insereTransportadora(newTransportadora);
 
         System.out.println("\nTransportadora registada com sucesso!");

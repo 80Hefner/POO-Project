@@ -139,9 +139,12 @@ public class TrazAqui
         return u.getPassword().equals(password);
     }
 
-    public static void realizaEntregaDeVenda(Loja loja, Encomenda enc, Voluntario voluntario) {
+    public static String realizaEntregaDeVenda(Loja loja, Encomenda enc, Voluntario voluntario) {
+        StringBuilder sb = new StringBuilder();
         loja.realizaEntregaDeVenda(enc);
-        voluntario.realizaEntregaDeVenda(enc);
+        String res = voluntario.realizaEntregaDeVenda(enc, loja, TrazAqui.getUtilizador(enc.getCodUtilizador()));
         TrazAqui.getUtilizador(enc.getCodUtilizador()).realizaEntregaDeVenda(enc);
+        sb.append("Tempo demorado a realizar a entrega -> ").append(res);
+        return sb.toString();
     }
 }
