@@ -83,4 +83,9 @@ public class GPS
         double nauticalMiles = 60 * Math.toDegrees(angle);
         return KMS_PER_NAUTICAL_MILE * nauticalMiles;
     }
+
+    public boolean isReachable(GPS that, double raioDeDistribuicao)
+    {
+        return (this.distanceTo(that) <= raioDeDistribuicao);
+    }
 }
