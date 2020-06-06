@@ -1,11 +1,17 @@
 package Models;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 public class Utilizador
 {
     private String nome;
     private String codigo;
     private GPS coordenadas;
     private String password;
+    private Map<String, Encomenda> encomendasHistorico;  //Todas as encomendas feitas e recebidas ou não por este utilizador
+    private Set<String> encomendasPendentes;
+    private Set<String> codsEncomendasTransportadoraPorAceitar;
 
     public Utilizador()
     {
@@ -13,6 +19,9 @@ public class Utilizador
         this.codigo = "";
         this.coordenadas = new GPS();
         this.password = "";
+        this.encomendasHistorico = new HashMap<>();
+        this.encomendasPendentes = new TreeSet<>();
+        this.codsEncomendasTransportadoraPorAceitar = new TreeSet<>();
     }
 
     public Utilizador(String nome, String codigo, GPS coordenadas, String password)
@@ -21,6 +30,9 @@ public class Utilizador
         this.codigo = codigo;
         this.coordenadas = coordenadas.clone();
         this.password = password;
+        this.encomendasHistorico = new HashMap<>();
+        this.encomendasPendentes = new TreeSet<>();
+        this.codsEncomendasTransportadoraPorAceitar = new TreeSet<>();
     }
 
     public Utilizador(Utilizador u)
@@ -29,6 +41,9 @@ public class Utilizador
         this.codigo = u.getCodigo();
         this.coordenadas = u.getCoordenadas();
         this.password = u.getPassword();
+        this.encomendasHistorico = new HashMap<>(u.getEncomendasHistorico());
+        this.encomendasPendentes = new TreeSet<>(u.getEncomendasPendentes());
+        this.codsEncomendasTransportadoraPorAceitar = new TreeSet<>(u.getCodsEncomendasTransportadoraPorAceitar());
     }
 
     public String getNome()
@@ -71,6 +86,49 @@ public class Utilizador
         this.password = password;
     }
 
+    public Map<String, Encomenda> getEncomendasHistorico() {
+        return encomendasHistorico
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().clone()));
+    }
+
+    public void setEncomendasHistorico(Map<String, Encomenda> encomendasHistorico) {
+        this.encomendasHistorico = new HashMap<>();
+        encomendasHistorico.forEach((key,value) -> this.encomendasHistorico.put(key,value.clone()));
+    }
+
+    public Set<String> getEncomendasPendentes() {
+        return new TreeSet<>(encomendasPendentes);
+    }
+
+    public void setEncomendasPendentes(Set<String> encomendasPendentes) {
+        this.encomendasPendentes = new TreeSet<>(encomendasPendentes);
+    }
+
+    public Set<String> getCodsEncomendasTransportadoraPorAceitar() {
+        return new TreeSet<>(codsEncomendasTransportadoraPorAceitar);
+    }
+
+    public void setCodsEncomendasTransportadoraPorAceitar(Set<String> codsEncomendasTransportadoraPorAceitar) {
+        this.codsEncomendasTransportadoraPorAceitar = new TreeSet<>(codsEncomendasTransportadoraPorAceitar);
+    }
+
+
+    public void insereEncomenda (Encomenda e) {
+        this.encomendasHistorico.put(e.getCodigo(), e);
+        this.encomendasPendentes.add(e.getCodigo());
+    }
+
+    public boolean verificaPossuiVendaeRemovePendente (String codEncomenda) {
+        boolean possui = this.encomendasHistorico.containsKey(codEncomenda);
+        if (possui)
+            this.encomendasPendentes.remove(codEncomenda);
+
+        return possui;
+
+    }
+
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -80,7 +138,10 @@ public class Utilizador
         return this.nome.equals(u.getNome()) &&
                 this.codigo.equals(u.getCodigo()) &&
                 this.coordenadas.equals(u.getCoordenadas()) &&
-                this.password.equals(u.getPassword());
+                this.password.equals(u.getPassword()) &&
+                this.encomendasHistorico.equals(new HashMap<>(u.getEncomendasHistorico())) &&
+                this.encomendasPendentes.equals(new TreeSet<>(u.getEncomendasPendentes())) &&
+                this.codsEncomendasTransportadoraPorAceitar.equals(new TreeSet<>(u.getCodsEncomendasTransportadoraPorAceitar()));
     }
 
     public String toString()
@@ -91,6 +152,9 @@ public class Utilizador
         sb.append("\nCodigo: ").append(this.codigo);
         sb.append("\nCoordenadas: ").append(this.coordenadas.toString());
         sb.append("\nPassword: ").append(this.password);
+        sb.append("\nEncomendas Pendentes: ").append(this.encomendasPendentes);
+        sb.append("\nEncomendas Por Aceitar: ").append(this.codsEncomendasTransportadoraPorAceitar);
+        sb.append("\nEncomendas Historico: ").append(this.encomendasHistorico.keySet());
         sb.append("\n");
 
         return sb.toString();

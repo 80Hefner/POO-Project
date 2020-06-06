@@ -38,11 +38,18 @@ public class TrazAqui
     public static void insereEncomendaAceite(String e)
     {
         TrazAqui.aceites.add(e);
+        TrazAqui.utilizadores.values().forEach(val -> val.verificaPossuiVendaeRemovePendente(e));
     }
 
     public static void insereEncomenda(Encomenda e, String codLoja)
     {
         TrazAqui.lojas.get(codLoja).insereEncomenda(e);
+    }
+
+    public static void adicionaEncomendaAoSistema(Encomenda e)
+    {
+        TrazAqui.lojas.get(e.getCodLoja()).insereEncomenda(e);
+        TrazAqui.utilizadores.get(e.getCodUtilizador()).insereEncomenda(e);
     }
 
     public static void setUtilizador_atual(String utilizador)

@@ -67,6 +67,7 @@ public class GPS
         return new GPS(this);
     }
 
+    //Mudar para plano XY em princípio
     public double distanceTo(GPS that)
     {
         double KMS_PER_NAUTICAL_MILE = 1.852;

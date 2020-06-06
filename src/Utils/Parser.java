@@ -41,6 +41,7 @@ public class Parser
                     break;
                 case "Encomenda":
                     Encomenda e = parseEncomenda(linhaPartida[1]);
+                    TrazAqui.adicionaEncomendaAoSistema(e);
                     //System.out.println(e.toString());
                     break;
                 case "Aceite":
