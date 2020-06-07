@@ -2,6 +2,7 @@ package Models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,7 @@ public class Voluntario
     private boolean medical;
     private boolean available;
     private boolean availableMedical;
-    private ArrayList<Encomenda> registos;
+    private ArrayList<Encomenda> registos; //Histórico de Encomendas feitas
 
     public Voluntario()
     {
@@ -234,27 +235,19 @@ public class Voluntario
 
 
     /******* Funções Principais *******/
-    public String realizaEntregaDeVenda(Encomenda enc, Loja loja, Utilizador utilizador) {
+    public void realizaEntregaDeVenda(Encomenda enc, Loja loja, Utilizador utilizador, Map<String, Encomenda> catalogoEncomendas) {
         Random r = new Random();
-        String res;
 
-        this.registos.add(enc);
-        double distancia = this.coordenadas.distanceTo(loja.getCoordenadas()) + this.coordenadas.distanceTo(utilizador.getCoordenadas());
-        double tempo = distancia/velocidadeMedia * 60.0;
+        //this.registos.add(enc);
+
+        double distance = this.coordenadas.distanceTo(loja.getCoordenadas()) + this.coordenadas.distanceTo(utilizador.getCoordenadas());
+        double tempo = distance/velocidadeMedia * 60.0;
         int temporal = (int) (r.nextDouble() * 3);
+        tempo*=(temporal+1);
+        //ACRESCENTAR DIFERENÇA DO PESO DA ENCOMENDA NA DEMORA DA ENTREGA
+        Encomenda encomenda = catalogoEncomendas.get(enc.getCodigo());
+        encomenda.setTempoTransporte(tempo);
+        encomenda.setCondicoesClimatericas(temporal);
 
-        if (temporal==0) {
-            tempo *= temporal+1;
-            res = ( (int)tempo/60 + " Horas e " + (int)tempo%60 + "Minutos " + "(em comdições Normais).");
-        } else if (temporal==1) {
-            tempo *= temporal+1;
-            res = ( (int)tempo/60 + " Horas e " + (int)tempo%60 + "Minutos " + "(em comdições de Chuva).");
-        } else {
-            tempo *= temporal+1;
-            res = ( (int)tempo/60 + " Horas e " + (int)tempo%60 + "Minutos " + "(em comdições de Neve e Trevoada).");
-        }
-
-
-    return res;
     }
 }

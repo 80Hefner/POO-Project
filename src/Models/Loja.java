@@ -1,9 +1,6 @@
 package Models;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Loja
@@ -13,7 +10,8 @@ public class Loja
     private GPS coordenadas;
     private boolean temFila;
     private LinkedList<Encomenda> fila;
-    private HashMap<String, Encomenda> encomendas;
+    //private HashMap<String, Encomenda> encomendas; Acho que faz mais sentido ter todas as encomendas no TrazAqui e mudá-as sempre lá, em vez de ter de mudar em tudo o que é Models.
+    private Set<String> encomendas;
 
     public Loja()
     {
@@ -22,7 +20,7 @@ public class Loja
         this.coordenadas = new GPS();
         this.temFila = false;
         this.fila = new LinkedList<>();
-        this.encomendas = new HashMap<>();
+        this.encomendas = new TreeSet<>();
     }
 
     public Loja(String nome, String codigo, GPS coordenadas, boolean temFila)
@@ -32,7 +30,7 @@ public class Loja
         this.coordenadas = coordenadas.clone();
         this.temFila = temFila;
         this.fila = new LinkedList<>();
-        this.encomendas = new HashMap<>();
+        this.encomendas = new TreeSet<>();
     }
 
     public Loja(Loja u)
@@ -42,7 +40,7 @@ public class Loja
         this.coordenadas = u.getCoordenadas();
         this.temFila = u.temFila();
         this.fila = new LinkedList<>(u.getPendentes());
-        this.encomendas = new HashMap<>(u.getEncomendas());
+        this.encomendas = new TreeSet<>(u.getEncomendas());
     }
 
     public String getNome()
@@ -95,21 +93,18 @@ public class Loja
         this.fila = fila.stream().map(Encomenda::clone).collect(Collectors.toCollection(LinkedList::new));
     }
 
-    public Map<String, Encomenda> getEncomendas() {
-        return encomendas
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().clone()));
+    public Set<String> getEncomendas() {
+        return new TreeSet<>(encomendas);
     }
 
-    public void setEncomendas(HashMap<String, Encomenda> encomendas) {
-        this.encomendas = new HashMap<>();
-        encomendas.forEach((key,value) -> this.encomendas.put(key,value.clone()));
+    public void setEncomendas(Set<String> encomendas) {
+        this.encomendas = new TreeSet<>(encomendas);
     }
 
+    /*
     public Encomenda getEncomenda (String codEncomenda) {
         return this.getEncomendas().get(codEncomenda);
-    }
+    }*/
 
     public boolean equals(Object o)
     {
@@ -147,17 +142,17 @@ public class Loja
     public void insereEncomenda(Encomenda e)
     {
         this.fila.add(e.clone());
-        this.encomendas.put(e.getCodigo(), e.clone());
+        this.encomendas.add(e.getCodigo());
     }
 
-    public boolean possuiEncomendaCodigo (String codEncomenda) {
-        if (this.encomendas.containsKey(codEncomenda))
-            return !this.encomendas.get(codEncomenda).isEntregue();
+    public boolean possuiEncomendaCodigo (String codEncomenda, Map<String,Encomenda> mapaEncomendas) {
+        if (this.encomendas.contains(codEncomenda))
+            return !mapaEncomendas.get(codEncomenda).isEntregue();
         return false;
     }
 
-    public void realizaEntregaDeVenda(Encomenda encomenda) {
+    public void realizaEntregaDeVenda(Encomenda encomenda, Map<String,Encomenda> mapaEncomendas) {
         this.fila.remove(encomenda);
-        this.encomendas.get(encomenda.getCodigo()).setEntregue(true);
+        mapaEncomendas.get(encomenda.getCodigo()).setEntregue(true);
     }
 }

@@ -15,6 +15,9 @@ public class Encomenda
     private boolean medical;
     private LocalDateTime data;
     private boolean entregue;
+    private double precoTransporte;
+    private double tempoTransporte;
+    private int condicoesClimatericas; //(0-Normais ; 1-Chuva ; 2-Neve E Trevoada)
 
     public Encomenda()
     {
@@ -26,9 +29,12 @@ public class Encomenda
         this.medical = false;
         this.data = LocalDateTime.now();
         this.entregue = false;
+        this.precoTransporte = 0;
+        this.tempoTransporte = 0.0;
+        this.condicoesClimatericas = 0;
     }
 
-    public Encomenda(String codigo, String codLoja, String codUtilizador, double peso, ArrayList<LinhaEncomenda> produtos, boolean medical, LocalDateTime data, boolean entregue)
+    public Encomenda(String codigo, String codLoja, String codUtilizador, double peso, ArrayList<LinhaEncomenda> produtos, boolean medical, LocalDateTime data, boolean entregue, double precoTransporte, double tempoTransporte, int condicoesClimatericas)
     {
         this.codigo = codigo;
         this.codLoja = codLoja;
@@ -38,6 +44,9 @@ public class Encomenda
         this.medical = medical;
         this.data = data;
         this.entregue = entregue;
+        this.precoTransporte = precoTransporte;
+        this.tempoTransporte = tempoTransporte;
+        this.condicoesClimatericas = condicoesClimatericas;
     }
 
     public Encomenda(Encomenda l)
@@ -50,6 +59,9 @@ public class Encomenda
         this.medical = l.isMedical();
         this.data = l.getData();
         this.entregue = l.isEntregue();
+        this.precoTransporte = l.getPrecoTransporte();
+        this.tempoTransporte = l.getTempoTransporte();
+        this.condicoesClimatericas = l.getCondicoesClimatericas();
     }
 
     public String getCodigo()
@@ -130,6 +142,30 @@ public class Encomenda
         this.entregue = entregue;
     }
 
+    public double getPrecoTransporte() {
+        return precoTransporte;
+    }
+
+    public void setPrecoTransporte(double precoTransporte) {
+        this.precoTransporte = precoTransporte;
+    }
+
+    public double getTempoTransporte() {
+        return tempoTransporte;
+    }
+
+    public void setTempoTransporte(double tempoTransporte) {
+        this.tempoTransporte = tempoTransporte;
+    }
+
+    public int getCondicoesClimatericas() {
+        return condicoesClimatericas;
+    }
+
+    public void setCondicoesClimatericas(int condicoesClimatericas) {
+        this.condicoesClimatericas = condicoesClimatericas;
+    }
+
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -143,7 +179,10 @@ public class Encomenda
                 this.produtos.equals(new ArrayList<>(e.getProdutos())) &&
                 this.medical == e.isMedical() &&
                 this.data.isEqual(e.getData())&&
-                this.entregue == (e.isEntregue());
+                this.entregue == (e.isEntregue()) &&
+                this.precoTransporte == (e.getPrecoTransporte()) &&
+                this.tempoTransporte == (e.getTempoTransporte()) &&
+                this.condicoesClimatericas == (e.getCondicoesClimatericas());
     }
 
     public String toString()
@@ -158,6 +197,7 @@ public class Encomenda
         sb.append("\nData da encomenda: ").append(this.data.toString());
         sb.append("\nFoi Entregue:\n").append(this.entregue);
         sb.append("\nProdutos:\n").append(this.produtos.toString());
+        sb.append("\nPreço Transporte:\n").append(this.precoTransporte);
         sb.append("\n");
 
         return sb.toString();

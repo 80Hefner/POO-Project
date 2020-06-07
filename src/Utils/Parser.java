@@ -12,7 +12,7 @@ import java.util.Random;
 
 public class Parser
 {
-    public void parseLogs(String data_path)
+    public void parseLogs(String data_path, TrazAqui trazAqui)
     {
         List<String> linhas = lerFicheiro(data_path + "/logs.txt");
         String[] linhaPartida;
@@ -21,32 +21,32 @@ public class Parser
             switch(linhaPartida[0]){
                 case "Utilizador":
                     Utilizador u = parseUtilizador(linhaPartida[1]); // criar um Utilizador
-                    TrazAqui.insereUtilizador(u);
+                    trazAqui.insereUtilizador(u);
                     //System.out.println(u.toString()); //enviar para o ecra, apenas para teste
                     break;
                 case "Voluntario":
                     Voluntario v = parseVoluntario(linhaPartida[1]);
-                    TrazAqui.insereVoluntario(v);
+                    trazAqui.insereVoluntario(v);
                     //System.out.println(v.toString());
                     break;
                 case "Transportadora":
                     Transportadora t = parseTransportadora(linhaPartida[1]);
-                    TrazAqui.insereTransportadora(t);
+                    trazAqui.insereTransportadora(t);
                     //System.out.println(t.toString());
                     break;
                 case "Loja":
                     Loja l = parseLoja(linhaPartida[1]);
-                    TrazAqui.insereLoja(l);
+                    trazAqui.insereLoja(l);
                     //System.out.println(l.toString());
                     break;
                 case "Encomenda":
                     Encomenda e = parseEncomenda(linhaPartida[1]);
-                    TrazAqui.adicionaEncomendaAoSistema(e);
+                    trazAqui.adicionaEncomendaAoSistema(e);
                     //System.out.println(e.toString());
                     break;
                 case "Aceite":
                     String s = linhaPartida[1];
-                    TrazAqui.insereEncomendaAceite(s);
+                    trazAqui.insereEncomendaAceite(s);
                     //System.out.println(s);
                     break;
                 default:
@@ -130,7 +130,7 @@ public class Parser
         LocalDateTime data = LocalDateTime.now();
         boolean medical = produtos.stream().anyMatch(l -> l.getDescricao().equals("Desinfetante") || l.getDescricao().equals("Água sanitária"));
 
-        return new Encomenda(codEncomenda, codLoja, codUtilizador, peso, produtos, medical, data, false);
+        return new Encomenda(codEncomenda, codLoja, codUtilizador, peso, produtos, medical, data, false, 0, 0.0, 0);
     }
 
     public List<LinhaEncomenda> parseProdutos(String input)

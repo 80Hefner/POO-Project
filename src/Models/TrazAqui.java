@@ -2,149 +2,201 @@ package Models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class TrazAqui
 {
-    private static TreeMap<String,Loja> lojas = new TreeMap<>();
-    private static TreeMap<String,Voluntario> voluntarios = new TreeMap<>();
-    private static TreeMap<String,Transportadora> transportadoras = new TreeMap<>();
-    private static TreeMap<String,Utilizador> utilizadores = new TreeMap<>();
-    private static ArrayList<String> aceites = new ArrayList<>();
-    private static String utilizador_atual = "";
+    private Map<String,Loja> lojas;
+    private Map<String,Voluntario> voluntarios;
+    private Map<String,Transportadora> transportadoras;
+    private Map<String,Utilizador> utilizadores;
+
+    private Map<String,Encomenda> catalogoEncomendas;
+
+    private List<String> aceites;
+    private String utilizador_atual;
 
 
-    public static void insereLoja(Loja l)
-    {
-        TrazAqui.lojas.put(l.getCodigo(), l.clone());
+    public TrazAqui() {
+        this.lojas = new TreeMap<>();
+        this.voluntarios = new TreeMap<>();
+        this.transportadoras = new TreeMap<>();
+        this.utilizadores = new TreeMap<>();
+        this.catalogoEncomendas = new TreeMap<>();
+        this.aceites = new ArrayList<>();
+        this.utilizador_atual = "";
+
     }
 
-    public static void insereVoluntario(Voluntario v)
+    public void insereLoja(Loja l)
     {
-        TrazAqui.voluntarios.put(v.getCodigo(), v.clone());
+        this.lojas.put(l.getCodigo(), l.clone());
     }
 
-    public static void insereTransportadora(Transportadora t)
+    public void insereVoluntario(Voluntario v)
     {
-        TrazAqui.transportadoras.put(t.getCodigo(), t.clone());
+        this.voluntarios.put(v.getCodigo(), v.clone());
     }
 
-    public static void insereUtilizador(Utilizador u)
+    public void insereTransportadora(Transportadora t)
     {
-        TrazAqui.utilizadores.put(u.getCodigo(), u.clone());
+        this.transportadoras.put(t.getCodigo(), t.clone());
     }
 
-    public static void insereEncomendaAceite(String e)
+    public void insereUtilizador(Utilizador u)
     {
-        TrazAqui.aceites.add(e);
-        TrazAqui.utilizadores.values().forEach(val -> val.verificaPossuiVendaeRemovePendente(e));
+        this.utilizadores.put(u.getCodigo(), u.clone());
     }
 
-    public static void insereEncomenda(Encomenda e, String codLoja)
+    public void insereEncomendaAceite(String e)
     {
-        TrazAqui.lojas.get(codLoja).insereEncomenda(e);
+        this.aceites.add(e);
+        this.utilizadores.values().forEach(val -> val.verificaPossuiVendaeRemovePendente(e));
     }
 
-    public static void adicionaEncomendaAoSistema(Encomenda e)
+    public void insereEncomenda(Encomenda e, String codLoja)
     {
-        TrazAqui.lojas.get(e.getCodLoja()).insereEncomenda(e);
-        TrazAqui.utilizadores.get(e.getCodUtilizador()).insereEncomenda(e);
+        this.lojas.get(codLoja).insereEncomenda(e);
+        this.catalogoEncomendas.putIfAbsent(e.getCodigo(), e.clone());
     }
 
-    public static void setUtilizador_atual(String utilizador)
+    public void adicionaEncomendaAoSistema(Encomenda e)
     {
-        TrazAqui.utilizador_atual = utilizador;
+        this.lojas.get(e.getCodLoja()).insereEncomenda(e);
+        this.utilizadores.get(e.getCodUtilizador()).insereEncomenda(e);
+        this.catalogoEncomendas.putIfAbsent(e.getCodigo(), e.clone());
     }
 
-    public static String getUtilizador_atual()
+    public void setUtilizador_atual(String utilizador)
+    {
+        this.utilizador_atual = utilizador;
+    }
+
+    public String getUtilizador_atual()
     {
         return utilizador_atual;
     }
 
-    public static List<Loja> getLojas()
+    public List<Loja> getLojas()
     {
-        return TrazAqui.lojas.values().stream().map(Loja::clone).collect(Collectors.toList());
+        return this.lojas.values().stream().map(Loja::clone).collect(Collectors.toList());
     }
 
-    public static Loja getLoja(String codLoja)
+    public Loja getLoja(String codLoja)
     {
-        return TrazAqui.lojas.get(codLoja);
+        return this.lojas.get(codLoja);
     }
 
-    public static Voluntario getVoluntario(String codVoluntario)
+    public Voluntario getVoluntario(String codVoluntario)
     {
-        return TrazAqui.voluntarios.get(codVoluntario);
+        return this.voluntarios.get(codVoluntario);
     }
 
-    public static Utilizador getUtilizador(String codUtilizador)
+    public Utilizador getUtilizador(String codUtilizador)
     {
-        return TrazAqui.utilizadores.get(codUtilizador);
+        return this.utilizadores.get(codUtilizador);
     }
 
-    public static Transportadora getTransportador(String codTransportadora)
+    public Transportadora getTransportador(String codTransportadora)
     {
-        return TrazAqui.transportadoras.get(codTransportadora);
+        return this.transportadoras.get(codTransportadora);
     }
 
-    public static List<Voluntario> getVoluntarios()
+    public List<Voluntario> getVoluntarios()
     {
-        return TrazAqui.voluntarios.values().stream().map(Voluntario::clone).collect(Collectors.toList());
+        return this.voluntarios.values().stream().map(Voluntario::clone).collect(Collectors.toList());
     }
 
-    public static List<Transportadora> getTransportadoras()
+    public List<Transportadora> getTransportadoras()
     {
-        return TrazAqui.transportadoras.values().stream().map(Transportadora::clone).collect(Collectors.toList());
+        return this.transportadoras.values().stream().map(Transportadora::clone).collect(Collectors.toList());
     }
 
-    public static List<Utilizador> getUtilizadores()
+    public List<Utilizador> getUtilizadores()
     {
-        return TrazAqui.utilizadores.values().stream().map(Utilizador::clone).collect(Collectors.toList());
+        return this.utilizadores.values().stream().map(Utilizador::clone).collect(Collectors.toList());
     }
 
-    public static List<String> getEncomendasAceites()
+    public List<String> getEncomendasAceites()
     {
-        return new ArrayList<>(TrazAqui.aceites);
+        return new ArrayList<>(this.aceites);
     }
 
-    public static boolean procuraEncomendaAceite(String codigo)
-    {
-        return TrazAqui.aceites.contains(codigo);
+    public Map<String, Encomenda> getCatalogoEncomendas () {
+        return this.catalogoEncomendas
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e->e.getValue().clone()));
     }
 
-    public static boolean procuraUtilizador(String utilizador)
-    {
-        return TrazAqui.utilizadores.containsKey(utilizador);
+    public Encomenda getEncomenda (String codEncomenda) {
+        if (this.catalogoEncomendas.containsKey(codEncomenda)) {
+            return this.catalogoEncomendas.get(codEncomenda).clone();
+        }
+        return null;
     }
 
-    public static boolean procuraVoluntario(String voluntario)
+    public boolean procuraEncomendaAceite(String codigo)
     {
-        return TrazAqui.voluntarios.containsKey(voluntario);
+        return this.aceites.contains(codigo);
     }
 
-    public static boolean procuraTransportadora(String transportadora)
+    public boolean procuraUtilizador(String utilizador)
     {
-        return TrazAqui.transportadoras.containsKey(transportadora);
+        return this.utilizadores.containsKey(utilizador);
     }
 
-    public static boolean procuraLoja(String loja)
+    public boolean procuraVoluntario(String voluntario)
     {
-        return TrazAqui.lojas.containsKey(loja);
+        return this.voluntarios.containsKey(voluntario);
     }
 
-    public static boolean verificaPassword(String utilizador, String password)
+    public boolean procuraTransportadora(String transportadora)
     {
-        Utilizador u = TrazAqui.utilizadores.get(utilizador);
+        return this.transportadoras.containsKey(transportadora);
+    }
+
+    public boolean procuraLoja(String loja)
+    {
+        return this.lojas.containsKey(loja);
+    }
+
+    public boolean verificaPassword(String utilizador, String password)
+    {
+        Utilizador u = this.utilizadores.get(utilizador);
 
         return u.getPassword().equals(password);
     }
 
-    public static String realizaEntregaDeVenda(Loja loja, Encomenda enc, Voluntario voluntario) {
+    public String realizaEntregaDeVenda(String codLoja, String codEnc, String codVoluntario) {
+
         StringBuilder sb = new StringBuilder();
-        loja.realizaEntregaDeVenda(enc);
-        String res = voluntario.realizaEntregaDeVenda(enc, loja, TrazAqui.getUtilizador(enc.getCodUtilizador()));
-        TrazAqui.getUtilizador(enc.getCodUtilizador()).realizaEntregaDeVenda(enc);
-        sb.append("Tempo demorado a realizar a entrega -> ").append(res);
+        Encomenda enc = this.catalogoEncomendas.get(codEnc);
+
+        this.lojas.get(codLoja).realizaEntregaDeVenda(enc, this.catalogoEncomendas);//Done
+
+        this.voluntarios.get(codVoluntario).realizaEntregaDeVenda(enc, this.lojas.get(codLoja), this.getUtilizador(enc.getCodUtilizador()), this.catalogoEncomendas);
+
+        this.utilizadores.get(enc.getCodUtilizador()).realizaEntregaDeVenda(enc);
+
+        sb.append("Tempo demorado a realizar a entrega -> ")
+                .append((int) this.catalogoEncomendas.get(enc.getCodigo()).getTempoTransporte()/60).append(" Horas e ")
+                .append((int) this.catalogoEncomendas.get(enc.getCodigo()).getTempoTransporte()%60).append(" minutos ");
+
+        if(this.catalogoEncomendas.get(enc.getCodigo()).getCondicoesClimatericas() == 0)
+            sb.append("em condições Normais\n");
+        else if(this.catalogoEncomendas.get(enc.getCodigo()).getCondicoesClimatericas() == 1)
+            sb.append("em condições de chuva\n");
+        else if(this.catalogoEncomendas.get(enc.getCodigo()).getCondicoesClimatericas() == 2)
+            sb.append("em condições de Neve e Tempestade\n");
+
         return sb.toString();
+    }
+
+
+    public void setAvailable (String codVoluntario, boolean status) {
+        this.voluntarios.get(codVoluntario).setAvailable(status);
     }
 }
