@@ -170,4 +170,8 @@ public class Loja
         this.encomendasPorEntregar.remove(encomenda.getCodigo());
         encomenda.setEntregue(true);
     }
+
+    public void insereNoHistorico (Encomenda encomendaFeita) {
+        this.encomendasHistorico.putIfAbsent(encomendaFeita.getCodigo(), encomendaFeita);
+    }
 }

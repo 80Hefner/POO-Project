@@ -173,15 +173,24 @@ public class TrazAqui
 
     public String realizaEntregaDeVenda(String codLoja, String codEnc, String codVoluntario) {
 
+        //TO DO: Trocar o return desta função para um void e depois imprimir as ceanas dadas da encomenda
         StringBuilder sb = new StringBuilder();
         Encomenda enc = this.getEncomenda(codEnc);
 
+        //Realiza e altera uma encomenda
         this.getLoja(codLoja).realizaEntregaDeVenda(enc);//Done
         this.getVoluntario(codVoluntario).realizaEntregaDeVenda(enc, this.lojas.get(codLoja), this.getUtilizador(enc.getCodUtilizador()));
         this.getUtilizador(enc.getCodUtilizador()).realizaEntregaDeVenda(enc);
 
+        //Insere venda alterada depois da entrega no catálogo das Encomendas
         this.catalogoEncomendas.put(codEnc, enc); //Replace da Encomenda antiga para n partilhar apontadores e ser sempre cópias
 
+        //Insere nos históricos de cada cena
+        this.lojas.get(codLoja).insereNoHistorico(enc.clone());
+        this.voluntarios.get(codVoluntario).insereNoHistorico(enc.clone());
+        this.utilizadores.get(enc.getCodUtilizador()).insereNoHistorico(enc.clone());
+
+        //Esta parte toda pode sair porque isto depois vai tar na View, e devolvemos um void
         sb.append("Tempo demorado a realizar a entrega -> ")
                 .append((int) this.catalogoEncomendas.get(enc.getCodigo()).getTempoTransporte()/60).append(" Horas e ")
                 .append((int) this.catalogoEncomendas.get(enc.getCodigo()).getTempoTransporte()%60).append(" minutos ");
@@ -199,5 +208,17 @@ public class TrazAqui
 
     public void setAvailable (String codVoluntario, boolean status) {
         this.voluntarios.get(codVoluntario).setAvailable(status);
+    }
+
+    public void avaliaEntregaEncomenda (String codEncomenda, double avaliacao) {
+        Encomenda encomenda = this.getEncomenda(codEncomenda);
+
+        if (encomenda.getCodTrnasportador().startsWith("v")) {
+            this.voluntarios.get(encomenda.getCodTrnasportador()).avaliaEncomendaFeita(avaliacao);
+        } else if (encomenda.getCodTrnasportador().startsWith("t")) {
+            this.transportadoras.get(encomenda.getCodTrnasportador()).avaliaEncomendaFeita(avaliacao);
+        }
+
+        this.utilizadores.get(this.getUtilizador_atual()).avaliaEncomendaFeita(encomenda.getCodigo());
     }
 }

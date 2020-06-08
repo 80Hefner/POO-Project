@@ -10,6 +10,8 @@ public class Utilizador
     private GPS coordenadas;
     private String password;
 
+    //Fazer aqui uma list de encomendas feitas que o Utilizador deve avaliar
+    private Map<String, Map.Entry<Double, Double>> encomendasCompletadasPorAvaliar;
     private Set<String> encomendasPendentes; //Encomendas que faltam aceitar pela Loja e as que faltam ser entregues (englobadas as duas aqui);
     private Set<String> codsEncomendasTransportadoraPorAceitar; //Encomendas que falta aceitar receber de uma tranpostadora;
     private Map<String, Encomenda> encomendasHistorico;  //Todas as encomendas feitas e recebidas ou não por este utilizador; (Adicionar só no fim esta parte?
@@ -20,6 +22,7 @@ public class Utilizador
         this.codigo = "";
         this.coordenadas = new GPS();
         this.password = "";
+        this.encomendasCompletadasPorAvaliar = new TreeMap<>();
         this.encomendasHistorico = new HashMap<>();
         this.encomendasPendentes = new TreeSet<>();
         this.codsEncomendasTransportadoraPorAceitar = new TreeSet<>();
@@ -31,6 +34,7 @@ public class Utilizador
         this.codigo = codigo;
         this.coordenadas = coordenadas.clone();
         this.password = password;
+        this.encomendasCompletadasPorAvaliar = new TreeMap<>();
         this.encomendasHistorico = new HashMap<>();
         this.encomendasPendentes = new TreeSet<>();
         this.codsEncomendasTransportadoraPorAceitar = new TreeSet<>();
@@ -42,6 +46,7 @@ public class Utilizador
         this.codigo = u.getCodigo();
         this.coordenadas = u.getCoordenadas();
         this.password = u.getPassword();
+        this.encomendasCompletadasPorAvaliar = new TreeMap<>();
         this.encomendasHistorico = new HashMap<>(u.getEncomendasHistorico());
         this.encomendasPendentes = new TreeSet<>(u.getEncomendasPendentes());
         this.codsEncomendasTransportadoraPorAceitar = new TreeSet<>(u.getCodsEncomendasTransportadoraPorAceitar());
@@ -115,6 +120,14 @@ public class Utilizador
         this.codsEncomendasTransportadoraPorAceitar = new TreeSet<>(codsEncomendasTransportadoraPorAceitar);
     }
 
+    public Map<String, Map.Entry<Double, Double>> getEncomendasCompletadasPorAvaliar() {
+        return new TreeMap<>(encomendasCompletadasPorAvaliar);
+    }
+
+    public void setEncomendasCompletadasPorAvaliar(Map<String, Map.Entry<Double, Double>> encomendasCompletadasPorAvaliar) {
+        this.encomendasCompletadasPorAvaliar = new TreeMap<>(encomendasCompletadasPorAvaliar);
+    }
+
 
     public void insereEncomenda (Encomenda e) {
         this.encomendasHistorico.put(e.getCodigo(), e);
@@ -142,7 +155,8 @@ public class Utilizador
                 this.password.equals(u.getPassword()) &&
                 this.encomendasHistorico.equals(new HashMap<>(u.getEncomendasHistorico())) &&
                 this.encomendasPendentes.equals(new TreeSet<>(u.getEncomendasPendentes())) &&
-                this.codsEncomendasTransportadoraPorAceitar.equals(new TreeSet<>(u.getCodsEncomendasTransportadoraPorAceitar()));
+                this.codsEncomendasTransportadoraPorAceitar.equals(new TreeSet<>(u.getCodsEncomendasTransportadoraPorAceitar())) &&
+                this.encomendasCompletadasPorAvaliar.equals(new TreeMap<>(u.encomendasCompletadasPorAvaliar));
     }
 
     public String toString()
@@ -168,5 +182,13 @@ public class Utilizador
 
     public void realizaEntregaDeVenda(Encomenda enc) {
         this.encomendasHistorico.get(enc.getCodigo()).setEntregue(true);
+    }
+
+    public void insereNoHistorico (Encomenda encomendaFeita) {
+        this.encomendasHistorico.putIfAbsent(encomendaFeita.getCodigo(), encomendaFeita);
+    }
+
+    public void avaliaEncomendaFeita (String codEncomenda) {
+        this.encomendasCompletadasPorAvaliar.remove(codEncomenda);
     }
 }

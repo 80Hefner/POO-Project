@@ -132,12 +132,14 @@ public class Interpreter
         int opcao;
 
         while(true) {
-
+            //Falta fazer a 3 e a 4
             clearScreen();
             System.out.println("----------------------MENU UTILIZADOR--------------------\n");
             System.out.println("0 -> Logout.");
             System.out.println("1 -> Listar entidades no sistema.");
             System.out.println("2 -> Fazer pedido de encomenda.");
+            System.out.println("3 -> Avaliar Encomendas que foram Entregues (" + trazAqui.getUtilizador(trazAqui.getUtilizador_atual()).getEncomendasCompletadasPorAvaliar().size() +").");
+            System.out.println("4 -> Aceitar Encomendas propostas entregar por uma Transportadora (" + trazAqui.getUtilizador(trazAqui.getUtilizador_atual()).getCodsEncomendasTransportadoraPorAceitar().size() +").");
 
             opcao = Integer.parseInt(sc.nextLine());
 

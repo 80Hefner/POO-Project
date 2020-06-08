@@ -81,7 +81,7 @@ public class Parser
         double raio = Double.parseDouble(campos[4]);
         Random r = new Random();
         boolean medical = r.nextBoolean();
-        double velocidadeMedia = 60.0 + ((120.0 - 60.0) * r.nextDouble());
+        double velocidadeMedia = 40.0 + ((60.0 - 40.0) * r.nextDouble());
 
         return new Voluntario(nome,codVoluntario,gps, "", velocidadeMedia,raio,medical);
     }
@@ -100,7 +100,7 @@ public class Parser
         Random r = new Random();
         int limite = r.nextInt(10) + 1;
         boolean medical = r.nextBoolean();
-        double velocidadeMedia = 60.0 + (120.0 - 60.0)*r.nextDouble();
+        double velocidadeMedia = 40.0 + (60.0 - 40.0)*r.nextDouble();
 
         return new Transportadora(nome,codTransportadora,gps, "", velocidadeMedia,nif,raio,preco_km,limite,medical);
     }
@@ -130,7 +130,7 @@ public class Parser
         LocalDateTime data = LocalDateTime.now();
         boolean medical = produtos.stream().anyMatch(l -> l.getDescricao().equals("Desinfetante") || l.getDescricao().equals("Água sanitária"));
 
-        return new Encomenda(codEncomenda, codLoja, codUtilizador, peso, produtos, medical, data, false, false, 0, 0.0, 0);
+        return new Encomenda(codEncomenda, codLoja, codUtilizador, "", peso, produtos, medical, data, false, false, 0, 0.0, 0);
     }
 
     public List<LinhaEncomenda> parseProdutos(String input)

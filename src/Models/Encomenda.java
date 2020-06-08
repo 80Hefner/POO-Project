@@ -10,6 +10,7 @@ public class Encomenda
     private String codigo;
     private String codLoja;
     private String codUtilizador;
+    private String codTrnasportador;
     private double peso;
     private ArrayList<LinhaEncomenda> produtos;
     private boolean medical;
@@ -25,6 +26,7 @@ public class Encomenda
         this.codigo = "";
         this.codLoja = "";
         this.codUtilizador = "";
+        this.codTrnasportador = "";
         this.peso = 0;
         this.produtos = new ArrayList<>();
         this.medical = false;
@@ -36,11 +38,12 @@ public class Encomenda
         this.condicoesClimatericas = 0;
     }
 
-    public Encomenda(String codigo, String codLoja, String codUtilizador, double peso, ArrayList<LinhaEncomenda> produtos, boolean medical, LocalDateTime data, boolean entregue, boolean aceiteLoja , double precoTransporte, double tempoTransporte, int condicoesClimatericas)
+    public Encomenda(String codigo, String codLoja, String codUtilizador, String codTrnasportador, double peso, ArrayList<LinhaEncomenda> produtos, boolean medical, LocalDateTime data, boolean entregue, boolean aceiteLoja , double precoTransporte, double tempoTransporte, int condicoesClimatericas)
     {
         this.codigo = codigo;
         this.codLoja = codLoja;
         this.codUtilizador = codUtilizador;
+        this.codTrnasportador = codTrnasportador;
         this.peso = peso;
         this.produtos = produtos.stream().map(LinhaEncomenda::clone).collect(Collectors.toCollection(ArrayList::new));
         this.medical = medical;
@@ -57,6 +60,7 @@ public class Encomenda
         this.codigo = l.getCodigo();
         this.codLoja = l.getCodLoja();
         this.codUtilizador = l.getCodUtilizador();
+        this.codTrnasportador = l.getCodTrnasportador();
         this.peso = l.getPeso();
         this.produtos = new ArrayList<>(l.getProdutos());
         this.medical = l.isMedical();
@@ -178,6 +182,14 @@ public class Encomenda
         this.aceiteLoja = aceiteLoja;
     }
 
+    public String getCodTrnasportador() {
+        return codTrnasportador;
+    }
+
+    public void setCodTrnasportador(String codTrnasportador) {
+        this.codTrnasportador = codTrnasportador;
+    }
+
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -187,6 +199,7 @@ public class Encomenda
         return this.codigo.equals(e.getCodigo()) &&
                 this.codLoja.equals(e.getCodLoja()) &&
                 this.codUtilizador.equals(e.getCodUtilizador()) &&
+                this.codTrnasportador.equals(e.getCodTrnasportador()) &&
                 this.peso == e.getPeso() &&
                 this.produtos.equals(new ArrayList<>(e.getProdutos())) &&
                 this.medical == e.isMedical() &&

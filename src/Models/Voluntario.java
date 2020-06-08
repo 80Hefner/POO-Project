@@ -1,9 +1,6 @@
 package Models;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 //TO do : Falta inserir velocidade, depois fazer aleatoriadade para o clima
@@ -22,7 +19,7 @@ public class Voluntario
     private boolean available;
     private boolean availableMedical;
 
-    private ArrayList<Encomenda> encomendasHistorico; //Histórico de Encomendas feitas
+    private Map<String, Encomenda> encomendasHistorico; //Histórico de Encomendas feitas
 
     public Voluntario()
     {
@@ -35,7 +32,7 @@ public class Voluntario
         this.medical = false;
         this.available = false;
         this.availableMedical = false;
-        this.encomendasHistorico = new ArrayList<>();
+        this.encomendasHistorico = new HashMap<>();
     }
 
     public Voluntario(String nome, String codigo, GPS coordenadas, String password, double velocidadeMedia, double raio, boolean medical)
@@ -51,7 +48,7 @@ public class Voluntario
         this.medical = medical;
         this.available = true;
         this.availableMedical = medical;
-        this.encomendasHistorico = new ArrayList<>();
+        this.encomendasHistorico = new HashMap<>();
     }
 
     public Voluntario(Voluntario e)
@@ -67,7 +64,7 @@ public class Voluntario
         this.medical = e.isMedical();
         this.available = true;
         this.availableMedical = medical;
-        this.encomendasHistorico = new ArrayList<>();
+        this.encomendasHistorico = new HashMap<>(e.getEncomendasHistorico());
     }
 
     public String getNome()
@@ -170,14 +167,18 @@ public class Voluntario
         this.availableMedical = availableMedical;
     }
 
-    public List<Encomenda> getEncomendasHistorico()
+    public Map<String, Encomenda> getEncomendasHistorico()
     {
-        return encomendasHistorico.stream().map(Encomenda::clone).collect(Collectors.toList());
+        return encomendasHistorico
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().clone()));
     }
 
-    public void setEncomendasHistorico(ArrayList<Encomenda> encomendasHistorico)
+    public void setEncomendasHistorico(Map<String, Encomenda> encomendasHistorico)
     {
-        this.encomendasHistorico = encomendasHistorico.stream().map(Encomenda::clone).collect(Collectors.toCollection(ArrayList::new));
+        this.encomendasHistorico = new HashMap<>();
+        encomendasHistorico.forEach((key,value) -> this.encomendasHistorico.put(key,value.clone()));
     }
 
     public double getVelocidadeMedia() {
@@ -205,7 +206,7 @@ public class Voluntario
                 this.medical == e.isMedical() &&
                 this.available == e.isAvailable() &&
                 this.availableMedical == e.isAvailableMedical() &&
-                this.encomendasHistorico.equals(new ArrayList<>(e.getEncomendasHistorico()));
+                this.encomendasHistorico.equals(new HashMap<>(e.getEncomendasHistorico()));
     }
 
     public String toString()
@@ -223,7 +224,7 @@ public class Voluntario
         sb.append("\nIs Medical? ").append(this.medical);
         sb.append("\nIs Available? ").append(this.available);
         sb.append("\nIs Available for Medical? ").append(this.availableMedical);
-        sb.append("\nRegistos: \n").append(this.encomendasHistorico.toString());
+        sb.append("\nRegistos Históricos: \n").append(this.encomendasHistorico.toString());
         sb.append("\n");
 
         return sb.toString();
@@ -249,6 +250,22 @@ public class Voluntario
 
         enc.setTempoTransporte(tempo);
         enc.setCondicoesClimatericas(temporal);
+        enc.setCodTrnasportador(this.getCodigo());
 
+    }
+
+    public void insereNoHistorico (Encomenda encomendaFeita) {
+        this.encomendasHistorico.putIfAbsent(encomendaFeita.getCodigo(), encomendaFeita);
+    }
+
+    public void avaliaEncomendaFeita (double avaliacao) {
+        Integer nrAvaliacoes = this.getTotal_entregas();
+        Double novaClassificacao = this.getClassificacao()*nrAvaliacoes + avaliacao;
+
+        nrAvaliacoes++;
+        novaClassificacao = novaClassificacao/nrAvaliacoes;
+
+        this.setTotal_entregas(nrAvaliacoes);
+        this.setClassificacao(novaClassificacao);
     }
 }
