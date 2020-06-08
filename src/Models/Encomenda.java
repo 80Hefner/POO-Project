@@ -14,6 +14,7 @@ public class Encomenda
     private ArrayList<LinhaEncomenda> produtos;
     private boolean medical;
     private LocalDateTime data;
+    private boolean aceiteLoja;
     private boolean entregue;
     private double precoTransporte;
     private double tempoTransporte;
@@ -29,12 +30,13 @@ public class Encomenda
         this.medical = false;
         this.data = LocalDateTime.now();
         this.entregue = false;
+        this.aceiteLoja = false;
         this.precoTransporte = 0;
         this.tempoTransporte = 0.0;
         this.condicoesClimatericas = 0;
     }
 
-    public Encomenda(String codigo, String codLoja, String codUtilizador, double peso, ArrayList<LinhaEncomenda> produtos, boolean medical, LocalDateTime data, boolean entregue, double precoTransporte, double tempoTransporte, int condicoesClimatericas)
+    public Encomenda(String codigo, String codLoja, String codUtilizador, double peso, ArrayList<LinhaEncomenda> produtos, boolean medical, LocalDateTime data, boolean entregue, boolean aceiteLoja , double precoTransporte, double tempoTransporte, int condicoesClimatericas)
     {
         this.codigo = codigo;
         this.codLoja = codLoja;
@@ -44,6 +46,7 @@ public class Encomenda
         this.medical = medical;
         this.data = data;
         this.entregue = entregue;
+        this.entregue = aceiteLoja;
         this.precoTransporte = precoTransporte;
         this.tempoTransporte = tempoTransporte;
         this.condicoesClimatericas = condicoesClimatericas;
@@ -59,6 +62,7 @@ public class Encomenda
         this.medical = l.isMedical();
         this.data = l.getData();
         this.entregue = l.isEntregue();
+        this.aceiteLoja = l.isAceiteLoja();
         this.precoTransporte = l.getPrecoTransporte();
         this.tempoTransporte = l.getTempoTransporte();
         this.condicoesClimatericas = l.getCondicoesClimatericas();
@@ -166,6 +170,14 @@ public class Encomenda
         this.condicoesClimatericas = condicoesClimatericas;
     }
 
+    public boolean isAceiteLoja() {
+        return aceiteLoja;
+    }
+
+    public void setAceiteLoja(boolean aceiteLoja) {
+        this.aceiteLoja = aceiteLoja;
+    }
+
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -180,6 +192,7 @@ public class Encomenda
                 this.medical == e.isMedical() &&
                 this.data.isEqual(e.getData())&&
                 this.entregue == (e.isEntregue()) &&
+                this.aceiteLoja == (e.isAceiteLoja()) &&
                 this.precoTransporte == (e.getPrecoTransporte()) &&
                 this.tempoTransporte == (e.getTempoTransporte()) &&
                 this.condicoesClimatericas == (e.getCondicoesClimatericas());
@@ -195,6 +208,7 @@ public class Encomenda
         sb.append("\nPeso: ").append(this.peso);
         sb.append("\nIs medical? ").append(this.medical);
         sb.append("\nData da encomenda: ").append(this.data.toString());
+        sb.append("\nFoi Aceite pela Loja: \n").append(this.aceiteLoja);
         sb.append("\nFoi Entregue:\n").append(this.entregue);
         sb.append("\nProdutos:\n").append(this.produtos.toString());
         sb.append("\nPreço Transporte:\n").append(this.precoTransporte);

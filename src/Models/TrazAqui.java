@@ -15,7 +15,7 @@ public class TrazAqui
 
     private Map<String,Encomenda> catalogoEncomendas;
 
-    private List<String> aceites;
+    private List<String> aceites; //Inútil???
     private String utilizador_atual;
 
 
@@ -53,6 +53,7 @@ public class TrazAqui
     public void insereEncomendaAceite(String e)
     {
         this.aceites.add(e);
+        this.catalogoEncomendas.get(e).setAceiteLoja(true);
         this.utilizadores.values().forEach(val -> val.verificaPossuiVendaeRemovePendente(e));
     }
 
@@ -86,22 +87,22 @@ public class TrazAqui
 
     public Loja getLoja(String codLoja)
     {
-        return this.lojas.get(codLoja);
+        return this.lojas.get(codLoja).clone();
     }
 
     public Voluntario getVoluntario(String codVoluntario)
     {
-        return this.voluntarios.get(codVoluntario);
+        return this.voluntarios.get(codVoluntario).clone();
     }
 
     public Utilizador getUtilizador(String codUtilizador)
     {
-        return this.utilizadores.get(codUtilizador);
+        return this.utilizadores.get(codUtilizador).clone();
     }
 
     public Transportadora getTransportador(String codTransportadora)
     {
-        return this.transportadoras.get(codTransportadora);
+        return this.transportadoras.get(codTransportadora).clone();
     }
 
     public List<Voluntario> getVoluntarios()
@@ -173,13 +174,13 @@ public class TrazAqui
     public String realizaEntregaDeVenda(String codLoja, String codEnc, String codVoluntario) {
 
         StringBuilder sb = new StringBuilder();
-        Encomenda enc = this.catalogoEncomendas.get(codEnc);
+        Encomenda enc = this.getEncomenda(codEnc);
 
-        this.lojas.get(codLoja).realizaEntregaDeVenda(enc, this.catalogoEncomendas);//Done
+        this.getLoja(codLoja).realizaEntregaDeVenda(enc);//Done
+        this.getVoluntario(codVoluntario).realizaEntregaDeVenda(enc, this.lojas.get(codLoja), this.getUtilizador(enc.getCodUtilizador()));
+        this.getUtilizador(enc.getCodUtilizador()).realizaEntregaDeVenda(enc);
 
-        this.voluntarios.get(codVoluntario).realizaEntregaDeVenda(enc, this.lojas.get(codLoja), this.getUtilizador(enc.getCodUtilizador()), this.catalogoEncomendas);
-
-        this.utilizadores.get(enc.getCodUtilizador()).realizaEntregaDeVenda(enc);
+        this.catalogoEncomendas.put(codEnc, enc); //Replace da Encomenda antiga para n partilhar apontadores e ser sempre cópias
 
         sb.append("Tempo demorado a realizar a entrega -> ")
                 .append((int) this.catalogoEncomendas.get(enc.getCodigo()).getTempoTransporte()/60).append(" Horas e ")

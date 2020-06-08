@@ -5,6 +5,7 @@ public class Transportadora extends Voluntario
     private int nif;
     private double preco_km;
     private int limite;
+    //Colocar aqui um set com os códigos das Encomendas á espera de resposta para entregar?
 
     public Transportadora()
     {
@@ -90,7 +91,7 @@ public class Transportadora extends Voluntario
         sb.append("\nIs Medical? ").append(super.isMedical());
         sb.append("\nIs Available? ").append(super.isAvailable());
         sb.append("\nIs Available for Medical? ").append(super.isAvailableMedical());
-        sb.append("\nRegistos: \n").append(super.getRegistos().toString());
+        sb.append("\nRegistos: \n").append(super.getEncomendasHistorico().toString());
         sb.append("\n");
 
         return sb.toString();

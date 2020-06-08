@@ -9,9 +9,11 @@ public class Loja
     private String codigo;
     private GPS coordenadas;
     private boolean temFila;
-    private LinkedList<Encomenda> fila;
-    //private HashMap<String, Encomenda> encomendas; Acho que faz mais sentido ter todas as encomendas no TrazAqui e mudá-as sempre lá, em vez de ter de mudar em tudo o que é Models.
-    private Set<String> encomendas;
+
+
+    private Set<String> encomendasPorAceitar;
+    private Set<String> encomendasPorEntregar;
+    private HashMap<String, Encomenda> encomendasHistorico; //Acho que faz mais sentido ter todas as encomendas no TrazAqui e mudá-as sempre lá, em vez de ter de mudar em tudo o que é Models.
 
     public Loja()
     {
@@ -19,8 +21,9 @@ public class Loja
         this.codigo = "";
         this.coordenadas = new GPS();
         this.temFila = false;
-        this.fila = new LinkedList<>();
-        this.encomendas = new TreeSet<>();
+        this.encomendasPorAceitar = new TreeSet<>();
+        this.encomendasPorEntregar = new TreeSet<>();
+        this.encomendasHistorico = new HashMap<>();
     }
 
     public Loja(String nome, String codigo, GPS coordenadas, boolean temFila)
@@ -29,8 +32,9 @@ public class Loja
         this.codigo = codigo;
         this.coordenadas = coordenadas.clone();
         this.temFila = temFila;
-        this.fila = new LinkedList<>();
-        this.encomendas = new TreeSet<>();
+        this.encomendasPorAceitar = new TreeSet<>();
+        this.encomendasPorEntregar = new TreeSet<>();
+        this.encomendasHistorico = new HashMap<>();
     }
 
     public Loja(Loja u)
@@ -39,8 +43,9 @@ public class Loja
         this.codigo = u.getCodigo();
         this.coordenadas = u.getCoordenadas();
         this.temFila = u.temFila();
-        this.fila = new LinkedList<>(u.getPendentes());
-        this.encomendas = new TreeSet<>(u.getEncomendas());
+        this.encomendasPorAceitar = new TreeSet<>(u.getEncomendasPorAceitar());
+        this.encomendasPorEntregar = new TreeSet<>(u.getEncomendasPorEntregar());
+        this.encomendasHistorico = new HashMap<>();
     }
 
     public String getNome()
@@ -83,22 +88,30 @@ public class Loja
         this.temFila = temFila;
     }
 
-    public List<Encomenda> getPendentes()
+    public Set<String> getEncomendasPorEntregar()
     {
-        return fila.stream().map(Encomenda::clone).collect(Collectors.toList());
+        return new TreeSet<>(encomendasPorEntregar);
     }
 
-    public void setPendentes(List<Encomenda> fila)
+    public void setEncomendasPorEntregar(Set<String> encomendasPorEntregar)
     {
-        this.fila = fila.stream().map(Encomenda::clone).collect(Collectors.toCollection(LinkedList::new));
+        this.encomendasPorEntregar = new TreeSet<>(encomendasPorEntregar);
     }
 
-    public Set<String> getEncomendas() {
-        return new TreeSet<>(encomendas);
+    public Set<String> getEncomendasPorAceitar() {
+        return new TreeSet<>(encomendasPorAceitar);
     }
 
-    public void setEncomendas(Set<String> encomendas) {
-        this.encomendas = new TreeSet<>(encomendas);
+    public void setEncomendasPorAceitar(Set<String> encomendasPorAceitar) {
+        this.encomendasPorAceitar = new TreeSet<>(encomendasPorAceitar);
+    }
+
+    public Map<String, Encomenda> getEncomendasHistorico() {
+        return new HashMap<>(encomendasHistorico);
+    }
+
+    public void setEncomendasHistorico(Map<String, Encomenda> encomendasHistorico) {
+        this.encomendasHistorico = new HashMap<>(encomendasHistorico);
     }
 
     /*
@@ -116,7 +129,9 @@ public class Loja
                 this.codigo.equals(u.getCodigo()) &&
                 this.coordenadas.equals(u.getCoordenadas()) &&
                 this.temFila == u.temFila() &&
-                this.fila.equals(new LinkedList<>(u.getPendentes()));
+                this.encomendasPorEntregar.equals(u.getEncomendasPorEntregar())  &&
+                this.encomendasPorAceitar.equals(u.getEncomendasPorAceitar()) &&
+                this.encomendasHistorico.equals(u.getEncomendasHistorico());
     }
 
     public String toString()
@@ -127,8 +142,9 @@ public class Loja
         sb.append("\nCodigo: ").append(this.codigo);
         sb.append("\nCoordenadas: ").append(this.coordenadas.toString());
         sb.append("\nTem fila de espera? ").append(this.temFila);
-        //sb.append("\nEncomendas em fila de espera: \n").append(this.fila.toString());
-        sb.append("\nEncomendas para entregar ").append(this.encomendas.toString());
+        sb.append("\nEncomendas por aceitar ").append(this.encomendasPorAceitar.toString());
+        sb.append("\nEncomendas para entregar ").append(this.encomendasPorEntregar.toString());
+        sb.append("\nEncomendas Histórico ").append(this.encomendasHistorico.toString());
         sb.append("\n");
 
         return sb.toString();
@@ -141,18 +157,17 @@ public class Loja
 
     public void insereEncomenda(Encomenda e)
     {
-        this.fila.add(e.clone());
-        this.encomendas.add(e.getCodigo());
+        this.encomendasPorEntregar.add(e.getCodigo());
     }
 
     public boolean possuiEncomendaCodigo (String codEncomenda, Map<String,Encomenda> mapaEncomendas) {
-        if (this.encomendas.contains(codEncomenda))
+        if (this.encomendasPorEntregar.contains(codEncomenda))
             return !mapaEncomendas.get(codEncomenda).isEntregue();
         return false;
     }
 
-    public void realizaEntregaDeVenda(Encomenda encomenda, Map<String,Encomenda> mapaEncomendas) {
-        this.fila.remove(encomenda);
-        mapaEncomendas.get(encomenda.getCodigo()).setEntregue(true);
+    public void realizaEntregaDeVenda(Encomenda encomenda) {
+        this.encomendasPorEntregar.remove(encomenda.getCodigo());
+        encomenda.setEntregue(true);
     }
 }

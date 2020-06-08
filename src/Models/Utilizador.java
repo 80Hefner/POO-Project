@@ -9,9 +9,10 @@ public class Utilizador
     private String codigo;
     private GPS coordenadas;
     private String password;
-    private Map<String, Encomenda> encomendasHistorico;  //Todas as encomendas feitas e recebidas ou não por este utilizador
-    private Set<String> encomendasPendentes;
-    private Set<String> codsEncomendasTransportadoraPorAceitar;
+
+    private Set<String> encomendasPendentes; //Encomendas que faltam aceitar pela Loja e as que faltam ser entregues (englobadas as duas aqui);
+    private Set<String> codsEncomendasTransportadoraPorAceitar; //Encomendas que falta aceitar receber de uma tranpostadora;
+    private Map<String, Encomenda> encomendasHistorico;  //Todas as encomendas feitas e recebidas ou não por este utilizador; (Adicionar só no fim esta parte?
 
     public Utilizador()
     {

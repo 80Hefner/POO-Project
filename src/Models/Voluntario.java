@@ -21,7 +21,8 @@ public class Voluntario
     private boolean medical;
     private boolean available;
     private boolean availableMedical;
-    private ArrayList<Encomenda> registos; //Histórico de Encomendas feitas
+
+    private ArrayList<Encomenda> encomendasHistorico; //Histórico de Encomendas feitas
 
     public Voluntario()
     {
@@ -34,7 +35,7 @@ public class Voluntario
         this.medical = false;
         this.available = false;
         this.availableMedical = false;
-        this.registos = new ArrayList<>();
+        this.encomendasHistorico = new ArrayList<>();
     }
 
     public Voluntario(String nome, String codigo, GPS coordenadas, String password, double velocidadeMedia, double raio, boolean medical)
@@ -50,7 +51,7 @@ public class Voluntario
         this.medical = medical;
         this.available = true;
         this.availableMedical = medical;
-        this.registos = new ArrayList<>();
+        this.encomendasHistorico = new ArrayList<>();
     }
 
     public Voluntario(Voluntario e)
@@ -66,7 +67,7 @@ public class Voluntario
         this.medical = e.isMedical();
         this.available = true;
         this.availableMedical = medical;
-        this.registos = new ArrayList<>();
+        this.encomendasHistorico = new ArrayList<>();
     }
 
     public String getNome()
@@ -169,14 +170,14 @@ public class Voluntario
         this.availableMedical = availableMedical;
     }
 
-    public List<Encomenda> getRegistos()
+    public List<Encomenda> getEncomendasHistorico()
     {
-        return registos.stream().map(Encomenda::clone).collect(Collectors.toList());
+        return encomendasHistorico.stream().map(Encomenda::clone).collect(Collectors.toList());
     }
 
-    public void setRegistos(ArrayList<Encomenda> registos)
+    public void setEncomendasHistorico(ArrayList<Encomenda> encomendasHistorico)
     {
-        this.registos = registos.stream().map(Encomenda::clone).collect(Collectors.toCollection(ArrayList::new));
+        this.encomendasHistorico = encomendasHistorico.stream().map(Encomenda::clone).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public double getVelocidadeMedia() {
@@ -204,7 +205,7 @@ public class Voluntario
                 this.medical == e.isMedical() &&
                 this.available == e.isAvailable() &&
                 this.availableMedical == e.isAvailableMedical() &&
-                this.registos.equals(new ArrayList<>(e.getRegistos()));
+                this.encomendasHistorico.equals(new ArrayList<>(e.getEncomendasHistorico()));
     }
 
     public String toString()
@@ -222,7 +223,7 @@ public class Voluntario
         sb.append("\nIs Medical? ").append(this.medical);
         sb.append("\nIs Available? ").append(this.available);
         sb.append("\nIs Available for Medical? ").append(this.availableMedical);
-        sb.append("\nRegistos: \n").append(this.registos.toString());
+        sb.append("\nRegistos: \n").append(this.encomendasHistorico.toString());
         sb.append("\n");
 
         return sb.toString();
@@ -235,19 +236,19 @@ public class Voluntario
 
 
     /******* Funções Principais *******/
-    public void realizaEntregaDeVenda(Encomenda enc, Loja loja, Utilizador utilizador, Map<String, Encomenda> catalogoEncomendas) {
+    public void realizaEntregaDeVenda(Encomenda enc, Loja loja, Utilizador utilizador) {
         Random r = new Random();
 
-        //this.registos.add(enc);
+        //this.encomendasHistorico.add(enc);
 
         double distance = this.coordenadas.distanceTo(loja.getCoordenadas()) + this.coordenadas.distanceTo(utilizador.getCoordenadas());
         double tempo = distance/velocidadeMedia * 60.0;
         int temporal = (int) (r.nextDouble() * 3);
         tempo*=(temporal+1);
         //ACRESCENTAR DIFERENÇA DO PESO DA ENCOMENDA NA DEMORA DA ENTREGA
-        Encomenda encomenda = catalogoEncomendas.get(enc.getCodigo());
-        encomenda.setTempoTransporte(tempo);
-        encomenda.setCondicoesClimatericas(temporal);
+
+        enc.setTempoTransporte(tempo);
+        enc.setCondicoesClimatericas(temporal);
 
     }
 }
