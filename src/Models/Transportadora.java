@@ -1,5 +1,6 @@
 package Models;
 
+import java.text.DecimalFormat;
 import java.util.Random;
 
 public class Transportadora extends Voluntario
@@ -78,22 +79,22 @@ public class Transportadora extends Voluntario
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
+        DecimalFormat fmt = new DecimalFormat("0.00");
 
-        sb.append("Nome: ").append(super.getNome());
-        sb.append("\nCodigo: ").append(super.getCodigo());
-        sb.append("\nCoordenadas: ").append(super.getCoordenadas().toString());
-        sb.append("\nPaswword: ").append(super.getPassword());
-        sb.append("\nVelocidade Média: ").append(super.getVelocidadeMedia());
-        sb.append("\nNIF: ").append(this.nif);
-        sb.append("\nRaio: ").append(super.getRaio());
-        sb.append("\nPreço por km: ").append(this.preco_km);
-        sb.append("\nLimite de encomendas: ").append(this.limite);
-        sb.append("\nClassificação: ").append(super.getClassificacao());
-        sb.append("\nTotal de entregas efetuadas: ").append(super.getTotal_entregas());
-        sb.append("\nIs Medical? ").append(super.isMedical());
-        sb.append("\nIs Available? ").append(super.isAvailable());
-        sb.append("\nIs Available for Medical? ").append(super.isAvailableMedical());
-        sb.append("\nRegistos: \n").append(super.getEncomendasHistorico().toString());
+        sb.append("TRANSPORTADORA  ->  ").append(super.getNome());
+        sb.append("\n  Codigo - ").append(super.getCodigo());
+        sb.append(" | Coordenadas - ").append(super.getCoordenadas().toString());
+        sb.append(" | NIF - ").append(this.nif);
+        sb.append(" | Password - ").append(super.getPassword());
+        sb.append("\n  Velocidade Média - ").append(fmt.format(super.getVelocidadeMedia())).append(" Km/h");
+        sb.append(" | Raio: ").append(super.getRaio()).append(" Km");
+        sb.append("\n  Preço por km - ").append(this.preco_km).append("€");
+        sb.append(" | Limite de encomendas - ").append(this.limite);
+        sb.append("\n  Classificação - ").append(super.getClassificacao());
+        sb.append(" | Total de entregas efetuadas - ").append(super.getTotal_entregas());
+        sb.append("\n  Is Medical - ").append(super.isMedical());
+        sb.append(" | Is Available - ").append(super.isAvailable());
+        sb.append("\n  Registos Históricos ").append(super.getEncomendasHistorico().keySet().toString());
         sb.append("\n");
 
         return sb.toString();

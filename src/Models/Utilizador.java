@@ -150,14 +150,14 @@ public class Utilizador
     {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Nome: ").append(this.nome);
-        sb.append("\nCodigo: ").append(this.codigo);
-        sb.append("\nCoordenadas: ").append(this.coordenadas.toString());
-        sb.append("\nPassword: ").append(this.password);
-        sb.append("\nEncomendas feitas por avaliar: ").append(this.encomendasCompletadasPorAvaliar.entrySet().toString());
-        sb.append("\nEncomendas Pendentes: ").append(this.encomendasPendentes);
-        sb.append("\nEncomendas Por Aceitar: ").append(this.encomendasTransportadoraPorAceitar);
-        sb.append("\nEncomendas Historico: ").append(this.encomendasHistorico.keySet().toString());
+        sb.append("UTILIZADOR  ->  ").append(this.nome);
+        sb.append("\n  Codigo - ").append(this.codigo);
+        sb.append(" | Coordenadas - ").append(this.coordenadas.toString());
+        sb.append(" | Password - ").append(this.password);
+        sb.append("\n  Encomendas Pendentes: ").append(this.encomendasPendentes);
+        sb.append("\n  Entregas Transportadora Por Aceitar: ").append(this.encomendasTransportadoraPorAceitar.keySet().toString());
+        sb.append("\n  Encomendas feitas por avaliar: ").append(this.encomendasCompletadasPorAvaliar.keySet().toString());
+        sb.append("\n  Encomendas Historico: ").append(this.encomendasHistorico.keySet().toString());
         sb.append("\n");
 
         return sb.toString();

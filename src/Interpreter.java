@@ -210,18 +210,7 @@ public class Interpreter
             }
             else if (opcao == 1) {
                 clearScreen();
-                System.out.println("\n-----------------TRAZ AQUI------------------------");
-                System.out.println("\n------------------LOJAS-------------------------\n");
-                System.out.println(trazAqui.getLojas().toString());
-                System.out.println("\n------------------VOLUNTARIOS-------------------------\n");
-                System.out.println(trazAqui.getVoluntarios().toString());
-                System.out.println("\n------------------TRANSPORTADORAS-------------------------\n");
-                System.out.println(trazAqui.getTransportadoras().toString());
-                System.out.println("\n------------------UTILIZADORES-------------------------\n");
-                System.out.println(trazAqui.getUtilizadores().toString());
-                System.out.println("\n------------------ACEITES-------------------------\n");
-                System.out.println(trazAqui.getEncomendasAceites().toString());
-                System.out.print("\n");
+                listagemEntidades(trazAqui);
                 esperaInput();
             }
             else if (opcao == 2) {
@@ -244,6 +233,65 @@ public class Interpreter
                 System.out.println("Opção inválida!");
                 esperaInput();
             }
+        }
+    }
+
+    private static void listagemEntidades (TrazAqui trazAqui) {
+        Scanner sc = new Scanner(System.in);
+        int escolhaInt;
+        boolean escolheuCerto = false;
+        clearScreen();
+        System.out.println("\n#*#*#*#*#*#*#*#*#*#*#*#*#*# TRAZ AQUI #*#*#*#*#*#*#*#*#*#*#*#*#*#");
+        System.out.println("Escolha tipo de entidades que pretende listar");
+        while(true) {
+            System.out.print("(0 - Lojas | 1 - Voluntários | 2 - Transportadoras | 3 - Utilizadores | 4 - Aceites): ");
+            String escolha = sc.nextLine();
+            if (escolha.equals("")) {
+                escolhaInt = -1;
+            } else {
+                escolhaInt = Integer.parseInt(escolha);
+            }
+
+        switch (escolhaInt) {
+            case 0:
+                System.out.println("\n----------------------------- LOJAS -----------------------------\n");
+                for (Loja loja : trazAqui.getLojas()) {
+                    System.out.println(loja.toString());
+                }
+                escolheuCerto = true;
+                break;
+            case 1:
+                System.out.println("\n-------------------------- VOLUNTARIOS --------------------------\n");
+                for (Voluntario voluntario : trazAqui.getVoluntarios()) {
+                    System.out.println(voluntario.toString());
+                }
+                escolheuCerto = true;
+                break;
+            case 2:
+                System.out.println("\n------------------------ TRANSPORTADORAS ------------------------\n");
+                for (Transportadora transportadora : trazAqui.getTransportadoras()) {
+                    System.out.println(transportadora.toString());
+                }
+                escolheuCerto = true;
+                break;
+            case 3:
+                System.out.println("\n------------------------- UTILIZADORES -------------------------\n");
+                for (Utilizador utilizador : trazAqui.getUtilizadores()) {
+                    System.out.println(utilizador.toString());
+                }
+                escolheuCerto = true;
+                break;
+            case 4:
+                System.out.println("\n---------------------------- ACEITES ----------------------------\n");
+                System.out.println(trazAqui.getEncomendasAceites().toString());
+                escolheuCerto = true;
+                break;
+            default:
+                System.out.println("Opção Inválida");
+            }
+
+        if (escolheuCerto)
+            break;
         }
     }
 
@@ -399,18 +447,7 @@ public class Interpreter
             }
             else if (opcao == 1) {
                 clearScreen();
-                System.out.println("\n-----------------TRAZ AQUI------------------------");
-                System.out.println("\n------------------LOJAS-------------------------\n");
-                System.out.println(trazAqui.getLojas().toString());
-                System.out.println("\n------------------VOLUNTARIOS-------------------------\n");
-                System.out.println(trazAqui.getVoluntarios().toString());
-                System.out.println("\n------------------TRANSPORTADORAS-------------------------\n");
-                System.out.println(trazAqui.getTransportadoras().toString());
-                System.out.println("\n------------------UTILIZADORES-------------------------\n");
-                System.out.println(trazAqui.getUtilizadores().toString());
-                System.out.println("\n------------------ACEITES-------------------------\n");
-                System.out.println(trazAqui.getEncomendasAceites().toString());
-                System.out.print("\n");
+                listagemEntidades(trazAqui);
                 esperaInput();
             }
             else if (opcao == 2) {
@@ -530,18 +567,7 @@ public class Interpreter
             }
             else if (opcao == 1) {
                 clearScreen();
-                System.out.println("\n-----------------TRAZ AQUI------------------------");
-                System.out.println("\n------------------LOJAS-------------------------\n");
-                System.out.println(trazAqui.getLojas().toString());
-                System.out.println("\n------------------VOLUNTARIOS-------------------------\n");
-                System.out.println(trazAqui.getVoluntarios().toString());
-                System.out.println("\n------------------TRANSPORTADORAS-------------------------\n");
-                System.out.println(trazAqui.getTransportadoras().toString());
-                System.out.println("\n------------------UTILIZADORES-------------------------\n");
-                System.out.println(trazAqui.getUtilizadores().toString());
-                System.out.println("\n------------------ACEITES-------------------------\n");
-                System.out.println(trazAqui.getEncomendasAceites().toString());
-                System.out.print("\n");
+                listagemEntidades(trazAqui);
                 esperaInput();
             }
             else if (opcao == 2) {
@@ -620,7 +646,7 @@ public class Interpreter
         while(true) {
 
             clearScreen();
-            System.out.println("----------------------MENU TRANSPORTADORA--------------------\n");
+            System.out.println("----------------------MENU LOJA--------------------\n");
             System.out.println("0 -> Logout.");
             System.out.println("1 -> Listar entidades no sistema.");
             System.out.println("2 -> Aceitar pedidos de Encomenda (" + trazAqui.getLoja(trazAqui.getUtilizador_atual()).getEncomendasPorAceitar().size()+").");
@@ -639,18 +665,7 @@ public class Interpreter
             }
             else if (opcao == 1) {
                 clearScreen();
-                System.out.println("\n-----------------TRAZ AQUI------------------------");
-                System.out.println("\n------------------LOJAS-------------------------\n");
-                System.out.println(trazAqui.getLojas().toString());
-                System.out.println("\n------------------VOLUNTARIOS-------------------------\n");
-                System.out.println(trazAqui.getVoluntarios().toString());
-                System.out.println("\n------------------TRANSPORTADORAS-------------------------\n");
-                System.out.println(trazAqui.getTransportadoras().toString());
-                System.out.println("\n------------------UTILIZADORES-------------------------\n");
-                System.out.println(trazAqui.getUtilizadores().toString());
-                System.out.println("\n------------------ACEITES-------------------------\n");
-                System.out.println(trazAqui.getEncomendasAceites().toString());
-                System.out.print("\n");
+                listagemEntidades(trazAqui);
                 esperaInput();
             }
             else if (opcao == 2) {

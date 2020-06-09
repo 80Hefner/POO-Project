@@ -1,5 +1,6 @@
 package Models;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -226,19 +227,19 @@ public class Voluntario
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
+        DecimalFormat fmt = new DecimalFormat("0.00");
 
-        sb.append("Nome: ").append(this.nome);
-        sb.append("\nCodigo: ").append(this.codigo);
-        sb.append("\nCoordenadas: ").append(this.coordenadas.toString());
-        sb.append("\nPassword: ").append(this.password);
-        sb.append("\nVelocidade Media: ").append(this.velocidadeMedia);
-        sb.append("\nRaio: ").append(this.raio);
-        sb.append("\nClassificação: ").append(this.classificacao);
-        sb.append("\nTotal de entregas efetuadas: ").append(this.total_entregas);
-        sb.append("\nIs Medical? ").append(this.medical);
-        sb.append("\nIs Available? ").append(this.available);
-        sb.append("\nIs Available for Medical? ").append(this.availableMedical);
-        sb.append("\nRegistos Históricos: \n").append(this.encomendasHistorico.keySet().toString());
+        sb.append("VOLUNTARIO  ->  ").append(this.nome);
+        sb.append("\n  Codigo - ").append(this.codigo);
+        sb.append(" | Coordenadas - ").append(this.coordenadas.toString());
+        sb.append(" | Password - ").append(this.password);
+        sb.append("\n  Velocidade Media - ").append(fmt.format(this.velocidadeMedia)).append(" Km/h");
+        sb.append(" | Raio - ").append(this.raio).append(" Km");
+        sb.append("\n  Classificação - ").append(this.classificacao);
+        sb.append(" | Total de entregas efetuadas - ").append(this.total_entregas);
+        sb.append("\n  Is Medical - ").append(this.medical);
+        sb.append("\n  Is Available - ").append(this.available);
+        sb.append("\n  Registos Históricos ").append(this.encomendasHistorico.keySet().toString());
         sb.append("\n");
 
         return sb.toString();

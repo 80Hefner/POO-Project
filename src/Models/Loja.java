@@ -134,13 +134,13 @@ public class Loja
     {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Nome: ").append(this.nome);
-        sb.append("\nCodigo: ").append(this.codigo);
-        sb.append("\nCoordenadas: ").append(this.coordenadas.toString());
-        sb.append("\nTem fila de espera? ").append(this.temFila);
-        sb.append("\nEncomendas por aceitar ").append(this.encomendasPorAceitar.toString());
-        sb.append("\nEncomendas para entregar ").append(this.encomendasPorEntregar.toString());
-        sb.append("\nEncomendas Histórico ").append(this.encomendasHistorico.keySet().toString());
+        sb.append("LOJA  ->  ").append(this.nome);
+        sb.append("\n  Código - ").append(this.codigo);
+        sb.append(" | Coordenadas - ").append(this.coordenadas.toString());
+        sb.append(" | Tem fila de espera? - ").append(this.temFila);
+        sb.append("\n  Encomendas por aceitar ").append(this.encomendasPorAceitar.toString());
+        sb.append("\n  Encomendas para entregar ").append(this.encomendasPorEntregar.toString());
+        sb.append("\n  Encomendas Histórico ").append(this.encomendasHistorico.keySet().toString());
         sb.append("\n");
 
         return sb.toString();
