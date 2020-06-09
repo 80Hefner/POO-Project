@@ -3,7 +3,6 @@ package Models;
 import java.util.*;
 import java.util.stream.Collectors;
 
-//TO do : Falta inserir velocidade, depois fazer aleatoriadade para o clima
 
 public class Voluntario
 {
@@ -257,9 +256,12 @@ public class Voluntario
 
         double distance = this.coordenadas.distanceTo(loja.getCoordenadas()) + this.coordenadas.distanceTo(utilizador.getCoordenadas());
         double tempo = distance/velocidadeMedia * 60.0;
+
         int temporal = (int) (r.nextDouble() * 3);
         tempo*=(temporal+1);
-        //ACRESCENTAR DIFERENÇA DO PESO DA ENCOMENDA NA DEMORA DA ENTREGA
+
+        double tempoPeso = ((enc.getPeso() / 25)*0.25 + 1);
+        tempo*=tempoPeso;
 
         enc.setTempoTransporte(tempo);
         enc.setCondicoesClimatericas(temporal);
