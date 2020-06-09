@@ -196,4 +196,8 @@ public class Utilizador
     public void todasEntregasAceitesOuRecusadas () {
         this.encomendasTransportadoraPorAceitar.clear();
     }
+
+    public void recusaEncomendaPedida (String codEnc) {
+        this.encomendasPendentes.remove(codEnc);
+    }
 }

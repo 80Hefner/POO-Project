@@ -181,4 +181,12 @@ public class Loja
     public void insereNoHistorico (Encomenda encomendaFeita) {
         this.encomendasHistorico.putIfAbsent(encomendaFeita.getCodigo(), encomendaFeita);
     }
+
+    public void recusaEncomendaPedida (String codEnc) {
+        this.encomendasPorAceitar.remove(codEnc);
+    }
+
+    public void lojaAceitaOuRecusaTodasEncomenda() {
+        this.encomendasPorAceitar.clear();
+    }
 }

@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class Interpreter
 {
     private static int login = 0;
-    private static final String data_path = "/home/besta80/IdeaProjects/POO-Project/src";
+    private static final String data_path = "/home/tourrete/Desktop/UNI/POO/POO-Project/src";
 
     public static void main(String[] args)
     {
@@ -31,6 +31,8 @@ public class Interpreter
                 menuVoluntario(trazAqui);
             else if (trazAqui.getUtilizador_atual().startsWith("t"))
                 menuTransportadora(trazAqui);
+            else if (trazAqui.getUtilizador_atual().startsWith("l"))
+                menuLoja(trazAqui);
         }
     }
 
@@ -144,6 +146,29 @@ public class Interpreter
                         break;
                     }
                     else System.out.println("Transportadora inválida!");
+                }
+                break;
+            }
+            else if (opcao == 6 && trazAqui.getLojas().size() != 0) {
+                clearScreen();
+                System.out.println("\n----------------------LOGIN--------------------");
+                while(true) {
+                    System.out.print("Nome da Loja: ");
+                    String loja = sc.nextLine();
+                    if (trazAqui.procuraLoja(loja)) {
+                        while(true) {
+                            System.out.print("Password: ");
+                            String password = sc.nextLine();
+                            if (password.equals("")) {
+                                login = 1;
+                                trazAqui.setUtilizador_atual(loja);
+                                break;
+                            }
+                            else System.out.println("Password incorreta!");
+                        }
+                        break;
+                    }
+                    else System.out.println("Loja inválida!");
                 }
                 break;
             }
@@ -585,6 +610,96 @@ public class Interpreter
         }
     }
 
+
+    /********************* MENUS DAS LOJAS *******************/
+    private static void menuLoja(TrazAqui trazAqui)
+    {
+        Scanner sc = new Scanner(System.in);
+        int opcao;
+
+        while(true) {
+
+            clearScreen();
+            System.out.println("----------------------MENU TRANSPORTADORA--------------------\n");
+            System.out.println("0 -> Logout.");
+            System.out.println("1 -> Listar entidades no sistema.");
+            System.out.println("2 -> Aceitar pedidos de Encomenda (" + trazAqui.getLoja(trazAqui.getUtilizador_atual()).getEncomendasPorAceitar().size()+").");
+
+            String escolha = sc.nextLine();
+            if (escolha.equals("")) {
+                opcao = -1;
+            } else {
+                opcao = Integer.parseInt(escolha);
+            }
+
+            if (opcao == 0) {
+                login = 0;
+                trazAqui.setUtilizador_atual("");
+                break;
+            }
+            else if (opcao == 1) {
+                clearScreen();
+                System.out.println("\n-----------------TRAZ AQUI------------------------");
+                System.out.println("\n------------------LOJAS-------------------------\n");
+                System.out.println(trazAqui.getLojas().toString());
+                System.out.println("\n------------------VOLUNTARIOS-------------------------\n");
+                System.out.println(trazAqui.getVoluntarios().toString());
+                System.out.println("\n------------------TRANSPORTADORAS-------------------------\n");
+                System.out.println(trazAqui.getTransportadoras().toString());
+                System.out.println("\n------------------UTILIZADORES-------------------------\n");
+                System.out.println(trazAqui.getUtilizadores().toString());
+                System.out.println("\n------------------ACEITES-------------------------\n");
+                System.out.println(trazAqui.getEncomendasAceites().toString());
+                System.out.print("\n");
+                esperaInput();
+            }
+            else if (opcao == 2) {
+                clearScreen();
+                aceitaOuRecusaTodosPedidosEncomenda(trazAqui);
+                esperaInput();
+                break;
+            }
+            else {
+                System.out.println("Opção inválida!");
+                esperaInput();
+            }
+        }
+    }
+
+    private static void aceitaOuRecusaTodosPedidosEncomenda(TrazAqui trazAqui)
+    {
+        Loja lojaAux = trazAqui.getLoja(trazAqui.getUtilizador_atual());
+        System.out.println("Aceite ou recuse os pedidos de entrega por parte dos Utilizadores (y-n): ");
+        lojaAux.getEncomendasPorAceitar()
+                .forEach(key -> aceitaOuRecusaUmPedidoEncomenda(trazAqui, key));
+        System.out.println("\n\nTodas as Encomendas pedidas aceitadas ou recusadas com sucesso.");
+        trazAqui.lojaAceitaOuRecusaTodasEncomenda(trazAqui.getUtilizador_atual());
+    }
+
+
+    private static void aceitaOuRecusaUmPedidoEncomenda(TrazAqui trazAqui, String codEncomenda)
+    {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("\nPedido da seguinte Encomenda " +codEncomenda+ ":");
+        System.out.println(trazAqui.getEncomenda(codEncomenda));
+        while (true) {
+            System.out.print("\nAceitar ou Recusar (y-n): ");
+            String aceita = sc.nextLine();
+            if (aceita.equals("y") || aceita.equals("Y")) {
+                trazAqui.lojaAceitaOuRecusaEncomenda(codEncomenda, true);
+                break;
+            }
+            else if (aceita.equals("n") || aceita.equals("N")) {
+                trazAqui.lojaAceitaOuRecusaEncomenda(codEncomenda, false);
+                break;
+            }
+            else {
+                System.out.println("Aceitação Inválida");
+            }
+        }
+    }
+
     /************* REGISTAR NOVAS ENTIDADES ****************/
     private static void registaLoja(TrazAqui trazAqui)
     {
@@ -633,7 +748,7 @@ public class Interpreter
         System.out.print("Medical? [y/n]: ");
         char c = sc.nextLine().toCharArray()[0];
         boolean medical = c == 'y';
-        double velocidadeMedia = 60.0 + (120.0 - 60.0)*r.nextDouble();
+        double velocidadeMedia = 40.0 + (60.0 - 40.0)*r.nextDouble();
 
         Voluntario newVoluntario = new Voluntario(nome, codigo, new GPS(latitude,longitude), "", velocidadeMedia, raio, medical);
         trazAqui.insereVoluntario(newVoluntario);
@@ -669,7 +784,7 @@ public class Interpreter
         System.out.print("Medical? [y/n]: ");
         char c = sc.nextLine().toCharArray()[0];
         boolean medical = c == 'y';
-        double velocidadeMedia = 60.0 + (120.0 - 60.0)*r.nextDouble();
+        double velocidadeMedia = 70.0 + (90.0 - 70.0)*r.nextDouble();
 
         Transportadora newTransportadora = new Transportadora(nome, codigo, new GPS(latitude,longitude), "", velocidadeMedia, nif, raio, preco_km, limite, medical);
         trazAqui.insereTransportadora(newTransportadora);

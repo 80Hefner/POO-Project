@@ -100,7 +100,7 @@ public class Parser
         Random r = new Random();
         int limite = r.nextInt(10) + 1;
         boolean medical = r.nextBoolean();
-        double velocidadeMedia = 40.0 + (60.0 - 40.0)*r.nextDouble();
+        double velocidadeMedia = 70.0 + (90.0 - 70.0)*r.nextDouble();
 
         return new Transportadora(nome,codTransportadora,gps, "", velocidadeMedia,nif,raio,preco_km,limite,medical);
     }

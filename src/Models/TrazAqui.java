@@ -267,4 +267,21 @@ public class TrazAqui
     public void todasEncomendasFeitasAvaliadas (String codUtilizador) {
         this.utilizadores.get(codUtilizador).todasEncomendasFeitasAvaliadas();
     }
+
+    public void lojaAceitaOuRecusaEncomenda(String codEnc, boolean status) {
+
+        Encomenda enc = this.getEncomenda(codEnc);
+        if( status ) { //Acontece quando é true, utilizador aceita
+            this.insereEncomendaAceite(codEnc);
+        }
+        else {
+            this.lojas.get(enc.getCodLoja()).recusaEncomendaPedida(codEnc);
+            this.utilizadores.get(enc.getCodUtilizador()).recusaEncomendaPedida(codEnc);
+            this.catalogoEncomendas.remove(codEnc); //Remover do catálogo de Encomendas ou deixar com tudo a false?
+        }
+    }
+
+    public void lojaAceitaOuRecusaTodasEncomenda (String codLoja) {
+        this.lojas.get(codLoja).lojaAceitaOuRecusaTodasEncomenda();
+    }
 }
