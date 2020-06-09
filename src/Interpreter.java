@@ -29,6 +29,8 @@ public class Interpreter
                 menuUtilizador(trazAqui);
             else if (trazAqui.getUtilizador_atual().startsWith("v"))
                 menuVoluntario(trazAqui);
+            else if (trazAqui.getUtilizador_atual().startsWith("t"))
+                menuTransportadora(trazAqui);
         }
     }
 
@@ -46,7 +48,8 @@ public class Interpreter
             System.out.println("2 -> Registar novo utilizador.");
             System.out.println("3 -> Registar entidade.");
             System.out.println("4 -> Efetuar login com Voluntario.");
-            System.out.println("5 -> Efetuar login com Loja.");
+            System.out.println("5 -> Efetuar login com Transportadora.");
+            System.out.println("6 -> Efetuar login com Loja.");
             System.out.print("OPÇÃO: ");
 
             String escolha = sc.nextLine();
@@ -122,7 +125,27 @@ public class Interpreter
                 break;
             }
             else if (opcao == 5 && trazAqui.getTransportadoras().size() != 0) {
-
+                clearScreen();
+                System.out.println("\n----------------------LOGIN--------------------");
+                while(true) {
+                    System.out.print("Nome da Transportadora: ");
+                    String transportadora = sc.nextLine();
+                    if (trazAqui.procuraTransportadora(transportadora)) {
+                        while(true) {
+                            System.out.print("Password: ");
+                            String password = sc.nextLine();
+                            if (password.equals("")) {
+                                login = 1;
+                                trazAqui.setUtilizador_atual(transportadora);
+                                break;
+                            }
+                            else System.out.println("Password incorreta!");
+                        }
+                        break;
+                    }
+                    else System.out.println("Transportadora inválida!");
+                }
+                break;
             }
             else {
                 System.out.println("Opção inválida!");
@@ -183,6 +206,12 @@ public class Interpreter
             else if (opcao == 3) {
                 clearScreen();
                 avaliaTodasAsEncomendasFeitas(trazAqui);
+                esperaInput();
+                break;
+            }
+            else if (opcao == 4) {
+                clearScreen();
+                aceitaOuRecusasTodasAsPropostas(trazAqui);
                 esperaInput();
                 break;
             }
@@ -279,6 +308,42 @@ public class Interpreter
         }
     }
 
+    private static void aceitaOuRecusasTodasAsPropostas(TrazAqui trazAqui)
+    {
+        Utilizador utilizadorAux = trazAqui.getUtilizador(trazAqui.getUtilizador_atual());
+        System.out.println("Aceite ou recuse as seguintes propostas de Entrega:");
+        utilizadorAux.getCodsEncomendasTransportadoraPorAceitar()
+                .forEach((key, value) -> aceitaOuRecusaUmaProposta(trazAqui, key, value.getKey(), value.getValue()));
+        System.out.println("\nTodas as Encomendas feitas avaliadas com sucesso.");
+        trazAqui.todasEntregasAceitesOuRecusadas(trazAqui.getUtilizador_atual());
+    }
+
+
+    private static void aceitaOuRecusaUmaProposta(TrazAqui trazAqui, String codEncomenda, double tempoTransporte, double preçoTransporte)
+    {
+        Scanner sc = new Scanner(System.in);
+        DecimalFormat fmt = new DecimalFormat("0.00");
+
+        System.out.println("Entrega da Encomenda "+codEncomenda+" irá demorar cerca de " + (int)tempoTransporte/60 + "Horas e "
+                + (int)tempoTransporte%60 + " minutos. Terá um custo de " + fmt.format(preçoTransporte) + "€." );
+
+        while (true) {
+            System.out.print("\nAceitar ou Recusar (y-n): ");
+            String aceita = sc.nextLine();
+            if (aceita.equals("y") || aceita.equals("Y")) {
+                trazAqui.utilizadorAceitaOuRecusaEntrega(codEncomenda, true);
+                break;
+            }
+            else if (aceita.equals("n") || aceita.equals("N")) {
+                trazAqui.utilizadorAceitaOuRecusaEntrega(codEncomenda, false);
+                break;
+            }
+            else {
+                System.out.println("Aceitação Inválida");
+            }
+        }
+    }
+
     /********************* MENUS DO VOLUNTÁRIO *******************/
     private static void menuVoluntario(TrazAqui trazAqui)
     {
@@ -289,7 +354,7 @@ public class Interpreter
         while(true) {
 
             clearScreen();
-            System.out.println("----------------------MENU UTILIZADOR--------------------\n");
+            System.out.println("----------------------MENU VOLUNTÁRIO--------------------\n");
             System.out.println("0 -> Logout.");
             System.out.println("1 -> Listar entidades no sistema.");
             System.out.println("2 -> Fazer pedido para entregar encomenda.");
@@ -325,13 +390,13 @@ public class Interpreter
             }
             else if (opcao == 2) {
                 clearScreen();
-                realizaEncomendaPedida(trazAqui);
+                realizaEncomendaPedidaVoluntario(trazAqui);
                 esperaInput();
                 break;
             }
             else if (opcao == 3) {
                 clearScreen();
-                alteraDisponibilidadeVoluntario(trazAqui);
+                alteraDisponibilidadeEntidade(trazAqui);
                 esperaInput();
                 break;
             }
@@ -342,7 +407,7 @@ public class Interpreter
         }
     }
 
-    public static void realizaEncomendaPedida (TrazAqui trazAqui) {
+    public static void realizaEncomendaPedidaVoluntario (TrazAqui trazAqui) {
         Scanner sc = new Scanner(System.in);
         Voluntario voluntario = trazAqui.getVoluntario(trazAqui.getUtilizador_atual());
 
@@ -390,21 +455,131 @@ public class Interpreter
         }
     }
 
-    public static void alteraDisponibilidadeVoluntario (TrazAqui trazAqui) {
+    public static void alteraDisponibilidadeEntidade (TrazAqui trazAqui) {
         Scanner sc = new Scanner(System.in);
-        String codVoluntario = trazAqui.getUtilizador_atual();
+        String codEntidade = trazAqui.getUtilizador_atual();
 
         while(true) {
             System.out.println("Qual disponibilidade quer colocar no Voluntario?");
             System.out.print("(y - Disponível | n - Não Disponível) : ");
             String disponibilidade = sc.nextLine();
             if (disponibilidade.startsWith("y") || disponibilidade.startsWith("Y")) {
-                trazAqui.setAvailable(codVoluntario, true);
-                System.out.println("Voluntário definido como Disponível para entregas!");
+                trazAqui.setAvailable(codEntidade, true);
+                System.out.println("Entidade definida como Disponível para entregas!");
                 break;
             } else if (disponibilidade.startsWith("n") || disponibilidade.startsWith("N")) {
-                trazAqui.setAvailable(codVoluntario, false);
-                System.out.println("Voluntário definido como Não Disponível para entregas!");
+                trazAqui.setAvailable(codEntidade, false);
+                System.out.println("Entidade definida como Não Disponível para entregas!");
+                break;
+            }
+        }
+    }
+
+    /********************* MENUS DO TRANSPORTADORA *******************/
+    private static void menuTransportadora(TrazAqui trazAqui)
+    {
+        Scanner sc = new Scanner(System.in);
+        Parser parser = new Parser();
+        int opcao;
+
+        while(true) {
+
+            clearScreen();
+            System.out.println("----------------------MENU TRANSPORTADORA--------------------\n");
+            System.out.println("0 -> Logout.");
+            System.out.println("1 -> Listar entidades no sistema.");
+            System.out.println("2 -> Fazer pedido para entregar encomenda.");
+            System.out.println("3 -> Altera disponibilidade de entrega.");
+
+            String escolha = sc.nextLine();
+            if (escolha.equals("")) {
+                opcao = -1;
+            } else {
+                opcao = Integer.parseInt(escolha);
+            }
+
+            if (opcao == 0) {
+                login = 0;
+                trazAqui.setUtilizador_atual("");
+                break;
+            }
+            else if (opcao == 1) {
+                clearScreen();
+                System.out.println("\n-----------------TRAZ AQUI------------------------");
+                System.out.println("\n------------------LOJAS-------------------------\n");
+                System.out.println(trazAqui.getLojas().toString());
+                System.out.println("\n------------------VOLUNTARIOS-------------------------\n");
+                System.out.println(trazAqui.getVoluntarios().toString());
+                System.out.println("\n------------------TRANSPORTADORAS-------------------------\n");
+                System.out.println(trazAqui.getTransportadoras().toString());
+                System.out.println("\n------------------UTILIZADORES-------------------------\n");
+                System.out.println(trazAqui.getUtilizadores().toString());
+                System.out.println("\n------------------ACEITES-------------------------\n");
+                System.out.println(trazAqui.getEncomendasAceites().toString());
+                System.out.print("\n");
+                esperaInput();
+            }
+            else if (opcao == 2) {
+                clearScreen();
+                realizaEncomendaPedidaTransportadora(trazAqui);
+                esperaInput();
+                break;
+            }
+            else if (opcao == 3) {
+                clearScreen();
+                alteraDisponibilidadeEntidade(trazAqui);
+                esperaInput();
+                break;
+            }
+            else {
+                System.out.println("Opção inválida!");
+                esperaInput();
+            }
+        }
+    }
+
+    public static void realizaEncomendaPedidaTransportadora (TrazAqui trazAqui) {
+        Scanner sc = new Scanner(System.in);
+        Transportadora transportadora = trazAqui.getTransportador(trazAqui.getUtilizador_atual());
+
+        clearScreen();
+        System.out.println("\n-----------------PEDIDO ENTREGA ENCOMENDA------------------------");
+        while(true) {
+            if (transportadora.isAvailable()) {
+                System.out.println("Insira o Código da loja:");
+                String codLoja = sc.nextLine();
+                if (!codLoja.startsWith("l")) {
+                    codLoja = "l" + codLoja;
+                }
+                if (trazAqui.procuraLoja(codLoja)) {
+
+                    if (trazAqui.getLoja(codLoja).getCoordenadas().isReachable( transportadora.getCoordenadas(), transportadora.getRaio())) {
+
+                        while(true) {
+                            System.out.println("Insira o Código da Encomenda:");
+                            String codEncomenda = sc.nextLine();
+                            if (trazAqui.getLoja(codLoja).possuiEncomendaCodigo(codEncomenda)) {
+                                Encomenda enc = trazAqui.getEncomenda(codEncomenda);
+                                if (trazAqui.getUtilizador(enc.getCodUtilizador()).getCoordenadas().isReachable(transportadora.getCoordenadas(), transportadora.getRaio())) {
+                                    String res = trazAqui.realizaEntregaDeVendaTransportadora(codLoja, codEncomenda, trazAqui.getUtilizador_atual());
+                                    System.out.println(res);
+                                    break;
+                                } else {
+                                    System.out.println("Nao consegue alcançar utilizador");
+                                }
+                            } else {
+                                System.out.println("Encomenda Pendente inexistente");
+                            }
+                        }
+                        break;
+                    } else {
+                        System.out.println("Não consegue alcançar esta loja");
+                    }
+                } else {
+                    System.out.println("Loja Inexistente");
+                }
+            } else {
+                System.out.println("Transportadora Não Disponível para realizar Entregas.");
                 break;
             }
         }

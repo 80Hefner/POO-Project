@@ -1,5 +1,7 @@
 package Models;
 
+import java.util.Random;
+
 public class Transportadora extends Voluntario
 {
     private int nif;
@@ -100,5 +102,16 @@ public class Transportadora extends Voluntario
     public Transportadora clone()
     {
         return new Transportadora(this);
+    }
+
+
+    public void realizaEntregaDeVenda(Encomenda enc, Loja loja, Utilizador utilizador) {
+
+        super.realizaEntregaDeVenda(enc, loja, utilizador);
+
+        double distance = super.getCoordenadas().distanceTo(loja.getCoordenadas()) + super.getCoordenadas().distanceTo(utilizador.getCoordenadas());
+        double precoTransporte = this.getPreco_km() * distance * ((enc.getPeso() / 25)*0.25 + 1);
+
+        enc.setPrecoTransporte(precoTransporte);
     }
 }

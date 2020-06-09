@@ -165,9 +165,17 @@ public class Loja
         return this.encomendasPorEntregar.contains(codEncomenda);
     }
 
-    public void realizaEntregaDeVenda(Encomenda encomenda) {
+    public void adicionaEncomendaParaEntregar (String codEnc) {
+        this.encomendasPorEntregar.add(codEnc);
+    }
+
+    public void realizaEntregaDeVendaVoluntario(Encomenda encomenda) {
         this.encomendasPorEntregar.remove(encomenda.getCodigo());
         encomenda.setEntregue(true);
+    }
+
+    public void realizaEntregaDeVendaTransportadora(Encomenda encomenda) {
+        this.encomendasPorEntregar.remove(encomenda.getCodigo());
     }
 
     public void insereNoHistorico (Encomenda encomendaFeita) {

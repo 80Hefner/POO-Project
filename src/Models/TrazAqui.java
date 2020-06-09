@@ -169,7 +169,7 @@ public class TrazAqui
         Encomenda enc = this.getEncomenda(codEnc);
 
         //Realiza e altera uma encomenda
-        this.lojas.get(codLoja).realizaEntregaDeVenda(enc);//Done
+        this.lojas.get(codLoja).realizaEntregaDeVendaVoluntario(enc);//Done
         this.voluntarios.get(codVoluntario).realizaEntregaDeVenda(enc, this.getLoja(codLoja), this.getUtilizador(enc.getCodUtilizador()));
         this.utilizadores.get(enc.getCodUtilizador()).realizaEntregaDeVenda(enc);
 
@@ -199,9 +199,58 @@ public class TrazAqui
         return sb.toString();
     }
 
+    public String realizaEntregaDeVendaTransportadora(String codLoja, String codEnc, String codTransportadora) {
 
-    public void setAvailable (String codVoluntario, boolean status) {
-        this.voluntarios.get(codVoluntario).setAvailable(status);
+        //TO DO: Trocar o return desta função para um void e depois imprimir as ceanas dadas da encomenda
+        StringBuilder sb = new StringBuilder();
+        Encomenda enc = this.getEncomenda(codEnc);
+
+        //Realiza e altera uma encomenda
+        this.lojas.get(codLoja).realizaEntregaDeVendaTransportadora(enc);//Done
+        this.transportadoras.get(codTransportadora).realizaEntregaDeVenda(enc, this.getLoja(codLoja), this.getUtilizador(enc.getCodUtilizador()));
+        this.utilizadores.get(enc.getCodUtilizador()).insereEntregaParaAceitar(enc);
+
+        //Insere venda alterada depois da entrega no catálogo das Encomendas
+        this.catalogoEncomendas.put(codEnc, enc); //Replace da Encomenda antiga para n partilhar apontadores e ser sempre cópias
+
+        return "Pedido de Entrega efetuado com sucesso";
+    }
+
+
+    public void utilizadorAceitaOuRecusaEntrega(String codEnc, boolean status) {
+
+        Encomenda enc = this.getEncomenda(codEnc);
+        if( status ) { //Acontece quando é true, utilizador aceita
+            this.lojas.get(enc.getCodLoja()).insereNoHistorico(enc.clone());
+            this.transportadoras.get(enc.getCodTrnasportador()).insereNoHistorico(enc.clone());
+            this.utilizadores.get(enc.getCodUtilizador()).realizaEntregaDeVenda(enc.clone());
+            this.utilizadores.get(enc.getCodUtilizador()).insereNoHistorico(enc.clone());
+
+            enc.setEntregue(true);
+            this.catalogoEncomendas.put(codEnc, enc);
+            this.utilizadores.get(enc.getCodUtilizador()).aicionaEncomendaParaAvaliar(enc.getCodigo(), enc.getTempoTransporte(), enc.getPrecoTransporte());
+        }
+        else {
+            this.lojas.get(enc.getCodLoja()).adicionaEncomendaParaEntregar(codEnc);
+
+            enc.setPrecoTransporte(0.0);
+            enc.setCondicoesClimatericas(0);
+            enc.setTempoTransporte(0.0);
+            enc.setCodTrnasportador("");
+            this.catalogoEncomendas.put(codEnc, enc);
+        }
+    }
+
+    public void todasEntregasAceitesOuRecusadas (String codUtilizador) {
+        this.utilizadores.get(codUtilizador).todasEntregasAceitesOuRecusadas();
+    }
+
+
+    public void setAvailable (String codEntidade, boolean status) {
+        if(codEntidade.startsWith("v"))
+            this.voluntarios.get(codEntidade).setAvailable(status);
+        else if (codEntidade.startsWith("t"))
+            this.transportadoras.get(codEntidade).setAvailable(status);
     }
 
 

@@ -13,7 +13,7 @@ public class Utilizador
     //Fazer aqui uma list de encomendas feitas que o Utilizador deve avaliar
     private Map<String, Map.Entry<Double, Double>> encomendasCompletadasPorAvaliar;
     private Set<String> encomendasPendentes; //Encomendas que faltam aceitar pela Loja e as que faltam ser entregues (englobadas as duas aqui);
-    private Set<String> codsEncomendasTransportadoraPorAceitar; //Encomendas que falta aceitar receber de uma tranpostadora;
+    private Map<String, Map.Entry<Double, Double>> encomendasTransportadoraPorAceitar; //Encomendas que falta aceitar receber de uma tranpostadora;
     private Map<String, Encomenda> encomendasHistorico;  //Todas as encomendas feitas e recebidas ou não por este utilizador; (Adicionar só no fim esta parte?
 
     public Utilizador()
@@ -25,7 +25,7 @@ public class Utilizador
         this.encomendasCompletadasPorAvaliar = new TreeMap<>();
         this.encomendasHistorico = new HashMap<>();
         this.encomendasPendentes = new TreeSet<>();
-        this.codsEncomendasTransportadoraPorAceitar = new TreeSet<>();
+        this.encomendasTransportadoraPorAceitar = new TreeMap<>();
     }
 
     public Utilizador(String nome, String codigo, GPS coordenadas, String password)
@@ -37,7 +37,7 @@ public class Utilizador
         this.encomendasCompletadasPorAvaliar = new TreeMap<>();
         this.encomendasHistorico = new HashMap<>();
         this.encomendasPendentes = new TreeSet<>();
-        this.codsEncomendasTransportadoraPorAceitar = new TreeSet<>();
+        this.encomendasTransportadoraPorAceitar = new TreeMap<>();
     }
 
     public Utilizador(Utilizador u)
@@ -49,7 +49,7 @@ public class Utilizador
         this.encomendasCompletadasPorAvaliar = new TreeMap<>(u.getEncomendasCompletadasPorAvaliar());
         this.encomendasHistorico = new HashMap<>(u.getEncomendasHistorico());
         this.encomendasPendentes = new TreeSet<>(u.getEncomendasPendentes());
-        this.codsEncomendasTransportadoraPorAceitar = new TreeSet<>(u.getCodsEncomendasTransportadoraPorAceitar());
+        this.encomendasTransportadoraPorAceitar = new TreeMap<>(u.getCodsEncomendasTransportadoraPorAceitar());
     }
 
     public String getNome()
@@ -112,12 +112,12 @@ public class Utilizador
         this.encomendasPendentes = new TreeSet<>(encomendasPendentes);
     }
 
-    public Set<String> getCodsEncomendasTransportadoraPorAceitar() {
-        return new TreeSet<>(codsEncomendasTransportadoraPorAceitar);
+    public Map<String, Map.Entry<Double, Double>> getCodsEncomendasTransportadoraPorAceitar() {
+        return new TreeMap<>(encomendasTransportadoraPorAceitar);
     }
 
-    public void setCodsEncomendasTransportadoraPorAceitar(Set<String> codsEncomendasTransportadoraPorAceitar) {
-        this.codsEncomendasTransportadoraPorAceitar = new TreeSet<>(codsEncomendasTransportadoraPorAceitar);
+    public void setCodsEncomendasTransportadoraPorAceitar(Map<String, Map.Entry<Double, Double>> encomendasTransportadoraPorAceitar) {
+        this.encomendasTransportadoraPorAceitar = new TreeMap<>(encomendasTransportadoraPorAceitar);
     }
 
     public Map<String, Map.Entry<Double, Double>> getEncomendasCompletadasPorAvaliar() {
@@ -142,7 +142,7 @@ public class Utilizador
                 this.password.equals(u.getPassword()) &&
                 this.encomendasHistorico.equals(new HashMap<>(u.getEncomendasHistorico())) &&
                 this.encomendasPendentes.equals(new TreeSet<>(u.getEncomendasPendentes())) &&
-                this.codsEncomendasTransportadoraPorAceitar.equals(new TreeSet<>(u.getCodsEncomendasTransportadoraPorAceitar())) &&
+                this.encomendasTransportadoraPorAceitar.equals(new TreeMap<>(u.getCodsEncomendasTransportadoraPorAceitar())) &&
                 this.encomendasCompletadasPorAvaliar.equals(new TreeMap<>(u.encomendasCompletadasPorAvaliar));
     }
 
@@ -156,7 +156,7 @@ public class Utilizador
         sb.append("\nPassword: ").append(this.password);
         sb.append("\nEncomendas feitas por avaliar: ").append(this.encomendasCompletadasPorAvaliar.entrySet().toString());
         sb.append("\nEncomendas Pendentes: ").append(this.encomendasPendentes);
-        sb.append("\nEncomendas Por Aceitar: ").append(this.codsEncomendasTransportadoraPorAceitar);
+        sb.append("\nEncomendas Por Aceitar: ").append(this.encomendasTransportadoraPorAceitar);
         sb.append("\nEncomendas Historico: ").append(this.encomendasHistorico.keySet().toString());
         sb.append("\n");
 
@@ -177,6 +177,10 @@ public class Utilizador
         this.encomendasPendentes.remove(enc.getCodigo());
     }
 
+    public void insereEntregaParaAceitar(Encomenda enc) {
+        this.encomendasTransportadoraPorAceitar.putIfAbsent(enc.getCodigo(), new AbstractMap.SimpleEntry<>(enc.getTempoTransporte(), enc.getPrecoTransporte()));
+    }
+
     public void insereNoHistorico (Encomenda encomendaFeita) {
         this.encomendasHistorico.putIfAbsent(encomendaFeita.getCodigo(), encomendaFeita);
     }
@@ -187,5 +191,9 @@ public class Utilizador
 
     public void todasEncomendasFeitasAvaliadas () {
         this.encomendasCompletadasPorAvaliar.clear();
+    }
+
+    public void todasEntregasAceitesOuRecusadas () {
+        this.encomendasTransportadoraPorAceitar.clear();
     }
 }
