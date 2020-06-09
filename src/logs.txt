@@ -35,6 +35,7 @@ Encomenda:e6465,u48,l13,70.94071,p9,Shampoo,5.030349,0.86281204,p43,Doce de leit
 Encomenda:e8779,u68,l8,70.72074,p10,Condicionador,4.7617254,36.898346,p41,Ervilha,8.82261,3.3189354,p71,Queijo outros,6.1653156,3.197555,p12,Lustra móveis,4.0892987,18.82121,p8,Sabonete,5.221398,13.939995,p37,Sardinha,4.479973,4.840426,p15,Álcool,5.610851,17.826002,p80,Salsicha,2.5069861,13.548766
 Aceite:e1014
 Aceite:e3319
+Aceite:e6465
 Aceite:e3013
 Aceite:e6813
 Aceite:e1440
