@@ -1,9 +1,6 @@
 package Models;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TrazAqui
@@ -53,14 +50,8 @@ public class TrazAqui
     public void insereEncomendaAceite(String e)
     {
         this.aceites.add(e);
+        this.lojas.get(this.getEncomenda(e).getCodLoja()).aceitaEncomenda(e);
         this.catalogoEncomendas.get(e).setAceiteLoja(true);
-        this.utilizadores.values().forEach(val -> val.verificaPossuiVendaeRemovePendente(e));
-    }
-
-    public void insereEncomenda(Encomenda e, String codLoja)
-    {
-        this.lojas.get(codLoja).insereEncomenda(e);
-        this.catalogoEncomendas.putIfAbsent(e.getCodigo(), e.clone());
     }
 
     public void adicionaEncomendaAoSistema(Encomenda e)
@@ -178,9 +169,9 @@ public class TrazAqui
         Encomenda enc = this.getEncomenda(codEnc);
 
         //Realiza e altera uma encomenda
-        this.getLoja(codLoja).realizaEntregaDeVenda(enc);//Done
-        this.getVoluntario(codVoluntario).realizaEntregaDeVenda(enc, this.lojas.get(codLoja), this.getUtilizador(enc.getCodUtilizador()));
-        this.getUtilizador(enc.getCodUtilizador()).realizaEntregaDeVenda(enc);
+        this.lojas.get(codLoja).realizaEntregaDeVenda(enc);//Done
+        this.voluntarios.get(codVoluntario).realizaEntregaDeVenda(enc, this.getLoja(codLoja), this.getUtilizador(enc.getCodUtilizador()));
+        this.utilizadores.get(enc.getCodUtilizador()).realizaEntregaDeVenda(enc);
 
         //Insere venda alterada depois da entrega no catálogo das Encomendas
         this.catalogoEncomendas.put(codEnc, enc); //Replace da Encomenda antiga para n partilhar apontadores e ser sempre cópias
@@ -189,6 +180,9 @@ public class TrazAqui
         this.lojas.get(codLoja).insereNoHistorico(enc.clone());
         this.voluntarios.get(codVoluntario).insereNoHistorico(enc.clone());
         this.utilizadores.get(enc.getCodUtilizador()).insereNoHistorico(enc.clone());
+
+
+        this.utilizadores.get(enc.getCodUtilizador()).aicionaEncomendaParaAvaliar(enc.getCodigo(), enc.getTempoTransporte(), enc.getPrecoTransporte());
 
         //Esta parte toda pode sair porque isto depois vai tar na View, e devolvemos um void
         sb.append("Tempo demorado a realizar a entrega -> ")
@@ -210,6 +204,7 @@ public class TrazAqui
         this.voluntarios.get(codVoluntario).setAvailable(status);
     }
 
+
     public void avaliaEntregaEncomenda (String codEncomenda, double avaliacao) {
         Encomenda encomenda = this.getEncomenda(codEncomenda);
 
@@ -218,7 +213,9 @@ public class TrazAqui
         } else if (encomenda.getCodTrnasportador().startsWith("t")) {
             this.transportadoras.get(encomenda.getCodTrnasportador()).avaliaEncomendaFeita(avaliacao);
         }
+    }
 
-        this.utilizadores.get(this.getUtilizador_atual()).avaliaEncomendaFeita(encomenda.getCodigo());
+    public void todasEncomendasFeitasAvaliadas (String codUtilizador) {
+        this.utilizadores.get(codUtilizador).todasEncomendasFeitasAvaliadas();
     }
 }

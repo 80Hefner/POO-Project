@@ -14,6 +14,7 @@ public class Voluntario
     private double velocidadeMedia;
     private double raio;
     private double classificacao;
+    private int total_avaliacoes;
     private int total_entregas;
     private boolean medical;
     private boolean available;
@@ -29,6 +30,9 @@ public class Voluntario
         this.password = "";
         this.velocidadeMedia = 0.0;
         this.raio = 0;
+        this.classificacao = 0.0;
+        this.total_avaliacoes = 0;
+        this.total_entregas = 0;
         this.medical = false;
         this.available = false;
         this.availableMedical = false;
@@ -43,7 +47,8 @@ public class Voluntario
         this.password = password;
         this.velocidadeMedia = velocidadeMedia;
         this.raio = raio;
-        this.classificacao = 0;
+        this.classificacao = 0.0;
+        this.total_avaliacoes = 0;
         this.total_entregas = 0;
         this.medical = medical;
         this.available = true;
@@ -59,8 +64,9 @@ public class Voluntario
         this.password = e.getPassword();
         this.velocidadeMedia = e.getVelocidadeMedia();
         this.raio = e.getRaio();
-        this.classificacao = 0;
-        this.total_entregas = 0;
+        this.classificacao = e.getClassificacao();
+        this.total_entregas = e.getTotal_entregas();
+        this.total_avaliacoes = e.getTotal_avaliacoes();
         this.medical = e.isMedical();
         this.available = true;
         this.availableMedical = medical;
@@ -137,6 +143,14 @@ public class Voluntario
         this.total_entregas = total_entregas;
     }
 
+    public int getTotal_avaliacoes() {
+        return total_avaliacoes;
+    }
+
+    public void setTotal_avaliacoes(int total_avaliacoes) {
+        this.total_avaliacoes = total_avaliacoes;
+    }
+
     public boolean isMedical()
     {
         return medical;
@@ -203,6 +217,7 @@ public class Voluntario
                 this.raio == e.getRaio() &&
                 this.classificacao == e.getClassificacao() &&
                 this.total_entregas == e.getTotal_entregas() &&
+                this.total_avaliacoes == e.getTotal_avaliacoes() &&
                 this.medical == e.isMedical() &&
                 this.available == e.isAvailable() &&
                 this.availableMedical == e.isAvailableMedical() &&
@@ -224,7 +239,7 @@ public class Voluntario
         sb.append("\nIs Medical? ").append(this.medical);
         sb.append("\nIs Available? ").append(this.available);
         sb.append("\nIs Available for Medical? ").append(this.availableMedical);
-        sb.append("\nRegistos Históricos: \n").append(this.encomendasHistorico.toString());
+        sb.append("\nRegistos Históricos: \n").append(this.encomendasHistorico.keySet().toString());
         sb.append("\n");
 
         return sb.toString();
@@ -240,8 +255,6 @@ public class Voluntario
     public void realizaEntregaDeVenda(Encomenda enc, Loja loja, Utilizador utilizador) {
         Random r = new Random();
 
-        //this.encomendasHistorico.add(enc);
-
         double distance = this.coordenadas.distanceTo(loja.getCoordenadas()) + this.coordenadas.distanceTo(utilizador.getCoordenadas());
         double tempo = distance/velocidadeMedia * 60.0;
         int temporal = (int) (r.nextDouble() * 3);
@@ -254,18 +267,23 @@ public class Voluntario
 
     }
 
+    public void incrementaNumeroEntregas () {
+        this.setTotal_entregas(this.getTotal_entregas() + 1);
+    }
+
     public void insereNoHistorico (Encomenda encomendaFeita) {
+        this.incrementaNumeroEntregas();
         this.encomendasHistorico.putIfAbsent(encomendaFeita.getCodigo(), encomendaFeita);
     }
 
     public void avaliaEncomendaFeita (double avaliacao) {
-        Integer nrAvaliacoes = this.getTotal_entregas();
+        Integer nrAvaliacoes = this.getTotal_avaliacoes();
         Double novaClassificacao = this.getClassificacao()*nrAvaliacoes + avaliacao;
 
         nrAvaliacoes++;
         novaClassificacao = novaClassificacao/nrAvaliacoes;
 
-        this.setTotal_entregas(nrAvaliacoes);
+        this.setTotal_avaliacoes(nrAvaliacoes);
         this.setClassificacao(novaClassificacao);
     }
 }

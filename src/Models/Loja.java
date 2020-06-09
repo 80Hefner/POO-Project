@@ -13,7 +13,7 @@ public class Loja
 
     private Set<String> encomendasPorAceitar;
     private Set<String> encomendasPorEntregar;
-    private HashMap<String, Encomenda> encomendasHistorico; //Acho que faz mais sentido ter todas as encomendas no TrazAqui e mudá-as sempre lá, em vez de ter de mudar em tudo o que é Models.
+    private Map<String, Encomenda> encomendasHistorico; //Acho que faz mais sentido ter todas as encomendas no TrazAqui e mudá-as sempre lá, em vez de ter de mudar em tudo o que é Models.
 
     public Loja()
     {
@@ -45,7 +45,7 @@ public class Loja
         this.temFila = u.temFila();
         this.encomendasPorAceitar = new TreeSet<>(u.getEncomendasPorAceitar());
         this.encomendasPorEntregar = new TreeSet<>(u.getEncomendasPorEntregar());
-        this.encomendasHistorico = new HashMap<>();
+        this.encomendasHistorico = new HashMap<>(u.getEncomendasHistorico());
     }
 
     public String getNome()
@@ -114,10 +114,6 @@ public class Loja
         this.encomendasHistorico = new HashMap<>(encomendasHistorico);
     }
 
-    /*
-    public Encomenda getEncomenda (String codEncomenda) {
-        return this.getEncomendas().get(codEncomenda);
-    }*/
 
     public boolean equals(Object o)
     {
@@ -144,7 +140,7 @@ public class Loja
         sb.append("\nTem fila de espera? ").append(this.temFila);
         sb.append("\nEncomendas por aceitar ").append(this.encomendasPorAceitar.toString());
         sb.append("\nEncomendas para entregar ").append(this.encomendasPorEntregar.toString());
-        sb.append("\nEncomendas Histórico ").append(this.encomendasHistorico.toString());
+        sb.append("\nEncomendas Histórico ").append(this.encomendasHistorico.keySet().toString());
         sb.append("\n");
 
         return sb.toString();
@@ -157,13 +153,16 @@ public class Loja
 
     public void insereEncomenda(Encomenda e)
     {
-        this.encomendasPorEntregar.add(e.getCodigo());
+        this.encomendasPorAceitar.add(e.getCodigo());
     }
 
-    public boolean possuiEncomendaCodigo (String codEncomenda, Map<String,Encomenda> mapaEncomendas) {
-        if (this.encomendasPorEntregar.contains(codEncomenda))
-            return !mapaEncomendas.get(codEncomenda).isEntregue();
-        return false;
+    public void aceitaEncomenda(String codEncomenda) {
+        this.encomendasPorAceitar.remove(codEncomenda);
+        this.encomendasPorEntregar.add(codEncomenda);
+    }
+
+    public boolean possuiEncomendaCodigo (String codEncomenda) {
+        return this.encomendasPorEntregar.contains(codEncomenda);
     }
 
     public void realizaEntregaDeVenda(Encomenda encomenda) {

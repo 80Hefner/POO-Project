@@ -46,7 +46,7 @@ public class Utilizador
         this.codigo = u.getCodigo();
         this.coordenadas = u.getCoordenadas();
         this.password = u.getPassword();
-        this.encomendasCompletadasPorAvaliar = new TreeMap<>();
+        this.encomendasCompletadasPorAvaliar = new TreeMap<>(u.getEncomendasCompletadasPorAvaliar());
         this.encomendasHistorico = new HashMap<>(u.getEncomendasHistorico());
         this.encomendasPendentes = new TreeSet<>(u.getEncomendasPendentes());
         this.codsEncomendasTransportadoraPorAceitar = new TreeSet<>(u.getCodsEncomendasTransportadoraPorAceitar());
@@ -129,19 +129,6 @@ public class Utilizador
     }
 
 
-    public void insereEncomenda (Encomenda e) {
-        this.encomendasHistorico.put(e.getCodigo(), e);
-        this.encomendasPendentes.add(e.getCodigo());
-    }
-
-    public boolean verificaPossuiVendaeRemovePendente (String codEncomenda) {
-        boolean possui = this.encomendasHistorico.containsKey(codEncomenda);
-        if (possui)
-            this.encomendasPendentes.remove(codEncomenda);
-
-        return possui;
-
-    }
 
     public boolean equals(Object o)
     {
@@ -167,9 +154,10 @@ public class Utilizador
         sb.append("\nCodigo: ").append(this.codigo);
         sb.append("\nCoordenadas: ").append(this.coordenadas.toString());
         sb.append("\nPassword: ").append(this.password);
+        sb.append("\nEncomendas feitas por avaliar: ").append(this.encomendasCompletadasPorAvaliar.entrySet().toString());
         sb.append("\nEncomendas Pendentes: ").append(this.encomendasPendentes);
         sb.append("\nEncomendas Por Aceitar: ").append(this.codsEncomendasTransportadoraPorAceitar);
-        sb.append("\nEncomendas Historico: ").append(this.encomendasHistorico.keySet());
+        sb.append("\nEncomendas Historico: ").append(this.encomendasHistorico.keySet().toString());
         sb.append("\n");
 
         return sb.toString();
@@ -180,15 +168,24 @@ public class Utilizador
         return new Utilizador(this);
     }
 
+
+    public void insereEncomenda (Encomenda enc) {
+        this.encomendasPendentes.add(enc.getCodigo());
+    }
+
     public void realizaEntregaDeVenda(Encomenda enc) {
-        this.encomendasHistorico.get(enc.getCodigo()).setEntregue(true);
+        this.encomendasPendentes.remove(enc.getCodigo());
     }
 
     public void insereNoHistorico (Encomenda encomendaFeita) {
         this.encomendasHistorico.putIfAbsent(encomendaFeita.getCodigo(), encomendaFeita);
     }
 
-    public void avaliaEncomendaFeita (String codEncomenda) {
-        this.encomendasCompletadasPorAvaliar.remove(codEncomenda);
+    public void aicionaEncomendaParaAvaliar (String codEncomenda, double tempoTransporte, double custoTransporte) {
+        this.encomendasCompletadasPorAvaliar.putIfAbsent(codEncomenda, new AbstractMap.SimpleEntry<Double, Double>(tempoTransporte, custoTransporte));
+    }
+
+    public void todasEncomendasFeitasAvaliadas () {
+        this.encomendasCompletadasPorAvaliar.clear();
     }
 }

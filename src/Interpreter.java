@@ -1,7 +1,10 @@
 import Models.*;
 import Utils.Parser;
+import org.w3c.dom.ls.LSOutput;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -47,7 +50,13 @@ public class Interpreter
             System.out.println("4 -> Efetuar login com Voluntario.");
             System.out.println("5 -> Efetuar login com Loja.");
             System.out.print("OPÇÃO: ");
-            opcao = Integer.parseInt(sc.nextLine());
+
+            String escolha = sc.nextLine();
+            if (escolha.equals("")) {
+                opcao = -1;
+            } else {
+                opcao = Integer.parseInt(escolha);
+            }
 
             if (opcao == 0)
                 System.exit(0);
@@ -141,7 +150,12 @@ public class Interpreter
             System.out.println("3 -> Avaliar Encomendas que foram Entregues (" + trazAqui.getUtilizador(trazAqui.getUtilizador_atual()).getEncomendasCompletadasPorAvaliar().size() +").");
             System.out.println("4 -> Aceitar Encomendas propostas entregar por uma Transportadora (" + trazAqui.getUtilizador(trazAqui.getUtilizador_atual()).getCodsEncomendasTransportadoraPorAceitar().size() +").");
 
-            opcao = Integer.parseInt(sc.nextLine());
+            String escolha = sc.nextLine();
+            if (escolha.equals("")) {
+                opcao = -1;
+            } else {
+                opcao = Integer.parseInt(escolha);
+            }
 
             if (opcao == 0) {
                 login = 0;
@@ -166,7 +180,17 @@ public class Interpreter
             }
             else if (opcao == 2) {
                 Encomenda e = novaEncomenda(trazAqui);
-                trazAqui.insereEncomenda(e, e.getCodLoja());
+                trazAqui.adicionaEncomendaAoSistema(e);
+            }
+            else if (opcao == 3) {
+                clearScreen();
+                avaliaTodasAsEncomendasFeitas(trazAqui);
+                esperaInput();
+                break;
+            }
+            else {
+                System.out.println("Opção inválida!");
+                esperaInput();
             }
         }
     }
@@ -222,6 +246,41 @@ public class Interpreter
         return l;
     }
 
+    private static void avaliaTodasAsEncomendasFeitas(TrazAqui trazAqui)
+    {
+        Utilizador utilizadorAux = trazAqui.getUtilizador(trazAqui.getUtilizador_atual());
+        System.out.println("Avalie todas as entregas da(s) Encomenda(s) de 0 a 10: ");
+        utilizadorAux.getEncomendasCompletadasPorAvaliar()
+                .forEach((key, value) -> avaliaUmaEncomendaFeita(trazAqui, key, value.getKey(), value.getValue()));
+        System.out.println("\nTodas as Encomendas feitas avaliadas com sucesso.");
+        trazAqui.todasEncomendasFeitasAvaliadas(trazAqui.getUtilizador_atual());
+    }
+
+
+    private static void avaliaUmaEncomendaFeita(TrazAqui trazAqui, String codEncomenda, double tempoTransporte, double preçoTransporte)
+    {
+        DecimalFormat fmt = new DecimalFormat("0.00");
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("Entrega da Encomenda "+codEncomenda+" demorou " + (int)tempoTransporte/60 + "Horas e "
+                        + (int)tempoTransporte%60 + " minutos. Teve o custo de " + fmt.format(preçoTransporte) + "€." );
+        while (true) {
+            System.out.print("\nAvaliação(0-10): ");
+            double avaliacao = sc.nextDouble();
+            if (avaliacao >= 0.0 && avaliacao <= 10.0) {
+                trazAqui.avaliaEntregaEncomenda(codEncomenda, avaliacao);
+                if (preçoTransporte == 0.0) {
+                    System.out.println("Voluntário responsável pela entrega da Encomenda avaliado com sucesso.");
+                } else {
+                    System.out.println("Transportadora responsável pela entrega da Encomenda avaliada com sucesso.");
+                }
+                break;
+            } else {
+                System.out.println("Avaliação Inválida");
+            }
+        }
+    }
+
     /********************* MENUS DO VOLUNTÁRIO *******************/
     private static void menuVoluntario(TrazAqui trazAqui)
     {
@@ -238,7 +297,12 @@ public class Interpreter
             System.out.println("2 -> Fazer pedido para entregar encomenda.");
             System.out.println("3 -> Altera disponibilidade de entrega.");
 
-            opcao = Integer.parseInt(sc.nextLine());
+            String escolha = sc.nextLine();
+            if (escolha.equals("")) {
+                opcao = -1;
+            } else {
+                opcao = Integer.parseInt(escolha);
+            }
 
             if (opcao == 0) {
                 login = 0;
@@ -273,6 +337,10 @@ public class Interpreter
                 esperaInput();
                 break;
             }
+            else {
+                System.out.println("Opção inválida!");
+                esperaInput();
+            }
         }
     }
 
@@ -296,7 +364,7 @@ public class Interpreter
                         while(true) {
                             System.out.println("Insira o Código da Encomenda:");
                             String codEncomenda = sc.nextLine();
-                            if (trazAqui.getLoja(codLoja).possuiEncomendaCodigo(codEncomenda, trazAqui.getCatalogoEncomendas())) {
+                            if (trazAqui.getLoja(codLoja).possuiEncomendaCodigo(codEncomenda)) {
                                 Encomenda enc = trazAqui.getEncomenda(codEncomenda);
                                 if (trazAqui.getUtilizador(enc.getCodUtilizador()).getCoordenadas().isReachable(voluntario.getCoordenadas(), voluntario.getRaio())) {
                                     String res = trazAqui.realizaEntregaDeVenda(codLoja, codEncomenda, trazAqui.getUtilizador_atual());
