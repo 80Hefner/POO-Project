@@ -127,8 +127,8 @@ public class Parser
         String codLoja = campos[2];
         double peso = Double.parseDouble(campos[3]);
         ArrayList<LinhaEncomenda> produtos = new ArrayList<>(parseProdutos(campos[4]));
-        LocalDateTime data = LocalDateTime.now();
-        boolean medical = produtos.stream().anyMatch(l -> l.getDescricao().equals("Desinfetante") || l.getDescricao().equals("Água sanitária"));
+        LocalDateTime data = LocalDateTime.of(2000, 1, 1, 0, 0);
+        boolean medical = produtos.stream().anyMatch(l -> l.getDescricao().equals("Desinfetante") || l.getDescricao().equals("Água sanitária") || l.getDescricao().equals("Medicamentos"));
 
         return new Encomenda(codEncomenda, codLoja, codUtilizador, "", peso, produtos, medical, data, false, false, 0, 0.0,0.0, 0);
     }

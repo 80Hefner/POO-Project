@@ -359,8 +359,8 @@ public class MVC_Controller {
             e.insereLinhaEncomenda(l);
             e.setPeso(e.getPeso() + l.getQuantidade() * l.getValor_unidade() / 10);
         }
-        e.setMedical(e.getProdutos().stream().anyMatch(l -> l.getDescricao().equals("Desinfetante") || l.getDescricao().equals("Água sanitária")));
-        e.setData(LocalDateTime.now());
+        e.setMedical(e.getProdutos().stream().anyMatch(l -> l.getDescricao().equals("Desinfetante") || l.getDescricao().equals("Água sanitária") || l.getDescricao().equals("Medicamentos")));
+        e.setData(LocalDateTime.of(2000, 1, 1, 0, 0)); //Por opção de meter horas e assim de Entrega
 
         return e;
     }
