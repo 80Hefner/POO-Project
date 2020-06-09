@@ -116,4 +116,8 @@ public class Transportadora extends Voluntario implements Serializable
 
         enc.setPrecoTransporte(precoTransporte);
     }
+
+    public double calculaTotalKmFeitos () {
+        return  super.calculaTotalKmFeitos();
+    }
 }

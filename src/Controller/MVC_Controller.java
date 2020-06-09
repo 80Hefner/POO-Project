@@ -226,7 +226,6 @@ public class MVC_Controller {
         int opcao;
 
         while(true) {
-            //Falta fazer a 3 e a 4
             clearScreen();
             System.out.println("----------------------MENU UTILIZADOR--------------------\n");
             System.out.println("0 -> Logout.");

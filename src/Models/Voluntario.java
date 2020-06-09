@@ -265,6 +265,7 @@ public class Voluntario implements Serializable
         double tempoPeso = ((enc.getPeso() / 25)*0.25 + 1);
         tempo*=tempoPeso;
 
+        enc.setDistanciaTransporte(distance);
         enc.setTempoTransporte(tempo);
         enc.setCondicoesClimatericas(temporal);
         enc.setCodTrnasportador(this.getCodigo());
@@ -289,5 +290,9 @@ public class Voluntario implements Serializable
 
         this.setTotal_avaliacoes(nrAvaliacoes);
         this.setClassificacao(novaClassificacao);
+    }
+
+    public double calculaTotalKmFeitos () {
+        return  this.getEncomendasHistorico().values().stream().mapToDouble(Encomenda::getDistanciaTransporte).sum();
     }
 }

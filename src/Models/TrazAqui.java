@@ -1,5 +1,8 @@
 package Models;
 
+import Utils.ComparatorMapEntryEmpresaKmPercorridos;
+import Utils.ComparatorMapEntryUtilizadoresEncomendas;
+
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -107,9 +110,19 @@ public class TrazAqui implements Serializable
         return this.transportadoras.values().stream().map(Transportadora::clone).collect(Collectors.toList());
     }
 
+    public Map<String,Transportadora> getTransportadorasMap ()
+    {
+        return new TreeMap<>(this.transportadoras);
+    }
+
     public List<Utilizador> getUtilizadores()
     {
         return this.utilizadores.values().stream().map(Utilizador::clone).collect(Collectors.toList());
+    }
+
+    public Map<String,Utilizador> getUtilizadoresMap ()
+    {
+        return new TreeMap<>(this.utilizadores);
     }
 
     public List<String> getEncomendasAceites()
@@ -237,6 +250,7 @@ public class TrazAqui implements Serializable
             enc.setPrecoTransporte(0.0);
             enc.setCondicoesClimatericas(0);
             enc.setTempoTransporte(0.0);
+            enc.setDistanciaTransporte(0.0);
             enc.setCodTrnasportador("");
             this.catalogoEncomendas.put(codEnc, enc);
         }
@@ -286,5 +300,18 @@ public class TrazAqui implements Serializable
         this.lojas.get(codLoja).lojaAceitaOuRecusaTodasEncomenda();
     }
 
+
+    public Set<Map.Entry<String, Double>> getLista10TransportadorasMaisKilometros () {
+        Set<Map.Entry<String, Double>> resultado = new TreeSet<>(new ComparatorMapEntryEmpresaKmPercorridos());
+        this.getTransportadorasMap().values().forEach(val -> resultado.add(new AbstractMap.SimpleEntry<>(val.getCodigo(), val.calculaTotalKmFeitos())));
+        return resultado;
+    }
+
+
+    public Set<Map.Entry<String, Integer>> getLista10UtilizadoresMaisEntregas () {
+        Set<Map.Entry<String, Integer>> resultado = new TreeSet<>(new ComparatorMapEntryUtilizadoresEncomendas());
+        this.getUtilizadoresMap().values().forEach(val -> resultado.add(new AbstractMap.SimpleEntry<>(val.getCodigo(), val.getEncomendasHistorico().size())));
+        return resultado;
+    }
 
 }

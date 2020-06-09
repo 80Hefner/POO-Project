@@ -130,7 +130,7 @@ public class Parser
         LocalDateTime data = LocalDateTime.now();
         boolean medical = produtos.stream().anyMatch(l -> l.getDescricao().equals("Desinfetante") || l.getDescricao().equals("Água sanitária"));
 
-        return new Encomenda(codEncomenda, codLoja, codUtilizador, "", peso, produtos, medical, data, false, false, 0, 0.0, 0);
+        return new Encomenda(codEncomenda, codLoja, codUtilizador, "", peso, produtos, medical, data, false, false, 0, 0.0,0.0, 0);
     }
 
     public List<LinhaEncomenda> parseProdutos(String input)

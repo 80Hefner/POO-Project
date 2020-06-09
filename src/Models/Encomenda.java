@@ -19,6 +19,7 @@ public class Encomenda implements Serializable
     private LocalDateTime data;
     private boolean aceiteLoja;
     private boolean entregue;
+    private double distanciaTransporte;
     private double precoTransporte;
     private double tempoTransporte;
     private int condicoesClimatericas; //(0-Normais ; 1-Chuva ; 2-Neve E Trevoada)
@@ -37,10 +38,11 @@ public class Encomenda implements Serializable
         this.aceiteLoja = false;
         this.precoTransporte = 0;
         this.tempoTransporte = 0.0;
+        this.distanciaTransporte = 0.0;
         this.condicoesClimatericas = 0;
     }
 
-    public Encomenda(String codigo, String codLoja, String codUtilizador, String codTrnasportador, double peso, ArrayList<LinhaEncomenda> produtos, boolean medical, LocalDateTime data, boolean entregue, boolean aceiteLoja , double precoTransporte, double tempoTransporte, int condicoesClimatericas)
+    public Encomenda(String codigo, String codLoja, String codUtilizador, String codTrnasportador, double peso, ArrayList<LinhaEncomenda> produtos, boolean medical, LocalDateTime data, boolean entregue, boolean aceiteLoja , double precoTransporte, double tempoTransporte, double distanciaTransporte, int condicoesClimatericas)
     {
         this.codigo = codigo;
         this.codLoja = codLoja;
@@ -54,6 +56,7 @@ public class Encomenda implements Serializable
         this.entregue = aceiteLoja;
         this.precoTransporte = precoTransporte;
         this.tempoTransporte = tempoTransporte;
+        this.distanciaTransporte = distanciaTransporte;
         this.condicoesClimatericas = condicoesClimatericas;
     }
 
@@ -71,6 +74,7 @@ public class Encomenda implements Serializable
         this.aceiteLoja = l.isAceiteLoja();
         this.precoTransporte = l.getPrecoTransporte();
         this.tempoTransporte = l.getTempoTransporte();
+        this.distanciaTransporte = l.getDistanciaTransporte();
         this.condicoesClimatericas = l.getCondicoesClimatericas();
     }
 
@@ -192,6 +196,14 @@ public class Encomenda implements Serializable
         this.codTrnasportador = codTrnasportador;
     }
 
+    public double getDistanciaTransporte() {
+        return distanciaTransporte;
+    }
+
+    public void setDistanciaTransporte(double distanciaTransporte) {
+        this.distanciaTransporte = distanciaTransporte;
+    }
+
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -210,6 +222,7 @@ public class Encomenda implements Serializable
                 this.aceiteLoja == (e.isAceiteLoja()) &&
                 this.precoTransporte == (e.getPrecoTransporte()) &&
                 this.tempoTransporte == (e.getTempoTransporte()) &&
+                this.distanciaTransporte == (e.getDistanciaTransporte()) &&
                 this.condicoesClimatericas == (e.getCondicoesClimatericas());
     }
 
