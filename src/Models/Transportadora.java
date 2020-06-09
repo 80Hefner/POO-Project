@@ -1,9 +1,10 @@
 package Models;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Random;
 
-public class Transportadora extends Voluntario
+public class Transportadora extends Voluntario implements Serializable
 {
     private int nif;
     private double preco_km;

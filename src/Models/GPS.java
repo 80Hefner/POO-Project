@@ -1,10 +1,11 @@
 package Models;
 
+import java.io.Serializable;
 import java.lang.Math;
 
 import static java.lang.Math.pow;
 
-public class GPS
+public class GPS  implements Serializable
 {
     private double latitude;
     private double longitude;

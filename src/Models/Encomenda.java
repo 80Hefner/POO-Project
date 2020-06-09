@@ -1,12 +1,13 @@
 package Models;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Encomenda
+public class Encomenda implements Serializable
 {
     private String codigo;
     private String codLoja;

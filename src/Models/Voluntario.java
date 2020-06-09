@@ -1,11 +1,12 @@
 package Models;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class Voluntario
+public class Voluntario implements Serializable
 {
     private String nome;
     private String codigo;

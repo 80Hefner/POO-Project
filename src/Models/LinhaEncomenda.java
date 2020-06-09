@@ -1,8 +1,9 @@
 package Models;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 
-public class LinhaEncomenda
+public class LinhaEncomenda  implements Serializable
 {
     private String codigo;
     private String descricao;

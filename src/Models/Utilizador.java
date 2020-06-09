@@ -1,9 +1,10 @@
 package Models;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Utilizador
+public class Utilizador implements Serializable
 {
     private String nome;
     private String codigo;

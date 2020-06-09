@@ -1,42 +1,67 @@
+package Controller;
+
 import Models.*;
 import Utils.Parser;
+import View.MVC_View;
 
+import java.io.*;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Interpreter
-{
-    private static int login = 0;
-    private static final String data_path = "/home/tourrete/Desktop/UNI/POO/POO-Project/src";
+public class MVC_Controller {
 
-    public static void main(String[] args)
+    private TrazAqui model;
+    private MVC_View view;
+    private int login = 0;
+
+    public TrazAqui getModel() {
+        return model;
+    }
+
+    public void setModel(TrazAqui model) {
+        this.model = model;
+    }
+
+    public MVC_View getView() {
+        return view;
+    }
+
+    public void setView(MVC_View view) {
+        this.view = view;
+    }
+
+    public MVC_Controller(TrazAqui model, MVC_View view) {
+        this.model = model;
+        this.view = view;
+    }
+
+    public void menuPrincipal(String data_path)
     {
         int opcao;
         Scanner sc = new Scanner(System.in);
         Parser parser = new Parser();
-        TrazAqui trazAqui = new TrazAqui();
-        parser.parseLogs(data_path, trazAqui);
+        parser.parseLogs(data_path, this.model);
 
         while(true) {
 
             if (login == 0)
-                menuLogin(trazAqui);
+                menuLogin(this.model);
 /*            else if (TrazAqui.getUtilizador_atual().equals("admin"))
                 menuAdmin();*/
-            else if (trazAqui.getUtilizador_atual().startsWith("u"))
-                menuUtilizador(trazAqui);
-            else if (trazAqui.getUtilizador_atual().startsWith("v"))
-                menuVoluntario(trazAqui);
-            else if (trazAqui.getUtilizador_atual().startsWith("t"))
-                menuTransportadora(trazAqui);
-            else if (trazAqui.getUtilizador_atual().startsWith("l"))
-                menuLoja(trazAqui);
+            else if (this.model.getUtilizador_atual().startsWith("u"))
+                menuUtilizador(this.model);
+            else if (this.model.getUtilizador_atual().startsWith("v"))
+                menuVoluntario(this.model);
+            else if (this.model.getUtilizador_atual().startsWith("t"))
+                menuTransportadora(this.model);
+            else if (this.model.getUtilizador_atual().startsWith("l"))
+                menuLoja(this.model);
         }
     }
 
-    private static void menuLogin(TrazAqui trazAqui)
+    private void menuLogin(TrazAqui trazAqui)
     {
         int opcao;
         Scanner sc = new Scanner(System.in);
@@ -52,6 +77,8 @@ public class Interpreter
             System.out.println("4 -> Efetuar login com Voluntario.");
             System.out.println("5 -> Efetuar login com Transportadora.");
             System.out.println("6 -> Efetuar login com Loja.");
+            System.out.println("7 -> Save to Disk");
+            System.out.println("8 -> Load from Disk");
             System.out.print("OPÇÃO: ");
 
             String escolha = sc.nextLine();
@@ -172,6 +199,18 @@ public class Interpreter
                 }
                 break;
             }
+            else if (opcao == 7 && trazAqui != null) {
+                clearScreen();
+                System.out.println("\n----------------------Traz Aqui a ser guardado--------------------");
+                saveToDisk();
+                break;
+            }
+            else if (opcao == 8) {
+                clearScreen();
+                System.out.println("\n----------------------Traz Aqui a dar load--------------------");
+                loadFromDisk();
+                break;
+            }
             else {
                 System.out.println("Opção inválida!");
                 esperaInput();
@@ -180,7 +219,7 @@ public class Interpreter
     }
 
     /********************* MENUS DO UTILIZADOR *******************/
-    private static void menuUtilizador(TrazAqui trazAqui)
+    private void menuUtilizador(TrazAqui trazAqui)
     {
         Scanner sc = new Scanner(System.in);
         Parser parser = new Parser();
@@ -236,7 +275,7 @@ public class Interpreter
         }
     }
 
-    private static void listagemEntidades (TrazAqui trazAqui) {
+    private void listagemEntidades (TrazAqui trazAqui) {
         Scanner sc = new Scanner(System.in);
         int escolhaInt;
         boolean escolheuCerto = false;
@@ -252,50 +291,50 @@ public class Interpreter
                 escolhaInt = Integer.parseInt(escolha);
             }
 
-        switch (escolhaInt) {
-            case 0:
-                System.out.println("\n----------------------------- LOJAS -----------------------------\n");
-                for (Loja loja : trazAqui.getLojas()) {
-                    System.out.println(loja.toString());
-                }
-                escolheuCerto = true;
-                break;
-            case 1:
-                System.out.println("\n-------------------------- VOLUNTARIOS --------------------------\n");
-                for (Voluntario voluntario : trazAqui.getVoluntarios()) {
-                    System.out.println(voluntario.toString());
-                }
-                escolheuCerto = true;
-                break;
-            case 2:
-                System.out.println("\n------------------------ TRANSPORTADORAS ------------------------\n");
-                for (Transportadora transportadora : trazAqui.getTransportadoras()) {
-                    System.out.println(transportadora.toString());
-                }
-                escolheuCerto = true;
-                break;
-            case 3:
-                System.out.println("\n------------------------- UTILIZADORES -------------------------\n");
-                for (Utilizador utilizador : trazAqui.getUtilizadores()) {
-                    System.out.println(utilizador.toString());
-                }
-                escolheuCerto = true;
-                break;
-            case 4:
-                System.out.println("\n---------------------------- ACEITES ----------------------------\n");
-                System.out.println(trazAqui.getEncomendasAceites().toString());
-                escolheuCerto = true;
-                break;
-            default:
-                System.out.println("Opção Inválida");
+            switch (escolhaInt) {
+                case 0:
+                    System.out.println("\n----------------------------- LOJAS -----------------------------\n");
+                    for (Loja loja : trazAqui.getLojas()) {
+                        System.out.println(loja.toString());
+                    }
+                    escolheuCerto = true;
+                    break;
+                case 1:
+                    System.out.println("\n-------------------------- VOLUNTARIOS --------------------------\n");
+                    for (Voluntario voluntario : trazAqui.getVoluntarios()) {
+                        System.out.println(voluntario.toString());
+                    }
+                    escolheuCerto = true;
+                    break;
+                case 2:
+                    System.out.println("\n------------------------ TRANSPORTADORAS ------------------------\n");
+                    for (Transportadora transportadora : trazAqui.getTransportadoras()) {
+                        System.out.println(transportadora.toString());
+                    }
+                    escolheuCerto = true;
+                    break;
+                case 3:
+                    System.out.println("\n------------------------- UTILIZADORES -------------------------\n");
+                    for (Utilizador utilizador : trazAqui.getUtilizadores()) {
+                        System.out.println(utilizador.toString());
+                    }
+                    escolheuCerto = true;
+                    break;
+                case 4:
+                    System.out.println("\n---------------------------- ACEITES ----------------------------\n");
+                    System.out.println(trazAqui.getEncomendasAceites().toString());
+                    escolheuCerto = true;
+                    break;
+                default:
+                    System.out.println("Opção Inválida");
             }
 
-        if (escolheuCerto)
-            break;
+            if (escolheuCerto)
+                break;
         }
     }
 
-    private static Encomenda novaEncomenda(TrazAqui trazAqui)
+    private Encomenda novaEncomenda(TrazAqui trazAqui)
     {
         Scanner sc = new Scanner(System.in);
         Random r = new Random();
@@ -327,7 +366,7 @@ public class Interpreter
         return e;
     }
 
-    private static LinhaEncomenda novaLinhaEncomenda()
+    private LinhaEncomenda novaLinhaEncomenda()
     {
         Scanner sc = new Scanner(System.in);
         LinhaEncomenda l = new LinhaEncomenda();
@@ -346,7 +385,7 @@ public class Interpreter
         return l;
     }
 
-    private static void avaliaTodasAsEncomendasFeitas(TrazAqui trazAqui)
+    private void avaliaTodasAsEncomendasFeitas(TrazAqui trazAqui)
     {
         Utilizador utilizadorAux = trazAqui.getUtilizador(trazAqui.getUtilizador_atual());
         System.out.println("Avalie todas as entregas da(s) Encomenda(s) de 0 a 10: ");
@@ -357,13 +396,13 @@ public class Interpreter
     }
 
 
-    private static void avaliaUmaEncomendaFeita(TrazAqui trazAqui, String codEncomenda, double tempoTransporte, double preçoTransporte)
+    private void avaliaUmaEncomendaFeita(TrazAqui trazAqui, String codEncomenda, double tempoTransporte, double preçoTransporte)
     {
         DecimalFormat fmt = new DecimalFormat("0.00");
         Scanner sc = new Scanner(System.in);
 
         System.out.println("Entrega da Encomenda "+codEncomenda+" demorou " + (int)tempoTransporte/60 + "Horas e "
-                        + (int)tempoTransporte%60 + " minutos. Teve o custo de " + fmt.format(preçoTransporte) + "€." );
+                + (int)tempoTransporte%60 + " minutos. Teve o custo de " + fmt.format(preçoTransporte) + "€." );
         while (true) {
             System.out.print("\nAvaliação(0-10): ");
             double avaliacao = sc.nextDouble();
@@ -381,7 +420,7 @@ public class Interpreter
         }
     }
 
-    private static void aceitaOuRecusasTodasAsPropostas(TrazAqui trazAqui)
+    private void aceitaOuRecusasTodasAsPropostas(TrazAqui trazAqui)
     {
         Utilizador utilizadorAux = trazAqui.getUtilizador(trazAqui.getUtilizador_atual());
         System.out.println("Aceite ou recuse as seguintes propostas de Entrega:");
@@ -392,7 +431,7 @@ public class Interpreter
     }
 
 
-    private static void aceitaOuRecusaUmaProposta(TrazAqui trazAqui, String codEncomenda, double tempoTransporte, double preçoTransporte)
+    private void aceitaOuRecusaUmaProposta(TrazAqui trazAqui, String codEncomenda, double tempoTransporte, double preçoTransporte)
     {
         Scanner sc = new Scanner(System.in);
         DecimalFormat fmt = new DecimalFormat("0.00");
@@ -418,7 +457,7 @@ public class Interpreter
     }
 
     /********************* MENUS DO VOLUNTÁRIO *******************/
-    private static void menuVoluntario(TrazAqui trazAqui)
+    private void menuVoluntario(TrazAqui trazAqui)
     {
         Scanner sc = new Scanner(System.in);
         Parser parser = new Parser();
@@ -469,7 +508,7 @@ public class Interpreter
         }
     }
 
-    public static void realizaEncomendaPedidaVoluntario (TrazAqui trazAqui) {
+    public void realizaEncomendaPedidaVoluntario (TrazAqui trazAqui) {
         Scanner sc = new Scanner(System.in);
         Voluntario voluntario = trazAqui.getVoluntario(trazAqui.getUtilizador_atual());
 
@@ -517,7 +556,7 @@ public class Interpreter
         }
     }
 
-    public static void alteraDisponibilidadeEntidade (TrazAqui trazAqui) {
+    public void alteraDisponibilidadeEntidade (TrazAqui trazAqui) {
         Scanner sc = new Scanner(System.in);
         String codEntidade = trazAqui.getUtilizador_atual();
 
@@ -538,7 +577,7 @@ public class Interpreter
     }
 
     /********************* MENUS DO TRANSPORTADORA *******************/
-    private static void menuTransportadora(TrazAqui trazAqui)
+    private void menuTransportadora(TrazAqui trazAqui)
     {
         Scanner sc = new Scanner(System.in);
         Parser parser = new Parser();
@@ -589,7 +628,7 @@ public class Interpreter
         }
     }
 
-    public static void realizaEncomendaPedidaTransportadora (TrazAqui trazAqui) {
+    public void realizaEncomendaPedidaTransportadora (TrazAqui trazAqui) {
         Scanner sc = new Scanner(System.in);
         Transportadora transportadora = trazAqui.getTransportador(trazAqui.getUtilizador_atual());
 
@@ -638,7 +677,7 @@ public class Interpreter
 
 
     /********************* MENUS DAS LOJAS *******************/
-    private static void menuLoja(TrazAqui trazAqui)
+    private void menuLoja(TrazAqui trazAqui)
     {
         Scanner sc = new Scanner(System.in);
         int opcao;
@@ -681,7 +720,7 @@ public class Interpreter
         }
     }
 
-    private static void aceitaOuRecusaTodosPedidosEncomenda(TrazAqui trazAqui)
+    private void aceitaOuRecusaTodosPedidosEncomenda(TrazAqui trazAqui)
     {
         Loja lojaAux = trazAqui.getLoja(trazAqui.getUtilizador_atual());
         System.out.println("Aceite ou recuse os pedidos de entrega por parte dos Utilizadores (y-n): ");
@@ -692,7 +731,7 @@ public class Interpreter
     }
 
 
-    private static void aceitaOuRecusaUmPedidoEncomenda(TrazAqui trazAqui, String codEncomenda)
+    private void aceitaOuRecusaUmPedidoEncomenda(TrazAqui trazAqui, String codEncomenda)
     {
         Scanner sc = new Scanner(System.in);
 
@@ -716,7 +755,7 @@ public class Interpreter
     }
 
     /************* REGISTAR NOVAS ENTIDADES ****************/
-    private static void registaLoja(TrazAqui trazAqui)
+    private void registaLoja(TrazAqui trazAqui)
     {
         Scanner sc = new Scanner(System.in);
 
@@ -742,7 +781,7 @@ public class Interpreter
         esperaInput();
     }
 
-    private static void registaVoluntario(TrazAqui trazAqui)
+    private void registaVoluntario(TrazAqui trazAqui)
     {
         Random r = new Random();
         Scanner sc = new Scanner(System.in);
@@ -772,7 +811,7 @@ public class Interpreter
         esperaInput();
     }
 
-    private static void registaTransportadora(TrazAqui trazAqui)
+    private void registaTransportadora(TrazAqui trazAqui)
     {
         Random r = new Random();
         Scanner sc = new Scanner(System.in);
@@ -808,7 +847,7 @@ public class Interpreter
         esperaInput();
     }
 
-    private static void registaUtilizador(TrazAqui trazAqui)
+    private void registaUtilizador(TrazAqui trazAqui)
     {
         Scanner sc = new Scanner(System.in);
 
@@ -833,16 +872,50 @@ public class Interpreter
         esperaInput();
     }
 
-    private static void clearScreen()
+    private void clearScreen()
     {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
-    private static void esperaInput()
+    private void esperaInput()
     {
         Scanner sc = new Scanner(System.in);
         System.out.println("\nPressione <ENTER> para continuar.");
         sc.nextLine();
     }
+
+    private void saveToDisk()
+    {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Introduza o nome do Ficheiro com o model que pretende guardar");
+        String filename = sc.nextLine();
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename + ".dat"));
+            out.writeObject(this.model);
+            System.out.println("Model guardado com sucesso");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadFromDisk()
+    {
+        Scanner sc = new Scanner(System.in);
+        TrazAqui new_TrazAqui = null;
+        System.out.println("Introduza o nome do Ficheiro com o model que pretende ler");
+        String filename = sc.nextLine();
+
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename + ".dat"));
+            new_TrazAqui = (TrazAqui) in.readObject();
+            this.model = new_TrazAqui;
+            System.out.println("Model carregado com sucesso");
+        } catch (IOException e) {
+            System.out.println("Impossível carregar ficheiro");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

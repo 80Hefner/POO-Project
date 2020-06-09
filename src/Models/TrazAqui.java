@@ -1,9 +1,10 @@
 package Models;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TrazAqui
+public class TrazAqui implements Serializable
 {
     private Map<String,Loja> lojas;
     private Map<String,Voluntario> voluntarios;
@@ -284,4 +285,6 @@ public class TrazAqui
     public void lojaAceitaOuRecusaTodasEncomenda (String codLoja) {
         this.lojas.get(codLoja).lojaAceitaOuRecusaTodasEncomenda();
     }
+
+
 }
