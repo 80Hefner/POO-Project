@@ -1,5 +1,6 @@
 package Models;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -214,17 +215,20 @@ public class Encomenda
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
+        DecimalFormat fmt = new DecimalFormat("0.00");
 
-        sb.append("Codigo: ").append(this.codigo);
-        sb.append("\nFrom loja: ").append(this.codLoja);
-        sb.append("\nTo user: ").append(this.codUtilizador);
-        sb.append("\nPeso: ").append(this.peso);
-        sb.append("\nIs medical? ").append(this.medical);
+        sb.append("######################### ENCOMENDA ").append(this.codigo).append(" #########################\n");
+        sb.append("Codigo -  ").append(this.codigo);
+        sb.append(" | From loja - ").append(this.codLoja);
+        sb.append(" | To user - ").append(this.codUtilizador);
+        sb.append("\nPeso total - ").append( fmt.format(this.peso)).append(" Kg");
+        sb.append(" | Is medical - ").append(this.medical);
         sb.append("\nData da encomenda: ").append(this.data.toString());
-        sb.append("\nFoi Aceite pela Loja: \n").append(this.aceiteLoja);
-        sb.append("\nFoi Entregue:\n").append(this.entregue);
-        sb.append("\nProdutos:\n").append(this.produtos.toString());
-        sb.append("\nPreço Transporte:\n").append(this.precoTransporte);
+        sb.append("\nFoi Aceite pela Loja - ").append(this.aceiteLoja);
+        sb.append(" | Foi Entregue - ").append(this.entregue);
+        sb.append("\n---------------------------- PRODUTOS ----------------------------\n");
+        for (LinhaEncomenda linha : this.produtos)
+            sb.append(linha.toString());
         sb.append("\n");
 
         return sb.toString();

@@ -1,5 +1,7 @@
 package Models;
 
+import java.text.DecimalFormat;
+
 public class LinhaEncomenda
 {
     private String codigo;
@@ -86,11 +88,12 @@ public class LinhaEncomenda
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
+        DecimalFormat fmt = new DecimalFormat("0.00");
 
-        sb.append("Codigo: ").append(this.codigo);
-        sb.append("\nDescrição: ").append(this.descricao);
-        sb.append("\nQuantidade: ").append(this.quantidade);
-        sb.append("\nValor por unidade: ").append(this.valor_unidade);
+        sb.append(" -> Codigo - ").append(this.codigo);
+        sb.append(" | Descrição - ").append(this.descricao);
+        sb.append(" | Quantidade - ").append(fmt.format(this.quantidade));
+        sb.append(" | Valor por unidade - ").append(fmt.format(this.valor_unidade)).append(" €");
         sb.append("\n");
 
         return sb.toString();
