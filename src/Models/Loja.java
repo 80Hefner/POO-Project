@@ -10,6 +10,7 @@ public class Loja implements Serializable
     private String codigo;
     private GPS coordenadas;
     private boolean temFila;
+    private String password;
 
 
     private Set<String> encomendasPorAceitar;
@@ -22,17 +23,19 @@ public class Loja implements Serializable
         this.codigo = "";
         this.coordenadas = new GPS();
         this.temFila = false;
+        this.password ="";
         this.encomendasPorAceitar = new TreeSet<>();
         this.encomendasPorEntregar = new TreeSet<>();
         this.encomendasHistorico = new HashMap<>();
     }
 
-    public Loja(String nome, String codigo, GPS coordenadas, boolean temFila)
+    public Loja(String nome, String codigo, String password, GPS coordenadas, boolean temFila)
     {
         this.nome = nome;
         this.codigo = codigo;
         this.coordenadas = coordenadas.clone();
         this.temFila = temFila;
+        this.password = password;
         this.encomendasPorAceitar = new TreeSet<>();
         this.encomendasPorEntregar = new TreeSet<>();
         this.encomendasHistorico = new HashMap<>();
@@ -44,6 +47,7 @@ public class Loja implements Serializable
         this.codigo = u.getCodigo();
         this.coordenadas = u.getCoordenadas();
         this.temFila = u.temFila();
+        this.password = u.getPassword();
         this.encomendasPorAceitar = new TreeSet<>(u.getEncomendasPorAceitar());
         this.encomendasPorEntregar = new TreeSet<>(u.getEncomendasPorEntregar());
         this.encomendasHistorico = new HashMap<>(u.getEncomendasHistorico());
@@ -89,6 +93,14 @@ public class Loja implements Serializable
         this.temFila = temFila;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public Set<String> getEncomendasPorEntregar()
     {
         return new TreeSet<>(encomendasPorEntregar);
@@ -126,6 +138,7 @@ public class Loja implements Serializable
                 this.codigo.equals(u.getCodigo()) &&
                 this.coordenadas.equals(u.getCoordenadas()) &&
                 this.temFila == u.temFila() &&
+                this.password.equals(u.getPassword()) &&
                 this.encomendasPorEntregar.equals(u.getEncomendasPorEntregar())  &&
                 this.encomendasPorAceitar.equals(u.getEncomendasPorAceitar()) &&
                 this.encomendasHistorico.equals(u.getEncomendasHistorico());
@@ -139,6 +152,7 @@ public class Loja implements Serializable
         sb.append("\n  Código - ").append(this.codigo);
         sb.append(" | Coordenadas - ").append(this.coordenadas.toString());
         sb.append(" | Tem fila de espera? - ").append(this.temFila);
+        sb.append(" | Password - ").append(this.password);
         sb.append("\n  Encomendas por aceitar ").append(this.encomendasPorAceitar.toString());
         sb.append("\n  Encomendas para entregar ").append(this.encomendasPorEntregar.toString());
         sb.append("\n  Encomendas Histórico ").append(this.encomendasHistorico.keySet().toString());

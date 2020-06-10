@@ -67,7 +67,7 @@ public class Parser
         double longitude = Double.parseDouble(campos[3]);
         GPS gps = new GPS(latitude, longitude);
 
-        return new Utilizador(nome, codUtilizador, gps, "");
+        return new Utilizador(nome, codUtilizador, gps, codUtilizador);
     }
 
     public Voluntario parseVoluntario(String input)
@@ -83,7 +83,7 @@ public class Parser
         boolean medical = r.nextBoolean();
         double velocidadeMedia = 40.0 + ((60.0 - 40.0) * r.nextDouble());
 
-        return new Voluntario(nome,codVoluntario,gps, "", velocidadeMedia,raio,medical);
+        return new Voluntario(nome,codVoluntario,gps, codVoluntario, velocidadeMedia,raio,medical);
     }
 
     public Transportadora parseTransportadora(String input)
@@ -102,7 +102,7 @@ public class Parser
         boolean medical = r.nextBoolean();
         double velocidadeMedia = 70.0 + (90.0 - 70.0)*r.nextDouble();
 
-        return new Transportadora(nome,codTransportadora,gps, "", velocidadeMedia,nif,raio,preco_km,limite,medical);
+        return new Transportadora(nome,codTransportadora,gps, codTransportadora, velocidadeMedia,nif,raio,preco_km,limite,medical);
     }
 
     public Loja parseLoja(String input)
@@ -116,7 +116,7 @@ public class Parser
         Random r = new Random();
         boolean temFila = r.nextBoolean();
 
-        return new Loja(nomeLoja, codLoja, gps, temFila);
+        return new Loja(nomeLoja, codLoja, codLoja, gps, temFila);
     }
 
     public Encomenda parseEncomenda(String input)

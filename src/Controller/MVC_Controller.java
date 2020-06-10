@@ -152,7 +152,7 @@ public class MVC_Controller {
                         while(true) {
                             view.print("Password: ");
                             String password = sc.nextLine();
-                            if (trazAqui.verificaPassword(utilizador, password)) {
+                            if (trazAqui.verificaPasswordUtilizador(utilizador, password)) {
                                 login = 1;
                                 trazAqui.setUtilizador_atual(utilizador);
                                 break;
@@ -175,7 +175,7 @@ public class MVC_Controller {
                         while(true) {
                             view.print("Password: ");
                             String password = sc.nextLine();
-                            if (password.equals("")) {
+                            if (trazAqui.verificaPasswordVoluntario(voluntario, password)) {
                                 login = 1;
                                 trazAqui.setUtilizador_atual(voluntario);
                                 break;
@@ -198,7 +198,7 @@ public class MVC_Controller {
                         while(true) {
                             view.print("Password: ");
                             String password = sc.nextLine();
-                            if (password.equals("")) {
+                            if (trazAqui.verificaPasswordTransportadora(transportadora, password)) {
                                 login = 1;
                                 trazAqui.setUtilizador_atual(transportadora);
                                 break;
@@ -221,7 +221,7 @@ public class MVC_Controller {
                         while(true) {
                             view.print("Password: ");
                             String password = sc.nextLine();
-                            if (password.equals("")) {
+                            if (trazAqui.verificaPasswordLoja(loja, password)) {
                                 login = 1;
                                 trazAqui.setUtilizador_atual(loja);
                                 break;
@@ -862,7 +862,7 @@ public class MVC_Controller {
         char c = sc.nextLine().toCharArray()[0];
         boolean temFila = c == 'y';
 
-        Loja newLoja = new Loja(nome, codigo, new GPS(latitude,longitude), temFila);
+        Loja newLoja = new Loja(nome, codigo, codigo, new GPS(latitude,longitude), temFila);
         trazAqui.insereLoja(newLoja);
 
         view.print("\nLoja registada com sucesso!\n");
@@ -897,7 +897,7 @@ public class MVC_Controller {
         boolean medical = c == 'y';
         double velocidadeMedia = 40.0 + (60.0 - 40.0)*r.nextDouble();
 
-        Voluntario newVoluntario = new Voluntario(nome, codigo, new GPS(latitude,longitude), "", velocidadeMedia, raio, medical);
+        Voluntario newVoluntario = new Voluntario(nome, codigo, new GPS(latitude,longitude), codigo, velocidadeMedia, raio, medical);
         trazAqui.insereVoluntario(newVoluntario);
 
         view.print("\nVoluntário registado com sucesso!\n");
@@ -938,7 +938,7 @@ public class MVC_Controller {
         boolean medical = c == 'y';
         double velocidadeMedia = 70.0 + (90.0 - 70.0)*r.nextDouble();
 
-        Transportadora newTransportadora = new Transportadora(nome, codigo, new GPS(latitude,longitude), "", velocidadeMedia, nif, raio, preco_km, limite, medical);
+        Transportadora newTransportadora = new Transportadora(nome, codigo, new GPS(latitude,longitude), codigo, velocidadeMedia, nif, raio, preco_km, limite, medical);
         trazAqui.insereTransportadora(newTransportadora);
 
         view.print("\nTransportadora registada com sucesso!\n");
@@ -966,10 +966,8 @@ public class MVC_Controller {
         double latitude = Double.parseDouble(sc.nextLine());
         view.print("\tLongitude: ");
         double longitude = Double.parseDouble(sc.nextLine());
-        view.print("Password: ");
-        String password = sc.nextLine();
 
-        Utilizador newUtilizador = new Utilizador(nome, codigo, new GPS(latitude,longitude), password);
+        Utilizador newUtilizador = new Utilizador(nome, codigo, new GPS(latitude,longitude), codigo);
         trazAqui.insereUtilizador(newUtilizador);
 
         view.print("\nUtilizador registado com sucesso!\n");

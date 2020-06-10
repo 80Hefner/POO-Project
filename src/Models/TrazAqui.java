@@ -188,10 +188,27 @@ public class TrazAqui implements Serializable
         return this.lojas.containsKey(loja);
     }
 
-    public boolean verificaPassword(String utilizador, String password)
+    public boolean verificaPasswordUtilizador(String utilizador, String password)
     {
         Utilizador u = this.utilizadores.get(utilizador);
+        return u.getPassword().equals(password);
+    }
 
+    public boolean verificaPasswordVoluntario(String voluntario, String password)
+    {
+        Voluntario u = this.voluntarios.get(voluntario);
+        return u.getPassword().equals(password);
+    }
+
+    public boolean verificaPasswordTransportadora(String transportadora, String password)
+    {
+        Transportadora u = this.transportadoras.get(transportadora);
+        return u.getPassword().equals(password);
+    }
+
+    public boolean verificaPasswordLoja(String loja, String password)
+    {
+        Loja u = this.lojas.get(loja);
         return u.getPassword().equals(password);
     }
 
