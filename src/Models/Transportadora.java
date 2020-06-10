@@ -3,13 +3,18 @@ package Models;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 
+/**
+ * Classe que representa cada Transportadora e que extende o Voluntário
+ */
 public class Transportadora extends Voluntario implements Serializable
 {
     private int nif;
     private double preco_km;
     private int limite;
-    //Colocar aqui um set com os códigos das Encomendas á espera de resposta para entregar?
 
+    /**
+     * Construtor por omissão da Transportadora
+     */
     public Transportadora()
     {
         super();
@@ -18,6 +23,19 @@ public class Transportadora extends Voluntario implements Serializable
         this.limite = 0;
     }
 
+    /**
+     * Construtor parametrizado da Transportadora
+     * @param nome              Nome da Transportadora
+     * @param codigo            Código referente á Transportadora
+     * @param coordenadas       Coordenadas iniciais da Transportadora
+     * @param password          Password da Transportadora
+     * @param velocidadeMedia   Velocidade Média da Transportadora
+     * @param nif               Nif da Transportadora
+     * @param raio              Raio de distribuiçao da Transportadora
+     * @param preco_km          Preco por Km feito exercido pela Transportadora
+     * @param limite            Limite de encomendas que Transportadora pode transportar de uma só vez
+     * @param medical           Booleano que indica se Transportadora está preparado para entregar Encomendas Médicas
+     */
     public Transportadora(String nome, String codigo, GPS coordenadas, String password, double velocidadeMedia, int nif, double raio, double preco_km, int limite, boolean medical)
     {
         super(nome,codigo,coordenadas,password, velocidadeMedia,raio,medical);
@@ -26,6 +44,10 @@ public class Transportadora extends Voluntario implements Serializable
         this.limite = limite;
     }
 
+    /**
+     * Construtor de cópia da Transportadora
+     * @param t     Transportadora a copiar
+     */
     public Transportadora(Transportadora t)
     {
         super(t);
@@ -34,36 +56,64 @@ public class Transportadora extends Voluntario implements Serializable
         this.limite = t.getLimite();
     }
 
+    /**
+     * Getter do Nif da Transportadora
+     * @return  Nif da Transportadora
+     */
     public int getNif()
     {
         return nif;
     }
 
+    /**
+     * Setter do Nif da Transportadora
+     * @param nif   Nif da Transportadora
+     */
     public void setNif(int nif)
     {
         this.nif = nif;
     }
 
+    /**
+     * Getter do Preco por Km da Transportadora
+     * @return  Preco por Km da Transportadora
+     */
     public double getPreco_km()
     {
         return preco_km;
     }
 
+    /**
+     * Setter do Preco por Km da Transportadora
+     * @param preco_km   Preco por Km da Transportadora
+     */
     public void setPreco_km(double preco_km)
     {
         this.preco_km = preco_km;
     }
 
+    /**
+     * Getter do Limite de entregas simultaneas da Transportadora
+     * @return  Limite de entregas simultaneas da Transportadora
+     */
     public int getLimite()
     {
         return limite;
     }
 
+    /**
+     * Setter do Limite de entregas simultaneas da Transportadora
+     * @param limite   Limite de entregas simultaneas da Transportadora
+     */
     public void setLimite(int limite)
     {
         this.limite = limite;
     }
 
+    /**
+     * Função de equals da Transportadora
+     * @param o           Objeto ao qual queremos comparar a Transportadora
+     */
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -76,6 +126,10 @@ public class Transportadora extends Voluntario implements Serializable
                 this.limite == t.getLimite();
     }
 
+    /**
+     * Função que transforma a Transportadora e os seus dados numa String
+     * @return           String resultante da função
+     */
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
@@ -100,12 +154,22 @@ public class Transportadora extends Voluntario implements Serializable
         return sb.toString();
     }
 
+
+    /**
+     * Função que dá clone á Transportadora
+     * @return           Cópia da Transportadora
+     */
     public Transportadora clone()
     {
         return new Transportadora(this);
     }
 
-
+    /**
+     * Função que realiza a o calculo de dados de uma possível entrega de Encomenda para um Utilizador
+     * @param enc           Encomenda a Entregar por parte do Voluntário
+     * @param loja          Loja onde se encontra a encomenda a transportar
+     * @param utilizador    Utilizador para o qual a Encomenda vais er entregue
+     */
     public void realizaEntregaDeVenda(Encomenda enc, Loja loja, Utilizador utilizador) {
 
         super.realizaEntregaDeVenda(enc, loja, utilizador);
@@ -116,6 +180,10 @@ public class Transportadora extends Voluntario implements Serializable
         enc.setPrecoTransporte(precoTransporte);
     }
 
+    /**
+     * Função que calcula o total de Kilómetros feitos pela Transportadora em todas as suas entregas
+     * @return      Total de Km feitos
+     */
     public double calculaTotalKmFeitos () {
         return  super.calculaTotalKmFeitos();
     }
