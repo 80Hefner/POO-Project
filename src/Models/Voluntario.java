@@ -237,7 +237,7 @@ public class Voluntario implements Serializable
 
     /**
      * Getter do Booleano de medical do Voluntário
-     * @return  Booleano que indica se Voluntário é medical
+     * @return  Booleano que indica se Voluntário é medica
      */
     public boolean isMedical()
     {
@@ -246,7 +246,7 @@ public class Voluntario implements Serializable
 
     /**
      * Setter do Booleano de medical do Voluntário
-     * @param medical   Booleano que indica se Voluntário é medical
+     * @param medical   Booleano que indica se Voluntário é medica
      */
     public void setMedical(boolean medical)
     {
