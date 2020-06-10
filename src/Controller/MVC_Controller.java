@@ -13,39 +13,62 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
+/**
+ * Classe que possui Controlador
+ */
 public class MVC_Controller {
 
     private TrazAqui model;
     private MVC_View view;
     private int login = 0;
 
+    /**
+     * Getter do Model do MVC (Modelo Vista Controlador)
+     * @return             Modelo que está implementado
+     */
     public TrazAqui getModel() {
         return model;
     }
 
+    /**
+     * Setter do Model do MVC (Modelo Vista Controlador)
+     * @param model            Modelo que queremos implementar
+     */
     public void setModel(TrazAqui model) {
         this.model = model;
     }
 
+    /**
+     * Getter da View do MVC (Modelo Vista Controlador)
+     * @return             View que está implementada
+     */
     public MVC_View getView() {
         return view;
     }
 
+    /**
+     * Setter da View do MVC (Modelo Vista Controlador)
+     * @param view            View que queremos implementar
+     */
     public void setView(MVC_View view) {
         this.view = view;
     }
 
+    /**
+     * Construtor parametrizado do MVC_Controller
+     * @param model           Model que queremos implementar
+     * @param view            View que queremos implementar
+     */
     public MVC_Controller(TrazAqui model, MVC_View view) {
         this.model = model;
         this.view = view;
     }
 
-    public void menuPrincipal(String data_path) throws EncomendaInexistenteException
+    /**
+     * Menu central e principal do Controlador responsável por gerir todas as escolhas do Utilizador
+     */
+    public void menuPrincipal()
     {
-        Scanner sc = new Scanner(System.in);
-        Parser parser = new Parser();
-        parser.parseLogs(data_path, this.model);
-
         while(true) {
             if (login == 0)
                 menuEscolhas(this.model);
@@ -92,6 +115,11 @@ public class MVC_Controller {
         }
     }
 
+    /**
+     *
+     * Menu central a partir de onde se vai para todas as outras coisas quando Usuário não está loggado em nenhuma entidade
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     */
     private void menuEscolhas(TrazAqui trazAqui)
     {
         Scanner sc = new Scanner(System.in);
@@ -132,11 +160,15 @@ public class MVC_Controller {
         }
     }
 
+    /**
+     * Menu onde são apresentadas as opções de login numa Entidade
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     */
     private void menuEscolhaLogin (TrazAqui trazAqui)
     {
-        view.printMenuEscolheLogin();
         Scanner sc = new Scanner(System.in);
         while(true) {
+            view.printMenuEscolheLogin();
             String escolha = sc.nextLine();
 
             if (escolha.equals("0") || escolha.equals("\n")){
@@ -242,10 +274,14 @@ public class MVC_Controller {
         }
     }
 
+    /**
+     * Menu onde vão ser apresentadas as opções possíveis quando queremos registar uma nova entidade
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     */
     public void menuEscolhaRegisto (TrazAqui trazAqui) {
-        view.printMenuRegistoEntidade();
         Scanner sc = new Scanner(System.in);
         while (true) {
+            view.printMenuRegistoEntidade();
             String escolha = sc.nextLine();
             if (escolha.equals("")) {
                 escolha = "-1";
@@ -274,6 +310,10 @@ public class MVC_Controller {
     }
 
     /********************* MENUS DO UTILIZADOR *******************/
+    /**
+     * Menú apresentando todas as opções quando se encontra loggado num Utilizador
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     */
     private void menuUtilizador(TrazAqui trazAqui) throws UtilizadorInexistenteException
     {
         Scanner sc = new Scanner(System.in);
@@ -324,6 +364,10 @@ public class MVC_Controller {
         }
     }
 
+    /**
+     * Menu responsável por mostrar as escolhas possíveis quando alguém peder para serem listadas as Entidades
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     */
     private void listagemEntidades (TrazAqui trazAqui) {
         Scanner sc = new Scanner(System.in);
         boolean escolheuCerto = false;
@@ -365,6 +409,11 @@ public class MVC_Controller {
         }
     }
 
+    /**
+     * Menu que aparece quando Utilizador pede uma nova Encomenda ao Sistema
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     * @return              Encomenda nova pedida pelo Utilizador loggado na sessão
+     */
     private Encomenda novaEncomenda(TrazAqui trazAqui)
     {
         Scanner sc = new Scanner(System.in);
@@ -428,6 +477,10 @@ public class MVC_Controller {
         return e;
     }
 
+    /**
+     * Menu que aparece para cada Linha de Encomenda que se quer pedir, quando Utilizador está apedir uma nova Encomenda
+     * @return      Linha de Encomenda que fará parte da Encomenda Pedida
+     */
     private LinhaEncomenda novaLinhaEncomenda()
     {
         Random r = new Random();
@@ -447,6 +500,10 @@ public class MVC_Controller {
         return l;
     }
 
+    /**
+     * Menu que aparece nas notificações do Utilizador e que fará com que este avalie todas as Encomendas que lhe sejam feitas
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     */
     private void avaliaTodasAsEncomendasFeitas(TrazAqui trazAqui) throws UtilizadorInexistenteException
     {
         Utilizador utilizadorAux = trazAqui.getUtilizador(trazAqui.getUtilizador_atual());
@@ -463,7 +520,13 @@ public class MVC_Controller {
         trazAqui.todasEncomendasFeitasAvaliadas(trazAqui.getUtilizador_atual());
     }
 
-
+    /**
+     * Menu que aparece quando Utilizador está a avaliar uma Entrega de Encomenda em Específico
+     * @param trazAqui              Model principal á volta do qual se trabalha ao longo do projeto
+     * @param codEncomenda          Código da Encomenda respetiva á Entrega
+     * @param tempoTransporte       Tempo de Transporte demorado na Entrega
+     * @param preçoTransporte       Preço do Transporte da Entrega
+     */
     private void avaliaUmaEncomendaFeita(TrazAqui trazAqui, String codEncomenda, double tempoTransporte, double preçoTransporte) throws EncomendaInexistenteException
     {
         DecimalFormat fmt = new DecimalFormat("0.00");
@@ -488,6 +551,10 @@ public class MVC_Controller {
         }
     }
 
+    /**
+     * Menu que aparece nas notificações do Utilizador e que fará com que este aceite ou recuse todas as propostas de Entrega que lhe tenham sido feitos por parte das Transportadoras
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     */
     private void aceitaOuRecusasTodasAsPropostas(TrazAqui trazAqui) throws UtilizadorInexistenteException
     {
         Utilizador utilizadorAux = trazAqui.getUtilizador(trazAqui.getUtilizador_atual());
@@ -505,6 +572,13 @@ public class MVC_Controller {
     }
 
 
+    /**
+     * Menu que aparece quando Utilizador tem de aceitar ou recusar uma Entrega de Encomenda em Específico
+     * @param trazAqui              Model principal á volta do qual se trabalha ao longo do projeto
+     * @param codEncomenda          Código da Encomenda respetiva á Entrega
+     * @param tempoTransporte       Tempo de Transporte demorado na Entrega
+     * @param preçoTransporte       Preço do Transporte da Entrega
+     */
     private void aceitaOuRecusaUmaProposta(TrazAqui trazAqui, String codEncomenda, double tempoTransporte, double preçoTransporte) throws EncomendaInexistenteException
     {
         Scanner sc = new Scanner(System.in);
@@ -533,6 +607,10 @@ public class MVC_Controller {
     }
 
     /********************* MENUS DO VOLUNTÁRIO *******************/
+    /**
+     * Menú apresentando todas as opções quando se encontra loggado num Voluntário
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     */
     private void menuVoluntario(TrazAqui trazAqui) throws UtilizadorInexistenteException, EncomendaInexistenteException, VoluntarioInexistenteException, LojaInexistenteException
     {
         Scanner sc = new Scanner(System.in);
@@ -572,6 +650,10 @@ public class MVC_Controller {
         }
     }
 
+    /**
+     * Menu que surge quando Voluntário logado pretende entregar uma encomenda
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     */
     public void realizaEncomendaPedidaVoluntario (TrazAqui trazAqui) throws VoluntarioInexistenteException, LojaInexistenteException, EncomendaInexistenteException, UtilizadorInexistenteException
     {
         Scanner sc = new Scanner(System.in);
@@ -628,13 +710,17 @@ public class MVC_Controller {
         }
     }
 
+    /**
+     * Menu que aparece quando Voluntário ou Transportadora logados pretendem alterar a sua disponibilidade para entrega de Encomendas
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     */
     public void alteraDisponibilidadeEntidade (TrazAqui trazAqui) {
         Scanner sc = new Scanner(System.in);
         String codEntidade = trazAqui.getUtilizador_atual();
         String escolha = "";
 
         while(!escolha.equals("exit")) {
-            view.print("Qual disponibilidade quer colocar no Voluntario?\n");
+            view.print("Qual disponibilidade quer colocar na Entidade?\n");
             view.print("(y - Disponível | n - Não Disponível) : ");
             escolha = sc.nextLine();
             String disponibilidade = escolha;
@@ -651,6 +737,10 @@ public class MVC_Controller {
     }
 
     /********************* MENUS DO TRANSPORTADORA *******************/
+    /**
+     * Menú apresentando todas as opções quando se encontra loggado numa Transportadora
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     */
     private void menuTransportadora(TrazAqui trazAqui) throws TransportadoraInexistenteException, UtilizadorInexistenteException, EncomendaInexistenteException, LojaInexistenteException
     {
         Scanner sc = new Scanner(System.in);
@@ -707,6 +797,10 @@ public class MVC_Controller {
         }
     }
 
+    /**
+     * Menu que surge quando Transportadora logada fazer um pedido de Entrega de uma Encomenda a um Utilizador
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     */
     public void realizaEncomendaPedidaTransportadora (TrazAqui trazAqui) throws TransportadoraInexistenteException, LojaInexistenteException, EncomendaInexistenteException, UtilizadorInexistenteException
     {
         Scanner sc = new Scanner(System.in);
@@ -764,6 +858,10 @@ public class MVC_Controller {
 
 
     /********************* MENUS DAS LOJAS *******************/
+    /**
+     * Menú apresentando todas as opções quando se encontra loggado numa Loja
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     */
     private void menuLoja(TrazAqui trazAqui) throws LojaInexistenteException
     {
         Scanner sc = new Scanner(System.in);
@@ -796,6 +894,10 @@ public class MVC_Controller {
         }
     }
 
+    /**
+     * Menu que surge quando Loja terá de aceitar ou recusar as todas as Encomendas que lhe foram pedidas por um Utilizador e ainda não foram revistas
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     */
     private void aceitaOuRecusaTodosPedidosEncomenda(TrazAqui trazAqui) throws LojaInexistenteException
     {
         Loja lojaAux = trazAqui.getLoja(trazAqui.getUtilizador_atual());
@@ -813,6 +915,11 @@ public class MVC_Controller {
     }
 
 
+    /**
+     * Menu que surge quando Loja possui as opções de aceitar ou recusar o pedido de uma Encomenda em específico
+     * @param trazAqui          Model principal á volta do qual se trabalha ao longo do projeto
+     * @param codEncomenda      Código da Encomenda a aceitar ou recusar
+     */
     private void aceitaOuRecusaUmPedidoEncomenda(TrazAqui trazAqui, String codEncomenda) throws EncomendaInexistenteException
     {
         Scanner sc = new Scanner(System.in);
@@ -837,6 +944,10 @@ public class MVC_Controller {
     }
 
     /************* REGISTAR NOVAS ENTIDADES ****************/
+    /**
+     * Menu onde constam as opções de registo de uma nova Loja no Sistema
+     * @param trazAqui  Model principal á volta do qual se trabalha ao longo do projeto
+     */
     private void registaLoja(TrazAqui trazAqui)
     {
         Random r = new Random();
@@ -869,6 +980,10 @@ public class MVC_Controller {
         esperaInput();
     }
 
+    /**
+     * Menu onde constam as opções de registo de um novo Voluntário no Sistema
+     * @param trazAqui  Model principal á volta do qual se trabalha ao longo do projeto
+     */
     private void registaVoluntario(TrazAqui trazAqui)
     {
         Random r = new Random();
@@ -904,6 +1019,10 @@ public class MVC_Controller {
         esperaInput();
     }
 
+    /**
+     * Menu onde constam as opções de registo de uma nova Transportadora no Sistema
+     * @param trazAqui  Model principal á volta do qual se trabalha ao longo do projeto
+     */
     private void registaTransportadora(TrazAqui trazAqui)
     {
         Random r = new Random();
@@ -945,6 +1064,10 @@ public class MVC_Controller {
         esperaInput();
     }
 
+    /**
+     * Menu onde constam as opções de registo de um novo Utilizador no Sistema
+     * @param trazAqui  Model principal á volta do qual se trabalha ao longo do projeto
+     */
     private void registaUtilizador(TrazAqui trazAqui)
     {
         Random r = new Random();
@@ -974,6 +1097,9 @@ public class MVC_Controller {
         esperaInput();
     }
 
+    /**
+     * Função que espera um Input por parte do Usuário
+     */
     private void esperaInput()
     {
         Scanner sc = new Scanner(System.in);
@@ -981,6 +1107,9 @@ public class MVC_Controller {
         sc.nextLine();
     }
 
+    /**
+     * Função que grava o estado atual do Model do MVC num ficheiro
+     */
     private void saveToDisk()
     {
         Scanner sc = new Scanner(System.in);
@@ -996,6 +1125,9 @@ public class MVC_Controller {
         }
     }
 
+    /**
+     * Função que dá load, se possível para o Model do MVC de um estado do Model guardado em ficheiro anteriormente
+     */
     private void loadFromDisk()
     {
         Scanner sc = new Scanner(System.in);

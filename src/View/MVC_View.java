@@ -5,24 +5,41 @@ import Models.*;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Classe que possui View
+ */
 public class MVC_View {
 
+    /**
+     * Função que limpa o ecrã
+     */
     public void clearScreen()
     {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
+    /**
+     * Função que imprime um dado objeto
+     * @param o     Objeto que pretendemos imprimir
+     */
     public void print(Object o)
     {
         System.out.print(o.toString());
     }
 
+    /**
+     * Função que imprime uma dada String
+     * @param string    String que pretendemos imprimir
+     */
     public void print(String string)
     {
         System.out.print(string);
     }
 
+    /**
+     * Função que imprime o menu principal
+     */
     public void printMenuPrincipal ()
     {
         clearScreen();
@@ -35,6 +52,9 @@ public class MVC_View {
         System.out.print(" $ OPÇÃO: ");
     }
 
+    /**
+     * Função que imprime o meno de logins
+     */
     public void printMenuEscolheLogin ()
     {
         clearScreen();
@@ -48,6 +68,9 @@ public class MVC_View {
         System.out.print(" $ OPÇÃO: ");
     }
 
+    /**
+     * Função que imprime o menu de registos de Entidade
+     */
     public void printMenuRegistoEntidade ()
     {
         clearScreen();
@@ -61,6 +84,12 @@ public class MVC_View {
         System.out.print(" $ OPÇÃO: ");
     }
 
+
+    /**
+     * Função que imprime o menu do um Utilizador
+     * @param nrAvaliacoes  Número de Entregas que tem de avaliar
+     * @param nrPropostas   Número de Propostas qe tem de aceitar ou recusas
+     */
     public void printMenuUtilizador (Integer nrAvaliacoes, Integer nrPropostas)
     {
         clearScreen();
@@ -74,6 +103,9 @@ public class MVC_View {
         System.out.print(" $ OPÇÃO: ");
     }
 
+    /**
+     * Função que imprime menu de um Voluntário
+     */
     public void printMenuVoluntário ()
     {
         clearScreen();
@@ -85,6 +117,9 @@ public class MVC_View {
         System.out.print(" $ OPÇÃO: ");
     }
 
+    /**
+     * Função que imprime menu de uma Transportadora
+     */
     public void printMenuTransportadora ()
     {
         clearScreen();
@@ -98,6 +133,10 @@ public class MVC_View {
         System.out.print(" $ OPÇÃO: ");
     }
 
+    /**
+     * Função que imprime menu de uma Loja
+     * @param nrPedidos     Número de pedidos de Encomenda que loja tem de aceitar ou recusar
+     */
     public void printMenuLojas (Integer nrPedidos)
     {
         clearScreen();
@@ -108,6 +147,10 @@ public class MVC_View {
         System.out.print(" $ OPÇÃO: ");
     }
 
+    /**
+     * Função que imprime querie dos 10 Utilizadores com mais entregas realizadas
+     * @param res   Resultado onde constão dados necessários a imprimir
+     */
     public void imprimeQuerie10Utilizadores (Set<Map.Entry<String, Integer>> res)
     {
         System.out.println("Utilizadores ordenados por ordem decrescente de encomendas transportadas:");
@@ -120,6 +163,10 @@ public class MVC_View {
         }
     }
 
+    /**
+     * Função que imprime querie dos 10 Transportadora com mais kilometros feitos nas suas entregas de Encomendas
+     * @param res   Resultado onde constão dados necessários a imprimir
+     */
     public void imprimeQuerie10Transportadoras (Set<Map.Entry<String, Double>> res)
     {
         System.out.println("Transportadoras ordenados por ordem decrescente de Kilómetros feitos:");
@@ -132,7 +179,10 @@ public class MVC_View {
         }
     }
 
-
+    /**
+     * Função que lista o conjunto de lojas do Sistema
+     * @param trazAqui  Model principal á volta do qual se trabalha ao longo do projeto
+     */
     public void imprimeLojasTrazAqui (TrazAqui trazAqui) {
         System.out.println("\n----------------------------- LOJAS -----------------------------\n");
         for (Loja loja : trazAqui.getLojas()) {
@@ -140,6 +190,10 @@ public class MVC_View {
         }
     }
 
+    /**
+     * Função que lista o conjunto de Voluntários do Sistema
+     * @param trazAqui  Model principal á volta do qual se trabalha ao longo do projeto
+     */
     public void imprimeVoluntariosTrazAqui (TrazAqui trazAqui) {
         System.out.println("\n-------------------------- VOLUNTARIOS --------------------------\n");
         for (Voluntario voluntario : trazAqui.getVoluntarios()) {
@@ -147,6 +201,10 @@ public class MVC_View {
         }
     }
 
+    /**
+     * Função que lista o conjunto de Transportadoras do Sistema
+     * @param trazAqui  Model principal á volta do qual se trabalha ao longo do projeto
+     */
     public void imprimeTransportadorasTrazAqui (TrazAqui trazAqui) {
         System.out.println("\n------------------------ TRANSPORTADORAS ------------------------\n");
         for (Transportadora transportadora : trazAqui.getTransportadoras()) {
@@ -154,6 +212,10 @@ public class MVC_View {
         }
     }
 
+    /**
+     * Função que lista o conjunto de Utilizadores do Sistema
+     * @param trazAqui  Model principal á volta do qual se trabalha ao longo do projeto
+     */
     public void imprimeUtilizadoresTrazAqui (TrazAqui trazAqui) {
         System.out.println("\n------------------------- UTILIZADORES -------------------------\n");
         for (Utilizador utilizador : trazAqui.getUtilizadores()) {
@@ -161,12 +223,19 @@ public class MVC_View {
         }
     }
 
+    /**
+     * Função que imprime menu de Listagem de entidades
+     */
     public void imprimeMenuListagemEntidades ()
     {
         System.out.println("\n#*#*#*#*#*#*#*#*#*#*#*#*#*# TRAZ AQUI #*#*#*#*#*#*#*#*#*#*#*#*#*#");
         System.out.println("  Escolha tipo de entidades que pretende listar");
     }
 
+    /**
+     * Função que imprime resultado da Entrega de uma encomenda
+     * @param encomenda     Encomenda entregue
+     */
     public void imprimeEntregaEncomendaVol (Encomenda encomenda)
     {
         StringBuilder sb = new StringBuilder();
