@@ -7,8 +7,10 @@ import View.MVC_View;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 
 public class MVC_Controller {
 
@@ -39,17 +41,13 @@ public class MVC_Controller {
 
     public void menuPrincipal(String data_path)
     {
-        int opcao;
         Scanner sc = new Scanner(System.in);
         Parser parser = new Parser();
         parser.parseLogs(data_path, this.model);
 
         while(true) {
-
             if (login == 0)
-                menuLogin(this.model);
-/*            else if (TrazAqui.getUtilizador_atual().equals("admin"))
-                menuAdmin();*/
+                menuEscolhas(this.model);
             else if (this.model.getUtilizador_atual().startsWith("u"))
                 menuUtilizador(this.model);
             else if (this.model.getUtilizador_atual().startsWith("v"))
@@ -61,158 +59,182 @@ public class MVC_Controller {
         }
     }
 
-    private void menuLogin(TrazAqui trazAqui)
+    private void menuEscolhas(TrazAqui trazAqui)
     {
-        int opcao;
         Scanner sc = new Scanner(System.in);
 
         while(true) {
-
-            clearScreen();
-            System.out.println("----------------------MENU LOGIN--------------------\n");
-            System.out.println("0 -> Sair do programa.");
-            System.out.println("1 -> Efetuar login.");
-            System.out.println("2 -> Registar novo utilizador.");
-            System.out.println("3 -> Registar entidade.");
-            System.out.println("4 -> Efetuar login com Voluntario.");
-            System.out.println("5 -> Efetuar login com Transportadora.");
-            System.out.println("6 -> Efetuar login com Loja.");
-            System.out.println("7 -> Save to Disk");
-            System.out.println("8 -> Load from Disk");
-            System.out.print("OPÇÃO: ");
+            view.printMenuPrincipal();
 
             String escolha = sc.nextLine();
-            if (escolha.equals("")) {
-                opcao = -1;
-            } else {
-                opcao = Integer.parseInt(escolha);
-            }
 
-            if (opcao == 0)
+            if (escolha.equals("0")) {
                 System.exit(0);
-            else if (opcao == 1 && trazAqui.getUtilizadores().size() != 0) {
-                clearScreen();
-                System.out.println("\n----------------------LOGIN--------------------");
+            }
+            else if (escolha.equals("1")) {
+                menuEscolhaLogin(trazAqui);
+                break;
+            }
+            else if (escolha.equals("2")) {
+                menuEscolhaRegisto(trazAqui);
+                break;
+            }
+            else if (escolha.equals("3") && trazAqui != null) {
+                view.clearScreen();
+                view.print("\n--------------------- Traz Aqui a ser guardado -------------------\n");
+                saveToDisk();
+                break;
+            }
+            else if (escolha.equals("4")) {
+                view.clearScreen();
+                view.print("\n--------------------- Traz Aqui a dar load -------------------\n");
+                loadFromDisk();
+                break;
+            }
+            else {
+                view.print("Opção inválida!\n");
+                esperaInput();
+                break;
+            }
+        }
+    }
+
+    private void menuEscolhaLogin (TrazAqui trazAqui)
+    {
+        view.printMenuEscolheLogin();
+        Scanner sc = new Scanner(System.in);
+        while(true) {
+            String escolha = sc.nextLine();
+
+            if (escolha.equals("0") || escolha.equals("\n")){
+                break;
+            }
+            else if (escolha.equals("1") && trazAqui.getUtilizadores().size() != 0) {
+                view.clearScreen();
+                view.print("\n----------------------LOGIN--------------------\n");
                 while(true) {
-                    System.out.print("Nome de utilizador: ");
+                    view.print("Nome de utilizador: ");
                     String utilizador = sc.nextLine();
                     if (trazAqui.procuraUtilizador(utilizador)) {
                         while(true) {
-                            System.out.print("Password: ");
+                            view.print("Password: ");
                             String password = sc.nextLine();
                             if (trazAqui.verificaPassword(utilizador, password)) {
                                 login = 1;
                                 trazAqui.setUtilizador_atual(utilizador);
                                 break;
                             }
-                            else System.out.println("Password incorreta!");
+                            else view.print("Password incorreta!\n");
                         }
                         break;
                     }
-                    else System.out.println("Utilizador inválido!");
+                    else view.print("Utilizador inválido!\n");
                 }
                 break;
             }
-            else if (opcao == 2) {
-                registaUtilizador(trazAqui);
-            }
-            else if (opcao == 3) {
-                clearScreen();
-                System.out.println("----------------------MENU REGISTO DE ENTIDADE--------------------\n");
-                System.out.println("Entidade a registar:");
-                System.out.println("1 -> Loja | 2 -> Voluntário | 3 -> Transportadora");
-                opcao = Integer.parseInt(sc.nextLine());
-
-                if (opcao == 1)
-                    registaLoja(trazAqui);
-                else if (opcao == 2)
-                    registaVoluntario(trazAqui);
-                else if (opcao == 3)
-                    registaTransportadora(trazAqui);
-            }
-            else if (opcao == 4 && trazAqui.getVoluntarios().size() != 0) {
-                clearScreen();
-                System.out.println("\n----------------------LOGIN--------------------");
+            else if (escolha.equals("2") && trazAqui.getVoluntarios().size() != 0) {
+                view.clearScreen();
+                view.print("\n----------------------LOGIN--------------------\n");
                 while(true) {
-                    System.out.print("Nome do Voluntario: ");
+                    view.print("Nome do Voluntario: ");
                     String voluntario = sc.nextLine();
                     if (trazAqui.procuraVoluntario(voluntario)) {
                         while(true) {
-                            System.out.print("Password: ");
+                            view.print("Password: ");
                             String password = sc.nextLine();
                             if (password.equals("")) {
                                 login = 1;
                                 trazAqui.setUtilizador_atual(voluntario);
                                 break;
                             }
-                            else System.out.println("Password incorreta!");
+                            else view.print("Password incorreta!\n");
                         }
                         break;
                     }
-                    else System.out.println("Voluntario inválido!");
+                    else view.print("Voluntario inválido!\n");
                 }
                 break;
             }
-            else if (opcao == 5 && trazAqui.getTransportadoras().size() != 0) {
-                clearScreen();
-                System.out.println("\n----------------------LOGIN--------------------");
+            else if (escolha.equals("3") && trazAqui.getTransportadoras().size() != 0) {
+                view.clearScreen();
+                view.print("\n----------------------LOGIN--------------------\n");
                 while(true) {
-                    System.out.print("Nome da Transportadora: ");
+                    view.print("Nome da Transportadora: ");
                     String transportadora = sc.nextLine();
                     if (trazAqui.procuraTransportadora(transportadora)) {
                         while(true) {
-                            System.out.print("Password: ");
+                            view.print("Password: ");
                             String password = sc.nextLine();
                             if (password.equals("")) {
                                 login = 1;
                                 trazAqui.setUtilizador_atual(transportadora);
                                 break;
                             }
-                            else System.out.println("Password incorreta!");
+                            else view.print("Password incorreta!\n");
                         }
                         break;
                     }
-                    else System.out.println("Transportadora inválida!");
+                    else view.print("Transportadora inválida!\n");
                 }
                 break;
             }
-            else if (opcao == 6 && trazAqui.getLojas().size() != 0) {
-                clearScreen();
-                System.out.println("\n----------------------LOGIN--------------------");
+            else if (escolha.equals("4") && trazAqui.getLojas().size() != 0) {
+                view.clearScreen();
+                view.print("\n----------------------LOGIN--------------------\n");
                 while(true) {
-                    System.out.print("Nome da Loja: ");
+                    view.print("Nome da Loja: ");
                     String loja = sc.nextLine();
                     if (trazAqui.procuraLoja(loja)) {
                         while(true) {
-                            System.out.print("Password: ");
+                            view.print("Password: ");
                             String password = sc.nextLine();
                             if (password.equals("")) {
                                 login = 1;
                                 trazAqui.setUtilizador_atual(loja);
                                 break;
                             }
-                            else System.out.println("Password incorreta!");
+                            else view.print("Password incorreta!\n");
                         }
                         break;
                     }
-                    else System.out.println("Loja inválida!");
+                    else view.print("Loja inválida!\n");
                 }
                 break;
             }
-            else if (opcao == 7 && trazAqui != null) {
-                clearScreen();
-                System.out.println("\n----------------------Traz Aqui a ser guardado--------------------");
-                saveToDisk();
+            else {
+                view.print("Opção inválida!\n");
+                esperaInput();
+            }
+
+        }
+    }
+
+    public void menuEscolhaRegisto (TrazAqui trazAqui) {
+        view.printMenuRegistoEntidade();
+        Scanner sc = new Scanner(System.in);
+        while (true) {
+            String escolha = sc.nextLine();
+            if (escolha.equals("")) {
+                escolha = "-1";
+            }
+
+            if (escolha.equals("0") || escolha.equals("\n")) {
                 break;
             }
-            else if (opcao == 8) {
-                clearScreen();
-                System.out.println("\n----------------------Traz Aqui a dar load--------------------");
-                loadFromDisk();
-                break;
+            else if (escolha.equals("1")) {
+                registaUtilizador(trazAqui);
+            }
+            else if (escolha.equals("2")) {
+                registaVoluntario(trazAqui);
+            }
+            else if (escolha.equals("3")) {
+                registaTransportadora(trazAqui);
+            }
+            else if (escolha.equals("4")) {
+                registaLoja(trazAqui);
             }
             else {
-                System.out.println("Opção inválida!");
+                view.print("Opção inválida!\n");
                 esperaInput();
             }
         }
@@ -222,53 +244,48 @@ public class MVC_Controller {
     private void menuUtilizador(TrazAqui trazAqui)
     {
         Scanner sc = new Scanner(System.in);
-        Parser parser = new Parser();
-        int opcao;
+
 
         while(true) {
-            clearScreen();
-            System.out.println("----------------------MENU UTILIZADOR--------------------\n");
-            System.out.println("0 -> Logout.");
-            System.out.println("1 -> Listar entidades no sistema.");
-            System.out.println("2 -> Fazer pedido de encomenda.");
-            System.out.println("3 -> Avaliar Encomendas que foram Entregues (" + trazAqui.getUtilizador(trazAqui.getUtilizador_atual()).getEncomendasCompletadasPorAvaliar().size() +").");
-            System.out.println("4 -> Aceitar Encomendas propostas entregar por uma Transportadora (" + trazAqui.getUtilizador(trazAqui.getUtilizador_atual()).getCodsEncomendasTransportadoraPorAceitar().size() +").");
+            view.printMenuUtilizador(trazAqui);
 
             String escolha = sc.nextLine();
-            if (escolha.equals("")) {
-                opcao = -1;
-            } else {
-                opcao = Integer.parseInt(escolha);
-            }
 
-            if (opcao == 0) {
+            if (escolha.equals("0")) {
                 login = 0;
                 trazAqui.setUtilizador_atual("");
                 break;
             }
-            else if (opcao == 1) {
-                clearScreen();
+            else if (escolha.equals("1")) {
+                view.clearScreen();
                 listagemEntidades(trazAqui);
                 esperaInput();
             }
-            else if (opcao == 2) {
+            else if (escolha.equals("2")) {
                 Encomenda e = novaEncomenda(trazAqui);
                 trazAqui.adicionaEncomendaAoSistema(e);
             }
-            else if (opcao == 3) {
-                clearScreen();
+            else if (escolha.equals("3")) {
+                view.clearScreen();
                 avaliaTodasAsEncomendasFeitas(trazAqui);
                 esperaInput();
                 break;
             }
-            else if (opcao == 4) {
-                clearScreen();
+            else if (escolha.equals("4")) {
+                view.clearScreen();
                 aceitaOuRecusasTodasAsPropostas(trazAqui);
                 esperaInput();
                 break;
             }
+            else if (escolha.equals("5")) {
+                view.clearScreen();
+                Set<Map.Entry<String, Integer>> res = trazAqui.getLista10UtilizadoresMaisEntregas();
+                view.imprimeQuerie10Utilizadores(res);
+                esperaInput();
+                break;
+            }
             else {
-                System.out.println("Opção inválida!");
+                view.print("Opção inválida!\n");
                 esperaInput();
             }
         }
@@ -276,56 +293,38 @@ public class MVC_Controller {
 
     private void listagemEntidades (TrazAqui trazAqui) {
         Scanner sc = new Scanner(System.in);
-        int escolhaInt;
         boolean escolheuCerto = false;
-        clearScreen();
-        System.out.println("\n#*#*#*#*#*#*#*#*#*#*#*#*#*# TRAZ AQUI #*#*#*#*#*#*#*#*#*#*#*#*#*#");
-        System.out.println("Escolha tipo de entidades que pretende listar");
+        view.clearScreen();
+        view.imprimeMenuListagemEntidades();
         while(true) {
-            System.out.print("(0 - Lojas | 1 - Voluntários | 2 - Transportadoras | 3 - Utilizadores | 4 - Aceites): ");
+            view.print("(0 - Lojas | 1 - Voluntários | 2 - Transportadoras | 3 - Utilizadores | 4 - Aceites): ");
             String escolha = sc.nextLine();
-            if (escolha.equals("")) {
-                escolhaInt = -1;
-            } else {
-                escolhaInt = Integer.parseInt(escolha);
-            }
 
-            switch (escolhaInt) {
-                case 0:
-                    System.out.println("\n----------------------------- LOJAS -----------------------------\n");
-                    for (Loja loja : trazAqui.getLojas()) {
-                        System.out.println(loja.toString());
-                    }
+            switch (escolha) {
+                case "0":
+                    view.imprimeLojasTrazAqui(trazAqui);
                     escolheuCerto = true;
                     break;
-                case 1:
-                    System.out.println("\n-------------------------- VOLUNTARIOS --------------------------\n");
-                    for (Voluntario voluntario : trazAqui.getVoluntarios()) {
-                        System.out.println(voluntario.toString());
-                    }
+                case "1":
+                    view.imprimeVoluntariosTrazAqui(trazAqui);
                     escolheuCerto = true;
                     break;
-                case 2:
-                    System.out.println("\n------------------------ TRANSPORTADORAS ------------------------\n");
-                    for (Transportadora transportadora : trazAqui.getTransportadoras()) {
-                        System.out.println(transportadora.toString());
-                    }
+                case "2":
+                    view.imprimeTransportadorasTrazAqui(trazAqui);
                     escolheuCerto = true;
                     break;
-                case 3:
-                    System.out.println("\n------------------------- UTILIZADORES -------------------------\n");
-                    for (Utilizador utilizador : trazAqui.getUtilizadores()) {
-                        System.out.println(utilizador.toString());
-                    }
+                case "3":
+                    view.imprimeUtilizadoresTrazAqui(trazAqui);
                     escolheuCerto = true;
                     break;
-                case 4:
-                    System.out.println("\n---------------------------- ACEITES ----------------------------\n");
-                    System.out.println(trazAqui.getEncomendasAceites().toString());
+                case "4":
+                    view.print("\n---------------------------- ACEITES ----------------------------\n");
+                    view.print(trazAqui.getEncomendasAceites().toString());
+                    view.print("\n");
                     escolheuCerto = true;
                     break;
                 default:
-                    System.out.println("Opção Inválida");
+                    view.print("Opção Inválida\n");
             }
 
             if (escolheuCerto)
@@ -339,8 +338,8 @@ public class MVC_Controller {
         Random r = new Random();
         Encomenda e = new Encomenda();
 
-        clearScreen();
-        System.out.println("------NOVA ENCOMENDA--------");
+        view.clearScreen();
+        view.print("------NOVA ENCOMENDA--------\n");
 
         while(true) {
             String codigo = "e" + (r.nextInt(8999) + 1000);
@@ -349,10 +348,10 @@ public class MVC_Controller {
                 break;
             }
         }
-        System.out.print("Código da loja: ");
+        view.print("Código da loja: ");
         e.setCodLoja(sc.nextLine());
         e.setCodUtilizador(trazAqui.getUtilizador_atual());
-        System.out.print("Número de produtos a encomendar: ");
+        view.print("Número de produtos a encomendar: ");
         int nr_produtos = Integer.parseInt(sc.nextLine());
         for (int i = 0; i < nr_produtos; i++) {
             LinhaEncomenda l = novaLinhaEncomenda();
@@ -360,26 +359,57 @@ public class MVC_Controller {
             e.setPeso(e.getPeso() + l.getQuantidade() * l.getValor_unidade() / 10);
         }
         e.setMedical(e.getProdutos().stream().anyMatch(l -> l.getDescricao().equals("Desinfetante") || l.getDescricao().equals("Água sanitária") || l.getDescricao().equals("Medicamentos")));
-        e.setData(LocalDateTime.of(2000, 1, 1, 0, 0)); //Por opção de meter horas e assim de Entrega
+
+        Integer ano,mes,dia;
+        while (true) {
+            view.print("Ano do Pedido da Encomenda:");
+            ano = Integer.parseInt(sc.nextLine());
+            if (ano >= 0)
+                break;
+            else view.print("Ano Inválido.\n");
+        }
+
+        while (true) {
+            view.print("Horas do Pedido da Encomenda:");
+            mes = Integer.parseInt(sc.nextLine());
+            if (mes>=0 || mes<=12)
+                break;
+            else view.print("Mês Inválido.\n");
+        }
+        while (true) {
+            view.print("Horas do Pedido da Encomenda:");
+            dia = Integer.parseInt(sc.nextLine());
+            if (mes!=2) {
+                if (dia>=0 || dia<=31)
+                    break;
+                else view.print("Dia Inválido.\n");
+            }
+            else {
+                if (dia>=0 || dia<=29)
+                    break;
+                else view.print("Dia Inválido.\n");
+            }
+        }
+        e.setData(LocalDateTime.of(ano, mes, dia, 0, 0)); //Por opção de meter horas e assim de Entrega
 
         return e;
     }
 
     private LinhaEncomenda novaLinhaEncomenda()
     {
+        Random r = new Random();
         Scanner sc = new Scanner(System.in);
         LinhaEncomenda l = new LinhaEncomenda();
 
-        clearScreen();
-        System.out.println("------NOVA LINHA ENCOMENDA--------");
-        System.out.print("Código do produto: ");
+        view.clearScreen();
+        view.print("------NOVA LINHA ENCOMENDA--------\n");
+        view.print("Código do produto: ");
         l.setCodigo(sc.nextLine());
-        System.out.print("Descrição: ");
+        view.print("Descrição: ");
         l.setDescricao(sc.nextLine());
-        System.out.print("Quantidade: ");
+        view.print("Quantidade: ");
         l.setQuantidade(Integer.parseInt(sc.nextLine()));
-        System.out.print("Valor por unidade: ");
-        l.setValor_unidade(Integer.parseInt(sc.nextLine()));
+        l.setValor_unidade(10*r.nextDouble());
 
         return l;
     }
@@ -387,10 +417,10 @@ public class MVC_Controller {
     private void avaliaTodasAsEncomendasFeitas(TrazAqui trazAqui)
     {
         Utilizador utilizadorAux = trazAqui.getUtilizador(trazAqui.getUtilizador_atual());
-        System.out.println("Avalie todas as entregas da(s) Encomenda(s) de 0 a 10: ");
+        view.print("Avalie todas as entregas da(s) Encomenda(s) de 0 a 10: \n");
         utilizadorAux.getEncomendasCompletadasPorAvaliar()
                 .forEach((key, value) -> avaliaUmaEncomendaFeita(trazAqui, key, value.getKey(), value.getValue()));
-        System.out.println("\nTodas as Encomendas feitas avaliadas com sucesso.");
+        view.print("\nTodas as Encomendas feitas avaliadas com sucesso.");
         trazAqui.todasEncomendasFeitasAvaliadas(trazAqui.getUtilizador_atual());
     }
 
@@ -400,21 +430,21 @@ public class MVC_Controller {
         DecimalFormat fmt = new DecimalFormat("0.00");
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("Entrega da Encomenda "+codEncomenda+" demorou " + (int)tempoTransporte/60 + "Horas e "
-                + (int)tempoTransporte%60 + " minutos. Teve o custo de " + fmt.format(preçoTransporte) + "€." );
+        view.print("Entrega da Encomenda "+codEncomenda+" demorou " + (int)tempoTransporte/60 + "Horas e "
+                + (int)tempoTransporte%60 + " minutos. Teve o custo de " + fmt.format(preçoTransporte) + "€.\n" );
         while (true) {
-            System.out.print("\nAvaliação(0-10): ");
+            view.print("Avaliação(0-10): ");
             double avaliacao = sc.nextDouble();
             if (avaliacao >= 0.0 && avaliacao <= 10.0) {
                 trazAqui.avaliaEntregaEncomenda(codEncomenda, avaliacao);
                 if (preçoTransporte == 0.0) {
-                    System.out.println("Voluntário responsável pela entrega da Encomenda avaliado com sucesso.");
+                    view.print("Voluntário responsável pela entrega da Encomenda avaliado com sucesso.\n");
                 } else {
-                    System.out.println("Transportadora responsável pela entrega da Encomenda avaliada com sucesso.");
+                    view.print("Transportadora responsável pela entrega da Encomenda avaliada com sucesso.\n");
                 }
                 break;
             } else {
-                System.out.println("Avaliação Inválida");
+                view.print("Avaliação Inválida\n");
             }
         }
     }
@@ -422,10 +452,10 @@ public class MVC_Controller {
     private void aceitaOuRecusasTodasAsPropostas(TrazAqui trazAqui)
     {
         Utilizador utilizadorAux = trazAqui.getUtilizador(trazAqui.getUtilizador_atual());
-        System.out.println("Aceite ou recuse as seguintes propostas de Entrega:");
+        view.print("Aceite ou recuse as seguintes propostas de Entrega:\n");
         utilizadorAux.getCodsEncomendasTransportadoraPorAceitar()
                 .forEach((key, value) -> aceitaOuRecusaUmaProposta(trazAqui, key, value.getKey(), value.getValue()));
-        System.out.println("\nTodas as Encomendas feitas avaliadas com sucesso.");
+        view.print("\nTodas as Encomendas feitas avaliadas com sucesso.\n");
         trazAqui.todasEntregasAceitesOuRecusadas(trazAqui.getUtilizador_atual());
     }
 
@@ -435,22 +465,24 @@ public class MVC_Controller {
         Scanner sc = new Scanner(System.in);
         DecimalFormat fmt = new DecimalFormat("0.00");
 
-        System.out.println("Entrega da Encomenda "+codEncomenda+" irá demorar cerca de " + (int)tempoTransporte/60 + "Horas e "
-                + (int)tempoTransporte%60 + " minutos. Terá um custo de " + fmt.format(preçoTransporte) + "€." );
+        view.print("Entrega da Encomenda "+codEncomenda+" irá demorar cerca de " + (int)tempoTransporte/60 + "Horas e "
+                + (int)tempoTransporte%60 + " minutos. Terá um custo de " + fmt.format(preçoTransporte) + "€.\n" );
 
         while (true) {
-            System.out.print("\nAceitar ou Recusar (y-n): ");
+            view.print("Aceitar ou Recusar (y-n): ");
             String aceita = sc.nextLine();
             if (aceita.equals("y") || aceita.equals("Y")) {
                 trazAqui.utilizadorAceitaOuRecusaEntrega(codEncomenda, true);
+                view.print("  Entrega Aceite\n");
                 break;
             }
             else if (aceita.equals("n") || aceita.equals("N")) {
                 trazAqui.utilizadorAceitaOuRecusaEntrega(codEncomenda, false);
+                view.print("  Entrega Recusada\n");
                 break;
             }
             else {
-                System.out.println("Aceitação Inválida");
+                view.print("Aceitação Inválida");
             }
         }
     }
@@ -459,49 +491,37 @@ public class MVC_Controller {
     private void menuVoluntario(TrazAqui trazAqui)
     {
         Scanner sc = new Scanner(System.in);
-        Parser parser = new Parser();
-        int opcao;
 
         while(true) {
 
-            clearScreen();
-            System.out.println("----------------------MENU VOLUNTÁRIO--------------------\n");
-            System.out.println("0 -> Logout.");
-            System.out.println("1 -> Listar entidades no sistema.");
-            System.out.println("2 -> Fazer pedido para entregar encomenda.");
-            System.out.println("3 -> Altera disponibilidade de entrega.");
+            view.printMenuVoluntário();
 
             String escolha = sc.nextLine();
-            if (escolha.equals("")) {
-                opcao = -1;
-            } else {
-                opcao = Integer.parseInt(escolha);
-            }
 
-            if (opcao == 0) {
+            if (escolha.equals("0")) {
                 login = 0;
                 trazAqui.setUtilizador_atual("");
                 break;
             }
-            else if (opcao == 1) {
-                clearScreen();
+            else if (escolha.equals("1")) {
+                view.clearScreen();
                 listagemEntidades(trazAqui);
                 esperaInput();
             }
-            else if (opcao == 2) {
-                clearScreen();
+            else if (escolha.equals("2")) {
+                view.clearScreen();
                 realizaEncomendaPedidaVoluntario(trazAqui);
                 esperaInput();
                 break;
             }
-            else if (opcao == 3) {
-                clearScreen();
+            else if (escolha.equals("3")) {
+                view.clearScreen();
                 alteraDisponibilidadeEntidade(trazAqui);
                 esperaInput();
                 break;
             }
             else {
-                System.out.println("Opção inválida!");
+                view.print("Opção inválida!\n");
                 esperaInput();
             }
         }
@@ -510,13 +530,15 @@ public class MVC_Controller {
     public void realizaEncomendaPedidaVoluntario (TrazAqui trazAqui) {
         Scanner sc = new Scanner(System.in);
         Voluntario voluntario = trazAqui.getVoluntario(trazAqui.getUtilizador_atual());
+        String escolha = "";
 
-        clearScreen();
-        System.out.println("\n-----------------PEDIDO ENTREGA ENCOMENDA------------------------");
-        while(true) {
+        view.clearScreen();
+        view.print("\n-----------------PEDIDO ENTREGA ENCOMENDA------------------------\n");
+        while(!escolha.equals("exit")) {
             if (voluntario.isAvailable()) {
-                System.out.println("Insira o Código da loja:");
-                String codLoja = sc.nextLine();
+                view.print("Insira o Código da loja:\n");
+                escolha = sc.nextLine();
+                String codLoja = escolha;
                 if (!codLoja.startsWith("l")) {
                     codLoja = "l" + codLoja;
                 }
@@ -524,32 +546,37 @@ public class MVC_Controller {
 
                     if (trazAqui.getLoja(codLoja).getCoordenadas().isReachable( voluntario.getCoordenadas(), voluntario.getRaio())) {
 
-                        while(true) {
-                            System.out.println("Insira o Código da Encomenda:");
-                            String codEncomenda = sc.nextLine();
+                        while(!escolha.equals("exit")) {
+                            view.print("Insira o Código da Encomenda:\n");
+                            escolha = sc.nextLine();
+                            String codEncomenda = escolha;
                             if (trazAqui.getLoja(codLoja).possuiEncomendaCodigo(codEncomenda)) {
                                 Encomenda enc = trazAqui.getEncomenda(codEncomenda);
-                                if (trazAqui.getUtilizador(enc.getCodUtilizador()).getCoordenadas().isReachable(voluntario.getCoordenadas(), voluntario.getRaio())) {
-                                    String res = trazAqui.realizaEntregaDeVenda(codLoja, codEncomenda, trazAqui.getUtilizador_atual());
-                                    System.out.println("Entrega feita com sucesso");
-                                    System.out.println(res);
-                                    break;
+                                if (!(!voluntario.isMedical() && enc.isMedical())) {
+                                    if (trazAqui.getUtilizador(enc.getCodUtilizador()).getCoordenadas().isReachable(voluntario.getCoordenadas(), voluntario.getRaio())) {
+                                        Encomenda res = trazAqui.realizaEntregaDeVenda(codLoja, codEncomenda, trazAqui.getUtilizador_atual());
+                                        view.print("Entrega feita com sucesso\n");
+                                        view.imprimeEntregaEncomendaVol(res);
+                                        break;
+                                    } else {
+                                        view.print("Nao consegue alcançar utilizador\n");
+                                    }
                                 } else {
-                                    System.out.println("Nao consegue alcançar utilizador");
+                                    view.print("Voluntário não se encontra preparado para transportar Encomendas Médicas.\n");
                                 }
                             } else {
-                                System.out.println("Encomenda Pendente inexistente");
+                                view.print("Encomenda Pendente inexistente\n");
                             }
                         }
                         break;
                     } else {
-                        System.out.println("Não consegue alcançar esta loja");
+                        view.print("Não consegue alcançar esta loja\n");
                     }
                 } else {
-                    System.out.println("Loja Inexistente");
+                    view.print("Loja Inexistente\n");
                 }
             } else {
-                System.out.println("Voluntário Não Disponível para realizar Entregas.");
+                view.print("Voluntário Não Disponível para realizar Entregas.\n");
                 break;
             }
         }
@@ -558,18 +585,20 @@ public class MVC_Controller {
     public void alteraDisponibilidadeEntidade (TrazAqui trazAqui) {
         Scanner sc = new Scanner(System.in);
         String codEntidade = trazAqui.getUtilizador_atual();
+        String escolha = "";
 
-        while(true) {
-            System.out.println("Qual disponibilidade quer colocar no Voluntario?");
-            System.out.print("(y - Disponível | n - Não Disponível) : ");
-            String disponibilidade = sc.nextLine();
+        while(!escolha.equals("exit")) {
+            view.print("Qual disponibilidade quer colocar no Voluntario?\n");
+            view.print("(y - Disponível | n - Não Disponível) : ");
+            escolha = sc.nextLine();
+            String disponibilidade = escolha;
             if (disponibilidade.startsWith("y") || disponibilidade.startsWith("Y")) {
                 trazAqui.setAvailable(codEntidade, true);
-                System.out.println("Entidade definida como Disponível para entregas!");
+                view.print("Entidade definida como Disponível para entregas!\n");
                 break;
             } else if (disponibilidade.startsWith("n") || disponibilidade.startsWith("N")) {
                 trazAqui.setAvailable(codEntidade, false);
-                System.out.println("Entidade definida como Não Disponível para entregas!");
+                view.print("Entidade definida como Não Disponível para entregas!\n");
                 break;
             }
         }
@@ -579,50 +608,47 @@ public class MVC_Controller {
     private void menuTransportadora(TrazAqui trazAqui)
     {
         Scanner sc = new Scanner(System.in);
-        Parser parser = new Parser();
-        int opcao;
 
         while(true) {
-
-            clearScreen();
-            System.out.println("----------------------MENU TRANSPORTADORA--------------------\n");
-            System.out.println("0 -> Logout.");
-            System.out.println("1 -> Listar entidades no sistema.");
-            System.out.println("2 -> Fazer pedido para entregar encomenda.");
-            System.out.println("3 -> Altera disponibilidade de entrega.");
+            view.printMenuTransportadora();
 
             String escolha = sc.nextLine();
-            if (escolha.equals("")) {
-                opcao = -1;
-            } else {
-                opcao = Integer.parseInt(escolha);
-            }
 
-            if (opcao == 0) {
+
+            if (escolha.equals("0")) {
                 login = 0;
                 trazAqui.setUtilizador_atual("");
                 break;
             }
-            else if (opcao == 1) {
-                clearScreen();
+            else if (escolha.equals("1")) {
+                view.clearScreen();
                 listagemEntidades(trazAqui);
                 esperaInput();
+                break;
             }
-            else if (opcao == 2) {
-                clearScreen();
+            else if (escolha.equals("2")) {
+                view.clearScreen();
                 realizaEncomendaPedidaTransportadora(trazAqui);
                 esperaInput();
                 break;
             }
-            else if (opcao == 3) {
-                clearScreen();
+            else if (escolha.equals("3")) {
+                view.clearScreen();
                 alteraDisponibilidadeEntidade(trazAqui);
                 esperaInput();
                 break;
             }
-            else {
-                System.out.println("Opção inválida!");
+            else if (escolha.equals("4")) {
+                view.clearScreen();
+                Set<Map.Entry<String, Double>> res = trazAqui.getLista10TransportadorasMaisKilometros();
+                view.imprimeQuerie10Transportadoras(res);
                 esperaInput();
+                break;
+            }
+            else {
+                view.print("Opção inválida!\n");
+                esperaInput();
+                break;
             }
         }
     }
@@ -630,13 +656,15 @@ public class MVC_Controller {
     public void realizaEncomendaPedidaTransportadora (TrazAqui trazAqui) {
         Scanner sc = new Scanner(System.in);
         Transportadora transportadora = trazAqui.getTransportador(trazAqui.getUtilizador_atual());
+        String escolha = "";
 
-        clearScreen();
-        System.out.println("\n-----------------PEDIDO ENTREGA ENCOMENDA------------------------");
-        while(true) {
+        view.clearScreen();
+        view.print("\n-----------------PEDIDO ENTREGA ENCOMENDA------------------------\n");
+        while(!escolha.equals("exit")) {
             if (transportadora.isAvailable()) {
-                System.out.println("Insira o Código da loja:");
-                String codLoja = sc.nextLine();
+                view.print("Insira o Código da loja:\n");
+                escolha = sc.nextLine();
+                String codLoja = escolha;
                 if (!codLoja.startsWith("l")) {
                     codLoja = "l" + codLoja;
                 }
@@ -644,31 +672,36 @@ public class MVC_Controller {
 
                     if (trazAqui.getLoja(codLoja).getCoordenadas().isReachable( transportadora.getCoordenadas(), transportadora.getRaio())) {
 
-                        while(true) {
-                            System.out.println("Insira o Código da Encomenda:");
-                            String codEncomenda = sc.nextLine();
+                        while(!escolha.equals("exit")) {
+                            view.print("Insira o Código da Encomenda:\n");
+                            escolha = sc.nextLine();
+                            String codEncomenda = escolha;
                             if (trazAqui.getLoja(codLoja).possuiEncomendaCodigo(codEncomenda)) {
                                 Encomenda enc = trazAqui.getEncomenda(codEncomenda);
-                                if (trazAqui.getUtilizador(enc.getCodUtilizador()).getCoordenadas().isReachable(transportadora.getCoordenadas(), transportadora.getRaio())) {
-                                    String res = trazAqui.realizaEntregaDeVendaTransportadora(codLoja, codEncomenda, trazAqui.getUtilizador_atual());
-                                    System.out.println(res);
-                                    break;
+                                if (!(!transportadora.isMedical() && enc.isMedical())) {
+                                    if (trazAqui.getUtilizador(enc.getCodUtilizador()).getCoordenadas().isReachable(transportadora.getCoordenadas(), transportadora.getRaio())) {
+                                        trazAqui.realizaEntregaDeVendaTransportadora(codLoja, codEncomenda, trazAqui.getUtilizador_atual());
+                                        view.print("Pedido de Entrega efetuado com sucesso");
+                                        break;
+                                    } else {
+                                        view.print("Nao consegue alcançar utilizador\n");
+                                    }
                                 } else {
-                                    System.out.println("Nao consegue alcançar utilizador");
+                                    view.print("Transportadora não se encontra preparada para transportar Encomendas Médicas.\n");
                                 }
                             } else {
-                                System.out.println("Encomenda Pendente inexistente");
+                                view.print("Encomenda Pendente inexistente\n");
                             }
                         }
                         break;
                     } else {
-                        System.out.println("Não consegue alcançar esta loja");
+                        view.print("Não consegue alcançar esta loja\n");
                     }
                 } else {
-                    System.out.println("Loja Inexistente");
+                    view.print("Loja Inexistente\n");
                 }
             } else {
-                System.out.println("Transportadora Não Disponível para realizar Entregas.");
+                view.print("Transportadora Não Disponível para realizar Entregas.\n");
                 break;
             }
         }
@@ -679,41 +712,30 @@ public class MVC_Controller {
     private void menuLoja(TrazAqui trazAqui)
     {
         Scanner sc = new Scanner(System.in);
-        int opcao;
 
         while(true) {
-
-            clearScreen();
-            System.out.println("----------------------MENU LOJA--------------------\n");
-            System.out.println("0 -> Logout.");
-            System.out.println("1 -> Listar entidades no sistema.");
-            System.out.println("2 -> Aceitar pedidos de Encomenda (" + trazAqui.getLoja(trazAqui.getUtilizador_atual()).getEncomendasPorAceitar().size()+").");
+            view.printMenuLojas(trazAqui);
 
             String escolha = sc.nextLine();
-            if (escolha.equals("")) {
-                opcao = -1;
-            } else {
-                opcao = Integer.parseInt(escolha);
-            }
 
-            if (opcao == 0) {
+            if (escolha.equals("0")) {
                 login = 0;
                 trazAqui.setUtilizador_atual("");
                 break;
             }
-            else if (opcao == 1) {
-                clearScreen();
+            else if (escolha.equals("1")) {
+                view.clearScreen();
                 listagemEntidades(trazAqui);
                 esperaInput();
             }
-            else if (opcao == 2) {
-                clearScreen();
+            else if (escolha.equals("3")) {
+                view.clearScreen();
                 aceitaOuRecusaTodosPedidosEncomenda(trazAqui);
                 esperaInput();
                 break;
             }
             else {
-                System.out.println("Opção inválida!");
+                view.print("Opção inválida!\n");
                 esperaInput();
             }
         }
@@ -722,10 +744,10 @@ public class MVC_Controller {
     private void aceitaOuRecusaTodosPedidosEncomenda(TrazAqui trazAqui)
     {
         Loja lojaAux = trazAqui.getLoja(trazAqui.getUtilizador_atual());
-        System.out.println("Aceite ou recuse os pedidos de entrega por parte dos Utilizadores (y-n): ");
+        view.print("Aceite ou recuse os pedidos de entrega por parte dos Utilizadores (y-n): \n");
         lojaAux.getEncomendasPorAceitar()
                 .forEach(key -> aceitaOuRecusaUmPedidoEncomenda(trazAqui, key));
-        System.out.println("\n\nTodas as Encomendas pedidas aceitadas ou recusadas com sucesso.");
+        view.print("\nTodas as Encomendas pedidas aceitadas ou recusadas com sucesso.");
         trazAqui.lojaAceitaOuRecusaTodasEncomenda(trazAqui.getUtilizador_atual());
     }
 
@@ -734,10 +756,10 @@ public class MVC_Controller {
     {
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("\nPedido da seguinte Encomenda " +codEncomenda+ ":");
-        System.out.println(trazAqui.getEncomenda(codEncomenda));
+        view.print("\n  Pedido da seguinte Encomenda " +codEncomenda+ ":");
+        view.print(trazAqui.getEncomenda(codEncomenda));
         while (true) {
-            System.out.print("\nAceitar ou Recusar (y-n): ");
+            view.print("Aceitar ou Recusar (y-n): ");
             String aceita = sc.nextLine();
             if (aceita.equals("y") || aceita.equals("Y")) {
                 trazAqui.lojaAceitaOuRecusaEncomenda(codEncomenda, true);
@@ -748,7 +770,7 @@ public class MVC_Controller {
                 break;
             }
             else {
-                System.out.println("Aceitação Inválida");
+                view.print("Aceitação Inválida\n");
             }
         }
     }
@@ -756,27 +778,33 @@ public class MVC_Controller {
     /************* REGISTAR NOVAS ENTIDADES ****************/
     private void registaLoja(TrazAqui trazAqui)
     {
+        Random r = new Random();
         Scanner sc = new Scanner(System.in);
 
-        clearScreen();
-        System.out.println("------REGISTO DE LOJA--------");
-        System.out.print("Nome: ");
+        view.clearScreen();
+        view.print("------REGISTO DE LOJA--------\n");
+        view.print("Nome: ");
         String nome = sc.nextLine();
-        System.out.print("Codigo: ");
-        String codigo = sc.nextLine();
-        System.out.println("Coordenadas:");
-        System.out.print("\tLatitude: ");
+        String codigo;
+        while(true) {
+            codigo = "l" + (r.nextInt(250) + 1);
+            if (!trazAqui.procuraLoja(codigo)) {
+                break;
+            }
+        }
+        view.print("Coordenadas:\n");
+        view.print("\tLatitude: ");
         double latitude = Double.parseDouble(sc.nextLine());
-        System.out.print("\tLongitude: ");
+        view.print("\tLongitude: ");
         double longitude = Double.parseDouble(sc.nextLine());
-        System.out.print("Fila de espera? [y/n]: ");
+        view.print("Fila de espera? [y/n]: ");
         char c = sc.nextLine().toCharArray()[0];
         boolean temFila = c == 'y';
 
         Loja newLoja = new Loja(nome, codigo, new GPS(latitude,longitude), temFila);
         trazAqui.insereLoja(newLoja);
 
-        System.out.println("\nLoja registada com sucesso!");
+        view.print("\nLoja registada com sucesso!\n");
         esperaInput();
     }
 
@@ -785,20 +813,25 @@ public class MVC_Controller {
         Random r = new Random();
         Scanner sc = new Scanner(System.in);
 
-        clearScreen();
-        System.out.println("------REGISTO DE VOLUNTARIO--------");
-        System.out.print("Nome: ");
+        view.clearScreen();
+        view.print("------REGISTO DE VOLUNTARIO--------\n");
+        view.print("Nome: ");
         String nome = sc.nextLine();
-        System.out.print("Codigo: ");
-        String codigo = sc.nextLine();
-        System.out.println("Coordenadas:");
-        System.out.print("\tLatitude: ");
+        String codigo;
+        while(true) {
+            codigo = "v" + (r.nextInt(250) + 1);
+            if (!trazAqui.procuraVoluntario(codigo)) {
+                break;
+            }
+        }
+        view.print("Coordenadas:\n");
+        view.print("\tLatitude: ");
         double latitude = Double.parseDouble(sc.nextLine());
-        System.out.print("\tLongitude: ");
+        view.print("\tLongitude: ");
         double longitude = Double.parseDouble(sc.nextLine());
-        System.out.print("Raio: ");
+        view.print("Raio: ");
         double raio = Double.parseDouble(sc.nextLine());
-        System.out.print("Medical? [y/n]: ");
+        view.print("Medical? [y/n]: ");
         char c = sc.nextLine().toCharArray()[0];
         boolean medical = c == 'y';
         double velocidadeMedia = 40.0 + (60.0 - 40.0)*r.nextDouble();
@@ -806,7 +839,7 @@ public class MVC_Controller {
         Voluntario newVoluntario = new Voluntario(nome, codigo, new GPS(latitude,longitude), "", velocidadeMedia, raio, medical);
         trazAqui.insereVoluntario(newVoluntario);
 
-        System.out.println("\nVoluntário registado com sucesso!");
+        view.print("\nVoluntário registado com sucesso!\n");
         esperaInput();
     }
 
@@ -815,26 +848,31 @@ public class MVC_Controller {
         Random r = new Random();
         Scanner sc = new Scanner(System.in);
 
-        clearScreen();
-        System.out.println("------REGISTO DE TRANSPORTADORA--------");
-        System.out.print("Nome: ");
+        view.clearScreen();
+        view.print("------REGISTO DE TRANSPORTADORA--------\n");
+        view.print("Nome: ");
         String nome = sc.nextLine();
-        System.out.print("Codigo: ");
-        String codigo = sc.nextLine();
-        System.out.println("Coordenadas:");
-        System.out.print("\tLatitude: ");
+        String codigo;
+        while(true) {
+            codigo = "t" + (r.nextInt(250) + 1);
+            if (!trazAqui.procuraTransportadora(codigo)) {
+                break;
+            }
+        }
+        view.print("Coordenadas:\n");
+        view.print("\tLatitude: ");
         double latitude = Double.parseDouble(sc.nextLine());
-        System.out.print("\tLongitude: ");
+        view.print("\tLongitude: ");
         double longitude = Double.parseDouble(sc.nextLine());
-        System.out.print("NIF: ");
+        view.print("NIF: ");
         int nif = Integer.parseInt(sc.nextLine());
-        System.out.print("Raio: ");
+        view.print("Raio: ");
         double raio = Double.parseDouble(sc.nextLine());
-        System.out.print("Preço por km: ");
+        view.print("Preço por km: ");
         double preco_km = Double.parseDouble(sc.nextLine());
-        System.out.print("Limite de encomendas: ");
+        view.print("Limite de encomendas: ");
         int limite = Integer.parseInt(sc.nextLine());
-        System.out.print("Medical? [y/n]: ");
+        view.print("Medical? [y/n]: ");
         char c = sc.nextLine().toCharArray()[0];
         boolean medical = c == 'y';
         double velocidadeMedia = 70.0 + (90.0 - 70.0)*r.nextDouble();
@@ -842,57 +880,58 @@ public class MVC_Controller {
         Transportadora newTransportadora = new Transportadora(nome, codigo, new GPS(latitude,longitude), "", velocidadeMedia, nif, raio, preco_km, limite, medical);
         trazAqui.insereTransportadora(newTransportadora);
 
-        System.out.println("\nTransportadora registada com sucesso!");
+        view.print("\nTransportadora registada com sucesso!\n");
         esperaInput();
     }
 
     private void registaUtilizador(TrazAqui trazAqui)
     {
+        Random r = new Random();
         Scanner sc = new Scanner(System.in);
 
-        clearScreen();
-        System.out.println("------REGISTO DE UTILIZADOR--------");
-        System.out.print("Nome: ");
+        view.clearScreen();
+        view.print("------REGISTO DE UTILIZADOR--------\n");
+        view.print("Nome: ");
         String nome = sc.nextLine();
-        System.out.print("Codigo: ");
-        String codigo = sc.nextLine();
-        System.out.println("Coordenadas:");
-        System.out.print("\tLatitude: ");
+        String codigo;
+        while(true) {
+            codigo = "u" + (r.nextInt(250) + 1);
+            if (!trazAqui.procuraUtilizador(codigo)) {
+                break;
+            }
+        }
+        view.print("Coordenadas:\n");
+        view.print("\tLatitude: ");
         double latitude = Double.parseDouble(sc.nextLine());
-        System.out.print("\tLongitude: ");
+        view.print("\tLongitude: ");
         double longitude = Double.parseDouble(sc.nextLine());
-        System.out.print("Password: ");
+        view.print("Password: ");
         String password = sc.nextLine();
 
         Utilizador newUtilizador = new Utilizador(nome, codigo, new GPS(latitude,longitude), password);
         trazAqui.insereUtilizador(newUtilizador);
 
-        System.out.println("\nUtilizador registado com sucesso!");
+        view.print("\nUtilizador registado com sucesso!\n");
         esperaInput();
-    }
-
-    private void clearScreen()
-    {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
     }
 
     private void esperaInput()
     {
         Scanner sc = new Scanner(System.in);
-        System.out.println("\nPressione <ENTER> para continuar.");
+        view.print("\nPressione <ENTER> para continuar.\n");
         sc.nextLine();
     }
 
     private void saveToDisk()
     {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Introduza o nome do Ficheiro com o model que pretende guardar");
+        view.print("Introduza o nome do Ficheiro com o model que pretende guardar\n");
+        view.print("Nome do ficheiro : ");
         String filename = sc.nextLine();
         try {
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename + ".dat"));
             out.writeObject(this.model);
-            System.out.println("Model guardado com sucesso");
+            view.print("Model guardado com sucesso\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -902,16 +941,17 @@ public class MVC_Controller {
     {
         Scanner sc = new Scanner(System.in);
         TrazAqui new_TrazAqui = null;
-        System.out.println("Introduza o nome do Ficheiro com o model que pretende ler");
+        view.print("Introduza o nome do Ficheiro com o model que pretende ler\n");
+        view.print("Nome do ficheiro : ");
         String filename = sc.nextLine();
 
         try {
             ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename + ".dat"));
             new_TrazAqui = (TrazAqui) in.readObject();
             this.model = new_TrazAqui;
-            System.out.println("Model carregado com sucesso");
+            view.print("Model carregado com sucesso\n");
         } catch (IOException e) {
-            System.out.println("Impossível carregar ficheiro");
+            view.print("IMPOSSÍVEL CARREGAR FICHEIRO\n");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

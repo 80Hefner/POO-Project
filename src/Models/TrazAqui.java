@@ -176,7 +176,7 @@ public class TrazAqui implements Serializable
         return u.getPassword().equals(password);
     }
 
-    public String realizaEntregaDeVenda(String codLoja, String codEnc, String codVoluntario) {
+    public Encomenda realizaEntregaDeVenda(String codLoja, String codEnc, String codVoluntario) {
 
         //TO DO: Trocar o return desta função para um void e depois imprimir as ceanas dadas da encomenda
         StringBuilder sb = new StringBuilder();
@@ -195,25 +195,12 @@ public class TrazAqui implements Serializable
         this.voluntarios.get(codVoluntario).insereNoHistorico(enc.clone());
         this.utilizadores.get(enc.getCodUtilizador()).insereNoHistorico(enc.clone());
 
-
         this.utilizadores.get(enc.getCodUtilizador()).aicionaEncomendaParaAvaliar(enc.getCodigo(), enc.getTempoTransporte(), enc.getPrecoTransporte());
 
-        //Esta parte toda pode sair porque isto depois vai tar na View, e devolvemos um void
-        sb.append("Tempo demorado a realizar a entrega -> ")
-                .append((int) this.catalogoEncomendas.get(enc.getCodigo()).getTempoTransporte()/60).append(" Horas e ")
-                .append((int) this.catalogoEncomendas.get(enc.getCodigo()).getTempoTransporte()%60).append(" minutos ");
-
-        if(this.catalogoEncomendas.get(enc.getCodigo()).getCondicoesClimatericas() == 0)
-            sb.append("em condições Normais\n");
-        else if(this.catalogoEncomendas.get(enc.getCodigo()).getCondicoesClimatericas() == 1)
-            sb.append("em condições de chuva\n");
-        else if(this.catalogoEncomendas.get(enc.getCodigo()).getCondicoesClimatericas() == 2)
-            sb.append("em condições de Neve e Tempestade\n");
-
-        return sb.toString();
+        return enc.clone();
     }
 
-    public String realizaEntregaDeVendaTransportadora(String codLoja, String codEnc, String codTransportadora) {
+    public void realizaEntregaDeVendaTransportadora(String codLoja, String codEnc, String codTransportadora) {
 
         //TO DO: Trocar o return desta função para um void e depois imprimir as ceanas dadas da encomenda
         StringBuilder sb = new StringBuilder();
@@ -227,7 +214,6 @@ public class TrazAqui implements Serializable
         //Insere venda alterada depois da entrega no catálogo das Encomendas
         this.catalogoEncomendas.put(codEnc, enc); //Replace da Encomenda antiga para n partilhar apontadores e ser sempre cópias
 
-        return "Pedido de Entrega efetuado com sucesso";
     }
 
 
