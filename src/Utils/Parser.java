@@ -1,5 +1,6 @@
 package Utils;
 import Models.*;
+import NewExceptions.EncomendaInexistenteException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -12,8 +13,7 @@ import java.util.Random;
 
 public class Parser
 {
-    public void parseLogs(String data_path, TrazAqui trazAqui)
-    {
+    public void parseLogs(String data_path, TrazAqui trazAqui) throws EncomendaInexistenteException {
         List<String> linhas = lerFicheiro(data_path + "/logs.txt");
         String[] linhaPartida;
         for (String linha : linhas) {

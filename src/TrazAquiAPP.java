@@ -1,5 +1,6 @@
 import Controller.MVC_Controller;
 import Models.*;
+import NewExceptions.EncomendaInexistenteException;
 import View.MVC_View;
 
 import java.nio.file.Files;
@@ -16,6 +17,10 @@ public class TrazAquiAPP {
         Path logs_path = Paths.get(System.getProperty("user.dir") + "/src");
         if (!Files.isReadable(logs_path)) System.exit(0);
 
-        controlador.menuPrincipal(logs_path.toString());
+        try {
+            controlador.menuPrincipal(logs_path.toString());
+        } catch (EncomendaInexistenteException e) {
+            e.printStackTrace();
+        }
     }
 }

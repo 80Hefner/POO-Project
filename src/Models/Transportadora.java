@@ -2,7 +2,6 @@ package Models;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.util.Random;
 
 public class Transportadora extends Voluntario implements Serializable
 {

@@ -1,6 +1,7 @@
 package Controller;
 
 import Models.*;
+import NewExceptions.*;
 import Utils.Parser;
 import View.MVC_View;
 
@@ -39,7 +40,7 @@ public class MVC_Controller {
         this.view = view;
     }
 
-    public void menuPrincipal(String data_path)
+    public void menuPrincipal(String data_path) throws EncomendaInexistenteException
     {
         Scanner sc = new Scanner(System.in);
         Parser parser = new Parser();
@@ -48,14 +49,46 @@ public class MVC_Controller {
         while(true) {
             if (login == 0)
                 menuEscolhas(this.model);
-            else if (this.model.getUtilizador_atual().startsWith("u"))
-                menuUtilizador(this.model);
-            else if (this.model.getUtilizador_atual().startsWith("v"))
-                menuVoluntario(this.model);
-            else if (this.model.getUtilizador_atual().startsWith("t"))
-                menuTransportadora(this.model);
-            else if (this.model.getUtilizador_atual().startsWith("l"))
-                menuLoja(this.model);
+            else if (this.model.getUtilizador_atual().startsWith("u")) {
+                try {
+                    menuUtilizador(this.model);
+                } catch (UtilizadorInexistenteException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (this.model.getUtilizador_atual().startsWith("v")) {
+                try {
+                    menuVoluntario(this.model);
+                } catch (UtilizadorInexistenteException e) {
+                    e.printStackTrace();
+                } catch (EncomendaInexistenteException e) {
+                    e.printStackTrace();
+                } catch (VoluntarioInexistenteException e) {
+                    e.printStackTrace();
+                } catch (LojaInexistenteException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (this.model.getUtilizador_atual().startsWith("t")) {
+                try {
+                    menuTransportadora(this.model);
+                } catch (TransportadoraInexistenteException e) {
+                    e.printStackTrace();
+                } catch (UtilizadorInexistenteException e) {
+                    e.printStackTrace();
+                } catch (EncomendaInexistenteException e) {
+                    e.printStackTrace();
+                } catch (LojaInexistenteException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (this.model.getUtilizador_atual().startsWith("l")) {
+                try {
+                    menuLoja(this.model);
+                } catch (LojaInexistenteException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -241,13 +274,13 @@ public class MVC_Controller {
     }
 
     /********************* MENUS DO UTILIZADOR *******************/
-    private void menuUtilizador(TrazAqui trazAqui)
+    private void menuUtilizador(TrazAqui trazAqui) throws UtilizadorInexistenteException
     {
         Scanner sc = new Scanner(System.in);
 
 
         while(true) {
-            view.printMenuUtilizador(trazAqui);
+            view.printMenuUtilizador(trazAqui.getUtilizador(trazAqui.getUtilizador_atual()).getEncomendasCompletadasPorAvaliar().size(), trazAqui.getUtilizador(trazAqui.getUtilizador_atual()).getCodsEncomendasTransportadoraPorAceitar().size());
 
             String escolha = sc.nextLine();
 
@@ -414,18 +447,24 @@ public class MVC_Controller {
         return l;
     }
 
-    private void avaliaTodasAsEncomendasFeitas(TrazAqui trazAqui)
+    private void avaliaTodasAsEncomendasFeitas(TrazAqui trazAqui) throws UtilizadorInexistenteException
     {
         Utilizador utilizadorAux = trazAqui.getUtilizador(trazAqui.getUtilizador_atual());
         view.print("Avalie todas as entregas da(s) Encomenda(s) de 0 a 10: \n");
         utilizadorAux.getEncomendasCompletadasPorAvaliar()
-                .forEach((key, value) -> avaliaUmaEncomendaFeita(trazAqui, key, value.getKey(), value.getValue()));
+                .forEach((key, value) -> {
+                    try {
+                        avaliaUmaEncomendaFeita(trazAqui, key, value.getKey(), value.getValue());
+                    } catch (EncomendaInexistenteException e) {
+                        e.printStackTrace();
+                    }
+                });
         view.print("\nTodas as Encomendas feitas avaliadas com sucesso.");
         trazAqui.todasEncomendasFeitasAvaliadas(trazAqui.getUtilizador_atual());
     }
 
 
-    private void avaliaUmaEncomendaFeita(TrazAqui trazAqui, String codEncomenda, double tempoTransporte, double preçoTransporte)
+    private void avaliaUmaEncomendaFeita(TrazAqui trazAqui, String codEncomenda, double tempoTransporte, double preçoTransporte) throws EncomendaInexistenteException
     {
         DecimalFormat fmt = new DecimalFormat("0.00");
         Scanner sc = new Scanner(System.in);
@@ -449,18 +488,24 @@ public class MVC_Controller {
         }
     }
 
-    private void aceitaOuRecusasTodasAsPropostas(TrazAqui trazAqui)
+    private void aceitaOuRecusasTodasAsPropostas(TrazAqui trazAqui) throws UtilizadorInexistenteException
     {
         Utilizador utilizadorAux = trazAqui.getUtilizador(trazAqui.getUtilizador_atual());
         view.print("Aceite ou recuse as seguintes propostas de Entrega:\n");
         utilizadorAux.getCodsEncomendasTransportadoraPorAceitar()
-                .forEach((key, value) -> aceitaOuRecusaUmaProposta(trazAqui, key, value.getKey(), value.getValue()));
+                .forEach((key, value) -> {
+                    try {
+                        aceitaOuRecusaUmaProposta(trazAqui, key, value.getKey(), value.getValue());
+                    } catch (EncomendaInexistenteException e) {
+                        e.printStackTrace();
+                    }
+                });
         view.print("\nTodas as Encomendas feitas avaliadas com sucesso.\n");
         trazAqui.todasEntregasAceitesOuRecusadas(trazAqui.getUtilizador_atual());
     }
 
 
-    private void aceitaOuRecusaUmaProposta(TrazAqui trazAqui, String codEncomenda, double tempoTransporte, double preçoTransporte)
+    private void aceitaOuRecusaUmaProposta(TrazAqui trazAqui, String codEncomenda, double tempoTransporte, double preçoTransporte) throws EncomendaInexistenteException
     {
         Scanner sc = new Scanner(System.in);
         DecimalFormat fmt = new DecimalFormat("0.00");
@@ -488,7 +533,7 @@ public class MVC_Controller {
     }
 
     /********************* MENUS DO VOLUNTÁRIO *******************/
-    private void menuVoluntario(TrazAqui trazAqui)
+    private void menuVoluntario(TrazAqui trazAqui) throws UtilizadorInexistenteException, EncomendaInexistenteException, VoluntarioInexistenteException, LojaInexistenteException
     {
         Scanner sc = new Scanner(System.in);
 
@@ -527,7 +572,8 @@ public class MVC_Controller {
         }
     }
 
-    public void realizaEncomendaPedidaVoluntario (TrazAqui trazAqui) {
+    public void realizaEncomendaPedidaVoluntario (TrazAqui trazAqui) throws VoluntarioInexistenteException, LojaInexistenteException, EncomendaInexistenteException, UtilizadorInexistenteException
+    {
         Scanner sc = new Scanner(System.in);
         Voluntario voluntario = trazAqui.getVoluntario(trazAqui.getUtilizador_atual());
         String escolha = "";
@@ -605,9 +651,10 @@ public class MVC_Controller {
     }
 
     /********************* MENUS DO TRANSPORTADORA *******************/
-    private void menuTransportadora(TrazAqui trazAqui)
+    private void menuTransportadora(TrazAqui trazAqui) throws TransportadoraInexistenteException, UtilizadorInexistenteException, EncomendaInexistenteException, LojaInexistenteException
     {
         Scanner sc = new Scanner(System.in);
+        DecimalFormat fmt = new DecimalFormat("0.00");
 
         while(true) {
             view.printMenuTransportadora();
@@ -645,6 +692,13 @@ public class MVC_Controller {
                 esperaInput();
                 break;
             }
+            else if (escolha.equals("5")) {
+                view.clearScreen();
+                Double res = trazAqui.getTotalFaturadoTransportadora(trazAqui.getUtilizador_atual());
+                view.print("Empresa " + trazAqui.getUtilizador_atual() + " faturou " + fmt.format(res) + " €\n");
+                esperaInput();
+                break;
+            }
             else {
                 view.print("Opção inválida!\n");
                 esperaInput();
@@ -653,7 +707,8 @@ public class MVC_Controller {
         }
     }
 
-    public void realizaEncomendaPedidaTransportadora (TrazAqui trazAqui) {
+    public void realizaEncomendaPedidaTransportadora (TrazAqui trazAqui) throws TransportadoraInexistenteException, LojaInexistenteException, EncomendaInexistenteException, UtilizadorInexistenteException
+    {
         Scanner sc = new Scanner(System.in);
         Transportadora transportadora = trazAqui.getTransportador(trazAqui.getUtilizador_atual());
         String escolha = "";
@@ -709,12 +764,12 @@ public class MVC_Controller {
 
 
     /********************* MENUS DAS LOJAS *******************/
-    private void menuLoja(TrazAqui trazAqui)
+    private void menuLoja(TrazAqui trazAqui) throws LojaInexistenteException
     {
         Scanner sc = new Scanner(System.in);
 
         while(true) {
-            view.printMenuLojas(trazAqui);
+            view.printMenuLojas(trazAqui.getLoja(trazAqui.getUtilizador_atual()).getEncomendasPorAceitar().size());
 
             String escolha = sc.nextLine();
 
@@ -741,18 +796,24 @@ public class MVC_Controller {
         }
     }
 
-    private void aceitaOuRecusaTodosPedidosEncomenda(TrazAqui trazAqui)
+    private void aceitaOuRecusaTodosPedidosEncomenda(TrazAqui trazAqui) throws LojaInexistenteException
     {
         Loja lojaAux = trazAqui.getLoja(trazAqui.getUtilizador_atual());
         view.print("Aceite ou recuse os pedidos de entrega por parte dos Utilizadores (y-n): \n");
         lojaAux.getEncomendasPorAceitar()
-                .forEach(key -> aceitaOuRecusaUmPedidoEncomenda(trazAqui, key));
+                .forEach(key -> {
+                    try {
+                        aceitaOuRecusaUmPedidoEncomenda(trazAqui, key);
+                    } catch (EncomendaInexistenteException e) {
+                        e.printStackTrace();
+                    }
+                });
         view.print("\nTodas as Encomendas pedidas aceitadas ou recusadas com sucesso.");
         trazAqui.lojaAceitaOuRecusaTodasEncomenda(trazAqui.getUtilizador_atual());
     }
 
 
-    private void aceitaOuRecusaUmPedidoEncomenda(TrazAqui trazAqui, String codEncomenda)
+    private void aceitaOuRecusaUmPedidoEncomenda(TrazAqui trazAqui, String codEncomenda) throws EncomendaInexistenteException
     {
         Scanner sc = new Scanner(System.in);
 

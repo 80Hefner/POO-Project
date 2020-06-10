@@ -1,5 +1,6 @@
 package Models;
 
+import NewExceptions.*;
 import Utils.ComparatorMapEntryEmpresaKmPercorridos;
 import Utils.ComparatorMapEntryUtilizadoresEncomendas;
 
@@ -51,8 +52,7 @@ public class TrazAqui implements Serializable
         this.utilizadores.put(u.getCodigo(), u.clone());
     }
 
-    public void insereEncomendaAceite(String e)
-    {
+    public void insereEncomendaAceite(String e) throws EncomendaInexistenteException {
         this.aceites.add(e);
         this.lojas.get(this.getEncomenda(e).getCodLoja()).aceitaEncomenda(e);
         this.catalogoEncomendas.get(e).setAceiteLoja(true);
@@ -80,24 +80,40 @@ public class TrazAqui implements Serializable
         return this.lojas.values().stream().map(Loja::clone).collect(Collectors.toList());
     }
 
-    public Loja getLoja(String codLoja)
+    public Loja getLoja(String codLoja) throws LojaInexistenteException
     {
-        return this.lojas.get(codLoja).clone();
+        if (this.lojas.containsKey(codLoja)) {
+            return this.lojas.get(codLoja).clone();
+        } else {
+            throw new LojaInexistenteException();
+        }
     }
 
-    public Voluntario getVoluntario(String codVoluntario)
+    public Voluntario getVoluntario(String codVoluntario) throws VoluntarioInexistenteException
     {
-        return this.voluntarios.get(codVoluntario).clone();
+        if (this.voluntarios.containsKey(codVoluntario)) {
+            return this.voluntarios.get(codVoluntario).clone();
+        } else {
+            throw new VoluntarioInexistenteException();
+        }
     }
 
-    public Utilizador getUtilizador(String codUtilizador)
+    public Utilizador getUtilizador(String codUtilizador) throws UtilizadorInexistenteException
     {
-        return this.utilizadores.get(codUtilizador).clone();
+        if (this.utilizadores.containsKey(codUtilizador)) {
+            return this.utilizadores.get(codUtilizador).clone();
+        } else {
+            throw new UtilizadorInexistenteException();
+        }
     }
 
-    public Transportadora getTransportador(String codTransportadora)
+    public Transportadora getTransportador(String codTransportadora) throws TransportadoraInexistenteException
     {
-        return this.transportadoras.get(codTransportadora).clone();
+        if (this.transportadoras.containsKey(codTransportadora)) {
+            return this.transportadoras.get(codTransportadora).clone();
+        } else {
+            throw new TransportadoraInexistenteException();
+        }
     }
 
     public List<Voluntario> getVoluntarios()
@@ -137,11 +153,14 @@ public class TrazAqui implements Serializable
                 .collect(Collectors.toMap(Map.Entry::getKey, e->e.getValue().clone()));
     }
 
-    public Encomenda getEncomenda (String codEncomenda) {
+    public Encomenda getEncomenda (String codEncomenda) throws EncomendaInexistenteException
+    {
         if (this.catalogoEncomendas.containsKey(codEncomenda)) {
             return this.catalogoEncomendas.get(codEncomenda).clone();
         }
-        return null;
+        else {
+            throw new EncomendaInexistenteException();
+        }
     }
 
     public boolean procuraEncomendaAceite(String codigo)
@@ -176,7 +195,7 @@ public class TrazAqui implements Serializable
         return u.getPassword().equals(password);
     }
 
-    public Encomenda realizaEntregaDeVenda(String codLoja, String codEnc, String codVoluntario) {
+    public Encomenda realizaEntregaDeVenda(String codLoja, String codEnc, String codVoluntario) throws LojaInexistenteException, EncomendaInexistenteException, UtilizadorInexistenteException {
 
         //TO DO: Trocar o return desta função para um void e depois imprimir as ceanas dadas da encomenda
         StringBuilder sb = new StringBuilder();
@@ -200,7 +219,7 @@ public class TrazAqui implements Serializable
         return enc.clone();
     }
 
-    public void realizaEntregaDeVendaTransportadora(String codLoja, String codEnc, String codTransportadora) {
+    public void realizaEntregaDeVendaTransportadora(String codLoja, String codEnc, String codTransportadora) throws LojaInexistenteException, UtilizadorInexistenteException, EncomendaInexistenteException {
 
         //TO DO: Trocar o return desta função para um void e depois imprimir as ceanas dadas da encomenda
         StringBuilder sb = new StringBuilder();
@@ -217,7 +236,7 @@ public class TrazAqui implements Serializable
     }
 
 
-    public void utilizadorAceitaOuRecusaEntrega(String codEnc, boolean status) {
+    public void utilizadorAceitaOuRecusaEntrega(String codEnc, boolean status) throws EncomendaInexistenteException {
 
         Encomenda enc = this.getEncomenda(codEnc);
         if( status ) { //Acontece quando é true, utilizador aceita
@@ -255,7 +274,7 @@ public class TrazAqui implements Serializable
     }
 
 
-    public void avaliaEntregaEncomenda (String codEncomenda, double avaliacao) {
+    public void avaliaEntregaEncomenda (String codEncomenda, double avaliacao) throws EncomendaInexistenteException {
         Encomenda encomenda = this.getEncomenda(codEncomenda);
 
         if (encomenda.getCodTrnasportador().startsWith("v")) {
@@ -269,7 +288,7 @@ public class TrazAqui implements Serializable
         this.utilizadores.get(codUtilizador).todasEncomendasFeitasAvaliadas();
     }
 
-    public void lojaAceitaOuRecusaEncomenda(String codEnc, boolean status) {
+    public void lojaAceitaOuRecusaEncomenda(String codEnc, boolean status) throws EncomendaInexistenteException {
 
         Encomenda enc = this.getEncomenda(codEnc);
         if( status ) { //Acontece quando é true, utilizador aceita
@@ -298,6 +317,10 @@ public class TrazAqui implements Serializable
         Set<Map.Entry<String, Integer>> resultado = new TreeSet<>(new ComparatorMapEntryUtilizadoresEncomendas());
         this.getUtilizadoresMap().values().forEach(val -> resultado.add(new AbstractMap.SimpleEntry<>(val.getCodigo(), val.getEncomendasHistorico().size())));
         return resultado;
+    }
+
+    public double getTotalFaturadoTransportadora (String codTransportadora) throws TransportadoraInexistenteException {
+        return  this.getTransportador(codTransportadora).getEncomendasHistorico().values().stream().mapToDouble(Encomenda::getPrecoTransporte).sum();
     }
 
 }

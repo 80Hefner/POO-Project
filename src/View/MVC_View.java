@@ -61,15 +61,15 @@ public class MVC_View {
         System.out.print("OPÇÃO: ");
     }
 
-    public void printMenuUtilizador (TrazAqui trazAqui)
+    public void printMenuUtilizador (Integer nrAvaliacoes, Integer nrPropostas)
     {
         clearScreen();
         System.out.println("----------------------MENU UTILIZADOR--------------------\n");
         System.out.println("0 -> Logout.");
         System.out.println("1 -> Listar entidades no sistema.");
         System.out.println("2 -> Fazer pedido de encomenda.");
-        System.out.println("3 -> Avaliar Encomendas que foram Entregues (" + trazAqui.getUtilizador(trazAqui.getUtilizador_atual()).getEncomendasCompletadasPorAvaliar().size() +").");
-        System.out.println("4 -> Aceitar Encomendas propostas entregar por uma Transportadora (" + trazAqui.getUtilizador(trazAqui.getUtilizador_atual()).getCodsEncomendasTransportadoraPorAceitar().size() +").");
+        System.out.println("3 -> Avaliar Encomendas que foram Entregues (" + nrAvaliacoes +").");
+        System.out.println("4 -> Aceitar Encomendas propostas entregar por uma Transportadora (" + nrPropostas +").");
         System.out.println("5 -> Dez utilizadores ordenados com mais encomendas realizadas");
         System.out.print("OPÇÃO: ");
     }
@@ -94,16 +94,17 @@ public class MVC_View {
         System.out.println("2 -> Fazer pedido para entregar encomenda.");
         System.out.println("3 -> Altera disponibilidade de entrega.");
         System.out.println("4 -> Dez Transportadoras ordenadas com mais Km feitos");
+        System.out.println("5 -> Total faturado pelos Transportes da Transportadora");
         System.out.print("OPÇÃO: ");
     }
 
-    public void printMenuLojas (TrazAqui trazAqui)
+    public void printMenuLojas (Integer nrPedidos)
     {
         clearScreen();
         System.out.println("----------------------MENU LOJA--------------------\n");
         System.out.println("0 -> Logout.");
         System.out.println("1 -> Listar entidades no sistema.");
-        System.out.println("2 -> Aceitar pedidos de Encomenda (" + trazAqui.getLoja(trazAqui.getUtilizador_atual()).getEncomendasPorAceitar().size()+").");
+        System.out.println("2 -> Aceitar pedidos de Encomenda (" + nrPedidos +").");
         System.out.print("OPÇÃO: ");
     }
 
