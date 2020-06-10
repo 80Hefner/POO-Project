@@ -2,8 +2,17 @@ package Utils;
 
 import java.util.Comparator;
 import java.util.Map;
-
+/**
+ * Classe com Comparator de Map.Entrys que possuem como key uma String e como Value um Double
+ */
 public class ComparatorMapEntryEmpresaKmPercorridos implements Comparator<Map.Entry<String, Double>> {
+
+    /**
+     * @brief              Função que compara dois Map.Entrys que possuem como key uma String e como Value um Double
+     * @param o1           Map.Entry<String,Double>
+     * @param o2           Map.Entry<String,Double>
+     * @return             Inteiro que vai servir de comparação, como nas funções gerais de compare
+     */
     @Override
     public int compare(Map.Entry<String,Double> o1, Map.Entry<String,Double> o2) {
         double compara = o2.getValue().compareTo(o1.getValue());

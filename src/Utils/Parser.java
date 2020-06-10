@@ -11,8 +11,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Classe Responsável pelo Parsing de dados recebidos de um ficheiro
+ */
 public class Parser
 {
+    /**
+     * Função que dá Parsing a todos os dados presentes num ficheiro e os insere no Model
+     * @param data_path     Path onde se encontra os ficheiros de dados
+     * @param trazAqui      Função de Model principal onde irão ser colocados dados recebidos ao fim do Parsing de Dados
+     */
     public void parseLogs(String data_path, TrazAqui trazAqui) throws EncomendaInexistenteException {
         List<String> linhas = lerFicheiro(data_path + "/logs.txt");
         String[] linhaPartida;
@@ -57,7 +65,11 @@ public class Parser
         }
     }
 
-
+    /**
+     * Função que dá Parsing de um Utilizador
+     * @param input     Linha á qual vamos dar Parsging
+     * @return          Utilizador obtido pelo Parsing da linha
+     */
     public Utilizador parseUtilizador(String input)
     {
         String[] campos = input.split(",");
@@ -70,6 +82,11 @@ public class Parser
         return new Utilizador(nome, codUtilizador, gps, codUtilizador);
     }
 
+    /**
+     * Função que dá Parsing de um Voluntário
+     * @param input     Linha á qual vamos dar Parsging
+     * @return          Voluntário obtido pelo Parsing da linha
+     */
     public Voluntario parseVoluntario(String input)
     {
         String[] campos = input.split(",");
@@ -86,6 +103,11 @@ public class Parser
         return new Voluntario(nome,codVoluntario,gps, codVoluntario, velocidadeMedia,raio,medical);
     }
 
+    /**
+     * Função que dá Parsing de uma Transportadora
+     * @param input     Linha á qual vamos dar Parsging
+     * @return          Transportadora obtida pelo Parsing da linha
+     */
     public Transportadora parseTransportadora(String input)
     {
         String[] campos = input.split(",");
@@ -105,6 +127,11 @@ public class Parser
         return new Transportadora(nome,codTransportadora,gps, codTransportadora, velocidadeMedia,nif,raio,preco_km,limite,medical);
     }
 
+    /**
+     * Função que dá Parsing de uma Loja
+     * @param input     Linha á qual vamos dar Parsging
+     * @return          Loja obtido pelo Parsing da linha
+     */
     public Loja parseLoja(String input)
     {
         String[] campos = input.split(",");
@@ -119,6 +146,11 @@ public class Parser
         return new Loja(nomeLoja, codLoja, codLoja, gps, temFila);
     }
 
+    /**
+     * Função que dá Parsing de uma Encomenda
+     * @param input     Linha á qual vamos dar Parsging
+     * @return          Encomenda obtido pelo Parsing da linha
+     */
     public Encomenda parseEncomenda(String input)
     {
         String[] campos = input.split(",", 5);
@@ -133,6 +165,11 @@ public class Parser
         return new Encomenda(codEncomenda, codLoja, codUtilizador, "", peso, produtos, medical, data, false, false, 0, 0.0,0.0, 0);
     }
 
+    /**
+     * Função que dá Parsing de uma Linha de Encomenda
+     * @param input     Linha á qual vamos dar Parsging
+     * @return          LinhaEncomenda obtido pelo Parsing da linha
+     */
     public List<LinhaEncomenda> parseProdutos(String input)
     {
         String[] campos = input.split(",");
@@ -150,6 +187,11 @@ public class Parser
         return produtos;
     }
 
+    /**
+     * Função que lê um ficheiro e divide as linhas por uma List de String
+     * @param ficheiro      Path para o ficheiro que queremos ler
+     * @return              Lista de String, onde cada posição corresponde a cada linha do ficheiro
+     */
     public List<String> lerFicheiro(String ficheiro)
     {
         List<String> linhas = new ArrayList<>();
