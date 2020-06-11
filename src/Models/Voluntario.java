@@ -88,8 +88,8 @@ public class Voluntario implements Serializable
         this.total_entregas = e.getTotal_entregas();
         this.total_avaliacoes = e.getTotal_avaliacoes();
         this.medical = e.isMedical();
-        this.available = true;
-        this.availableMedical = medical;
+        this.available = e.isAvailable();
+        this.availableMedical = e.isAvailableMedical();
         this.encomendasHistorico = new HashMap<>(e.getEncomendasHistorico());
     }
 
@@ -369,8 +369,9 @@ public class Voluntario implements Serializable
         sb.append(" | Raio - ").append(this.raio).append(" Km");
         sb.append("\n  Classificação - ").append(this.classificacao);
         sb.append(" | Total de entregas efetuadas - ").append(this.total_entregas);
-        sb.append("\n  Is Medical - ").append(this.medical);
-        sb.append("\n  Is Available - ").append(this.available);
+        sb.append("\n  Is Medical - ").append(this.isMedical());
+        sb.append("\n  Is Available - ").append(this.isAvailable());
+        sb.append("\n  Is Available Medical - ").append(this.isAvailableMedical());
         sb.append("\n  Registos Históricos ").append(this.encomendasHistorico.keySet().toString());
         sb.append("\n");
 

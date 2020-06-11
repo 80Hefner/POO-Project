@@ -233,6 +233,15 @@ public class TrazAqui implements Serializable
     }
 
     /**
+     * Getter de um Map com as Lojas do Sistema
+     * @return      Map com as Lojas do Sistema
+     */
+    public Map<String,Loja> getLojasMap ()
+    {
+        return new TreeMap<>(this.lojas);
+    }
+
+    /**
      * Getter de um Map com as Encomendas do Sistema
      * @return      Map com as Encomendas do Sistema
      */
@@ -458,6 +467,18 @@ public class TrazAqui implements Serializable
             this.voluntarios.get(codEntidade).setAvailable(status);
         else if (codEntidade.startsWith("t"))
             this.transportadoras.get(codEntidade).setAvailable(status);
+    }
+
+    /**
+     * Função que determinar o estado de Disponibilidade para Entrega de Encomendas Médicas por parte de uma Entidade
+     * @param codEntidade   Entidade que vams colocar o estado de Disponibilidade
+     * @param status        Estado de disponibilidade a inserir
+     */
+    public void setAvailableMedical (String codEntidade, boolean status) {
+        if(codEntidade.startsWith("v"))
+            this.voluntarios.get(codEntidade).setAvailableMedical(status);
+        else if (codEntidade.startsWith("t"))
+            this.transportadoras.get(codEntidade).setAvailableMedical(status);
     }
 
     /**

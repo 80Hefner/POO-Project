@@ -118,7 +118,7 @@ public class Parser
         GPS gps = new GPS(latitude, longitude);
         int nif = Integer.parseInt(campos[4]);
         double raio = Double.parseDouble(campos[5]);
-        double preco_km = Double.parseDouble(campos[5]);
+        double preco_km = Double.parseDouble(campos[6]);
         Random r = new Random();
         int limite = r.nextInt(10) + 1;
         boolean medical = r.nextBoolean();

@@ -148,6 +148,7 @@ public class Transportadora extends Voluntario implements Serializable
         sb.append(" | Total de entregas efetuadas - ").append(super.getTotal_entregas());
         sb.append("\n  Is Medical - ").append(super.isMedical());
         sb.append(" | Is Available - ").append(super.isAvailable());
+        sb.append(" | Is Available Medical - ").append(super.isAvailableMedical());
         sb.append("\n  Registos Históricos ").append(super.getEncomendasHistorico().keySet().toString());
         sb.append("\n");
 

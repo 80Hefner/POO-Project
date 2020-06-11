@@ -2,7 +2,6 @@ package Controller;
 
 import Models.*;
 import NewExceptions.*;
-import Utils.Parser;
 import View.MVC_View;
 
 import java.io.*;
@@ -70,8 +69,10 @@ public class MVC_Controller {
     public void menuPrincipal()
     {
         while(true) {
-            if (login == 0)
+            if (login == 0) {
+                view.imprimeLogo();
                 menuEscolhas(this.model);
+            }
             else if (this.model.getUtilizador_atual().startsWith("u")) {
                 try {
                     menuUtilizador(this.model);
@@ -90,6 +91,8 @@ public class MVC_Controller {
                     e.printStackTrace();
                 } catch (LojaInexistenteException e) {
                     e.printStackTrace();
+                } catch (TransportadoraInexistenteException e) {
+                    e.printStackTrace();
                 }
             }
             else if (this.model.getUtilizador_atual().startsWith("t")) {
@@ -102,6 +105,8 @@ public class MVC_Controller {
                 } catch (EncomendaInexistenteException e) {
                     e.printStackTrace();
                 } catch (LojaInexistenteException e) {
+                    e.printStackTrace();
+                } catch (VoluntarioInexistenteException e) {
                     e.printStackTrace();
                 }
             }
@@ -140,21 +145,30 @@ public class MVC_Controller {
                 menuEscolhaRegisto(trazAqui);
                 break;
             }
-            else if (escolha.equals("3") && trazAqui != null) {
+            else if (escolha.equals("3")) {
+                view.clearScreen();
+                listagemEntidades(trazAqui);
+                esperaInput();
+                break;
+            }
+            else if (escolha.equals("4") && trazAqui != null) {
                 view.clearScreen();
                 view.print("\n--------------------- Traz Aqui a ser guardado -------------------\n");
                 saveToDisk();
+                esperaInput();
                 break;
             }
-            else if (escolha.equals("4")) {
+            else if (escolha.equals("5")) {
                 view.clearScreen();
                 view.print("\n--------------------- Traz Aqui a dar load -------------------\n");
                 loadFromDisk();
+                esperaInput();
                 break;
             }
             else {
                 view.print("Opção inválida!\n");
                 esperaInput();
+                view.clearScreen();
                 break;
             }
         }
@@ -357,6 +371,12 @@ public class MVC_Controller {
                 esperaInput();
                 break;
             }
+            else if (escolha.equals("6")) {
+                view.clearScreen();
+                view.imprimeHistoricoEntidade(trazAqui.getUtilizador(trazAqui.getUtilizador_atual()).getEncomendasHistorico());
+                esperaInput();
+                break;
+            }
             else {
                 view.print("Opção inválida!\n");
                 esperaInput();
@@ -374,7 +394,7 @@ public class MVC_Controller {
         view.clearScreen();
         view.imprimeMenuListagemEntidades();
         while(true) {
-            view.print("(0 - Lojas | 1 - Voluntários | 2 - Transportadoras | 3 - Utilizadores | 4 - Aceites): ");
+            view.print("    (0 - Lojas | 1 - Voluntários | 2 - Transportadoras | 3 - Utilizadores | 4 - Encomendas | 5 - Aceites): ");
             String escolha = sc.nextLine();
 
             switch (escolha) {
@@ -395,6 +415,10 @@ public class MVC_Controller {
                     escolheuCerto = true;
                     break;
                 case "4":
+                    view.imprimeEncomendasTrazAqui(trazAqui);
+                    escolheuCerto = true;
+                    break;
+                case "5":
                     view.print("\n---------------------------- ACEITES ----------------------------\n");
                     view.print(trazAqui.getEncomendasAceites().toString());
                     view.print("\n");
@@ -611,7 +635,7 @@ public class MVC_Controller {
      * Menú apresentando todas as opções quando se encontra loggado num Voluntário
      * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
      */
-    private void menuVoluntario(TrazAqui trazAqui) throws UtilizadorInexistenteException, EncomendaInexistenteException, VoluntarioInexistenteException, LojaInexistenteException
+    private void menuVoluntario(TrazAqui trazAqui) throws UtilizadorInexistenteException, EncomendaInexistenteException, VoluntarioInexistenteException, LojaInexistenteException, TransportadoraInexistenteException
     {
         Scanner sc = new Scanner(System.in);
 
@@ -643,6 +667,18 @@ public class MVC_Controller {
                 esperaInput();
                 break;
             }
+            else if (escolha.equals("4")) {
+                view.clearScreen();
+                alteraDisponibilidadeMedicaEntidade(trazAqui);
+                esperaInput();
+                break;
+            }
+            else if (escolha.equals("5")) {
+                view.clearScreen();
+                view.imprimeHistoricoEntidade(trazAqui.getVoluntario(trazAqui.getUtilizador_atual()).getEncomendasHistorico());
+                esperaInput();
+                break;
+            }
             else {
                 view.print("Opção inválida!\n");
                 esperaInput();
@@ -657,14 +693,15 @@ public class MVC_Controller {
     public void realizaEncomendaPedidaVoluntario (TrazAqui trazAqui) throws VoluntarioInexistenteException, LojaInexistenteException, EncomendaInexistenteException, UtilizadorInexistenteException
     {
         Scanner sc = new Scanner(System.in);
-        Voluntario voluntario = trazAqui.getVoluntario(trazAqui.getUtilizador_atual());
+        Voluntario voluntario = trazAqui.getVoluntario(this.model.getUtilizador_atual());
         String escolha = "";
 
         view.clearScreen();
         view.print("\n-----------------PEDIDO ENTREGA ENCOMENDA------------------------\n");
         while(!escolha.equals("exit")) {
             if (voluntario.isAvailable()) {
-                view.print("Insira o Código da loja:\n");
+                view.print("\nLojas no Sistema - " + trazAqui.getLojasMap().keySet().toString() + "\n");
+                view.print("    Insira o Código da loja: ");
                 escolha = sc.nextLine();
                 String codLoja = escolha;
                 if (!codLoja.startsWith("l")) {
@@ -675,33 +712,38 @@ public class MVC_Controller {
                     if (trazAqui.getLoja(codLoja).getCoordenadas().isReachable( voluntario.getCoordenadas(), voluntario.getRaio())) {
 
                         while(!escolha.equals("exit")) {
-                            view.print("Insira o Código da Encomenda:\n");
+                            view.print("\nEncomendas da Loja - " + trazAqui.getLoja(codLoja).getEncomendasPorEntregar().toString() + "\n");
+                            view.print("    Insira o Código da Encomenda: ");
                             escolha = sc.nextLine();
                             String codEncomenda = escolha;
                             if (trazAqui.getLoja(codLoja).possuiEncomendaCodigo(codEncomenda)) {
                                 Encomenda enc = trazAqui.getEncomenda(codEncomenda);
                                 if (!(!voluntario.isMedical() && enc.isMedical())) {
-                                    if (trazAqui.getUtilizador(enc.getCodUtilizador()).getCoordenadas().isReachable(voluntario.getCoordenadas(), voluntario.getRaio())) {
-                                        Encomenda res = trazAqui.realizaEntregaDeVenda(codLoja, codEncomenda, trazAqui.getUtilizador_atual());
-                                        view.print("Entrega feita com sucesso\n");
-                                        view.imprimeEntregaEncomendaVol(res);
-                                        break;
+                                    if(!(!voluntario.isAvailableMedical() && enc.isMedical())) {
+                                        if (trazAqui.getUtilizador(enc.getCodUtilizador()).getCoordenadas().isReachable(voluntario.getCoordenadas(), voluntario.getRaio())) {
+                                            Encomenda res = trazAqui.realizaEntregaDeVenda(codLoja, codEncomenda, trazAqui.getUtilizador_atual());
+                                            view.print("\nEntrega feita com sucesso\n");
+                                            view.imprimeEntregaEncomendaVol(res);
+                                            break;
+                                        } else {
+                                            view.print("Nao consegue alcançar utilizador!\n");
+                                        }
                                     } else {
-                                        view.print("Nao consegue alcançar utilizador\n");
+                                        view.print("Voluntário não se encontra Disponível para transportar Encomendas Médicas.\n");
                                     }
                                 } else {
-                                    view.print("Voluntário não se encontra preparado para transportar Encomendas Médicas.\n");
+                                    view.print("Voluntário não possui Capacidades para transportar Encomendas Médicas.\n");
                                 }
                             } else {
-                                view.print("Encomenda Pendente inexistente\n");
+                                view.print("Encomenda Pendente inexistente!\n");
                             }
                         }
                         break;
                     } else {
-                        view.print("Não consegue alcançar esta loja\n");
+                        view.print("Não consegue alcançar esta loja!\n");
                     }
                 } else {
-                    view.print("Loja Inexistente\n");
+                    view.print("Loja Inexistente!\n");
                 }
             } else {
                 view.print("Voluntário Não Disponível para realizar Entregas.\n");
@@ -736,12 +778,52 @@ public class MVC_Controller {
         }
     }
 
+    /**
+     * Menu que aparece quando Voluntário ou Transportadora logados pretendem alterar a sua disponibilidade para entrega de Encomendas Médicas
+     * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
+     */
+    public void alteraDisponibilidadeMedicaEntidade (TrazAqui trazAqui) throws VoluntarioInexistenteException, TransportadoraInexistenteException
+    {
+        Scanner sc = new Scanner(System.in);
+        String codEntidade = trazAqui.getUtilizador_atual();
+        String escolha = "";
+
+        if (codEntidade.startsWith("v")) {
+            if (!trazAqui.getVoluntario(codEntidade).isMedical()) {
+                view.print("Voluntário não possui Capacidades para transportar Encomendas Médicas");
+                return;
+            }
+        }
+        else if (codEntidade.startsWith("t")) {
+            if (!trazAqui.getTransportador(codEntidade).isMedical()) {
+                view.print("Transportadora não possui Capacidades para transportar Encomendas Médicas");
+                return;
+            }
+        }
+
+        while(!escolha.equals("exit")) {
+            view.print("Qual disponibilidade Médica quer colocar na Entidade?\n");
+            view.print("(y - Disponível | n - Não Disponível) : ");
+            escolha = sc.nextLine();
+            String disponibilidade = escolha;
+            if (disponibilidade.startsWith("y") || disponibilidade.startsWith("Y")) {
+                trazAqui.setAvailableMedical(codEntidade, true);
+                view.print("Entidade definida como Disponível para entregas médicas!\n");
+                break;
+            } else if (disponibilidade.startsWith("n") || disponibilidade.startsWith("N")) {
+                trazAqui.setAvailableMedical(codEntidade, false);
+                view.print("Entidade definida como Não Disponível para entregas médicas!\n");
+                break;
+            }
+        }
+    }
+
     /********************* MENUS DO TRANSPORTADORA *******************/
     /**
      * Menú apresentando todas as opções quando se encontra loggado numa Transportadora
      * @param trazAqui      Model principal á volta do qual se trabalha ao longo do projeto
      */
-    private void menuTransportadora(TrazAqui trazAqui) throws TransportadoraInexistenteException, UtilizadorInexistenteException, EncomendaInexistenteException, LojaInexistenteException
+    private void menuTransportadora(TrazAqui trazAqui) throws TransportadoraInexistenteException, UtilizadorInexistenteException, EncomendaInexistenteException, LojaInexistenteException, VoluntarioInexistenteException
     {
         Scanner sc = new Scanner(System.in);
         DecimalFormat fmt = new DecimalFormat("0.00");
@@ -777,15 +859,27 @@ public class MVC_Controller {
             }
             else if (escolha.equals("4")) {
                 view.clearScreen();
-                Set<Map.Entry<String, Double>> res = trazAqui.getLista10TransportadorasMaisKilometros();
-                view.imprimeQuerie10Transportadoras(res);
+                alteraDisponibilidadeMedicaEntidade(trazAqui);
                 esperaInput();
                 break;
             }
             else if (escolha.equals("5")) {
                 view.clearScreen();
+                Set<Map.Entry<String, Double>> res = trazAqui.getLista10TransportadorasMaisKilometros();
+                view.imprimeQuerie10Transportadoras(res);
+                esperaInput();
+                break;
+            }
+            else if (escolha.equals("6")) {
+                view.clearScreen();
                 Double res = trazAqui.getTotalFaturadoTransportadora(trazAqui.getUtilizador_atual());
                 view.print("Empresa " + trazAqui.getUtilizador_atual() + " faturou " + fmt.format(res) + " €\n");
+                esperaInput();
+                break;
+            }
+            else if (escolha.equals("7")) {
+                view.clearScreen();
+                view.imprimeHistoricoEntidade(trazAqui.getTransportador(trazAqui.getUtilizador_atual()).getEncomendasHistorico());
                 esperaInput();
                 break;
             }
@@ -811,7 +905,8 @@ public class MVC_Controller {
         view.print("\n-----------------PEDIDO ENTREGA ENCOMENDA------------------------\n");
         while(!escolha.equals("exit")) {
             if (transportadora.isAvailable()) {
-                view.print("Insira o Código da loja:\n");
+                view.print("\nLojas no Sistema - " + trazAqui.getLojasMap().keySet().toString() + "\n");
+                view.print("    Insira o Código da loja: ");
                 escolha = sc.nextLine();
                 String codLoja = escolha;
                 if (!codLoja.startsWith("l")) {
@@ -822,32 +917,37 @@ public class MVC_Controller {
                     if (trazAqui.getLoja(codLoja).getCoordenadas().isReachable( transportadora.getCoordenadas(), transportadora.getRaio())) {
 
                         while(!escolha.equals("exit")) {
-                            view.print("Insira o Código da Encomenda:\n");
+                            view.print("\nEncomendas da Loja - " + trazAqui.getLoja(codLoja).getEncomendasPorEntregar().toString() + "\n");
+                            view.print("    Insira o Código da Encomenda: ");
                             escolha = sc.nextLine();
                             String codEncomenda = escolha;
                             if (trazAqui.getLoja(codLoja).possuiEncomendaCodigo(codEncomenda)) {
                                 Encomenda enc = trazAqui.getEncomenda(codEncomenda);
                                 if (!(!transportadora.isMedical() && enc.isMedical())) {
-                                    if (trazAqui.getUtilizador(enc.getCodUtilizador()).getCoordenadas().isReachable(transportadora.getCoordenadas(), transportadora.getRaio())) {
-                                        trazAqui.realizaEntregaDeVendaTransportadora(codLoja, codEncomenda, trazAqui.getUtilizador_atual());
-                                        view.print("Pedido de Entrega efetuado com sucesso");
-                                        break;
+                                    if(!(!transportadora.isAvailableMedical() && enc.isMedical())) {
+                                        if (trazAqui.getUtilizador(enc.getCodUtilizador()).getCoordenadas().isReachable(transportadora.getCoordenadas(), transportadora.getRaio())) {
+                                            trazAqui.realizaEntregaDeVendaTransportadora(codLoja, codEncomenda, trazAqui.getUtilizador_atual());
+                                            view.print("\nPedido de Entrega efetuado com sucesso!\n");
+                                            break;
+                                        } else {
+                                            view.print("Nao consegue alcançar utilizador!\n");
+                                        }
                                     } else {
-                                        view.print("Nao consegue alcançar utilizador\n");
+                                        view.print("Transportadora não se encontra Disponível para transportar Encomendas Médicas");
                                     }
                                 } else {
-                                    view.print("Transportadora não se encontra preparada para transportar Encomendas Médicas.\n");
+                                    view.print("Transportadora não possui Capacidades para transportar Encomendas Médicas.\n");
                                 }
                             } else {
-                                view.print("Encomenda Pendente inexistente\n");
+                                view.print("Encomenda Pendente inexistente!\n");
                             }
                         }
                         break;
                     } else {
-                        view.print("Não consegue alcançar esta loja\n");
+                        view.print("Não consegue alcançar esta loj!a\n");
                     }
                 } else {
-                    view.print("Loja Inexistente\n");
+                    view.print("Loja Inexistente!\n");
                 }
             } else {
                 view.print("Transportadora Não Disponível para realizar Entregas.\n");
@@ -881,9 +981,15 @@ public class MVC_Controller {
                 listagemEntidades(trazAqui);
                 esperaInput();
             }
-            else if (escolha.equals("3")) {
+            else if (escolha.equals("2")) {
                 view.clearScreen();
                 aceitaOuRecusaTodosPedidosEncomenda(trazAqui);
+                esperaInput();
+                break;
+            }
+            else if (escolha.equals("3")) {
+                view.clearScreen();
+                view.imprimeHistoricoEntidade(trazAqui.getLoja(trazAqui.getUtilizador_atual()).getEncomendasHistorico());
                 esperaInput();
                 break;
             }
