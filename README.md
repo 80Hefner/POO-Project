@@ -13,4 +13,4 @@ Instructions on how to use the project!
 # Run the program  
 In order to run the program, you must be in the folder where the application's .jar is located and run the following command:  
 
-    java -jar POO-Project.jar.jar
+    java -jar POO-Project.jar
