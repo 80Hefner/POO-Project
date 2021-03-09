@@ -1,4 +1,4 @@
-# Projeto POO (2019/2020)
+# POO Project - Programação Orientada aos Objetos [19-20]
 **Version 1.0.0**
 
 Instructions on how to use the project!
